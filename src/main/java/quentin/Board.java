@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class Board {
 
-  private final int SIZE = 13; // Board size (specified in rules)
+  public final int SIZE = 13; // Board size (specified in rules)
   private final BoardPoint[][] board = new BoardPoint[SIZE][SIZE];
   private final boolean[][] visited = new boolean[SIZE][SIZE];
 
