@@ -25,8 +25,7 @@ replay_pid*
 
 #Gradle
 .gradle/
-/build/
-gradle-wrapper.jar
+build/
 gradle-wrapper.properties
 
 #IDE
@@ -35,3 +34,19 @@ gradle-wrapper.properties
 
 # Other
 .DS_Store
+
+# Ignore Eclipse project files
+.classpath
+.project
+.settings/
+
+# Ignore Gradle wraper
+!gradlew
+!gradlew.bat
+.gradle/
+
+# Ignore local config files
+*.properties
+
+# Ignore metadata files
+.metadata/
