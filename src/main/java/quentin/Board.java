@@ -1,6 +1,7 @@
 package quentin;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class Board {
 
@@ -46,6 +47,11 @@ public class Board {
         this.board[i][j] = BoardPoint.fromString(cell);
       }
     }
+  }
+
+  public Board(String compactString) {
+    this();
+    this.fromCompactString(compactString);
   }
 
   public BoardPoint[][] getBoard() {
@@ -174,5 +180,26 @@ public class Board {
     toReturn.append("          B     B    B    B   B     B    B    B    B    B    B   B     B\n");
 
     return toReturn.toString();
+  }
+
+  public String toCompactString() {
+    return Arrays.stream(board) // Creates a two-dimensional stream from the board array.
+        .flatMap(Arrays::stream) // two-dimensional stream into a one-dimensional stream
+        .map(BoardPoint::toString) // Converts each BoardPoint element to its string "W" "B" or "."
+        .collect(Collectors.joining()); // Joins all the elements of the stream into a single string
+  }
+
+  public void fromCompactString(String compactString) {
+    if (compactString.length() != SIZE * SIZE) {
+      throw new IllegalArgumentException("Invalid compact string length");
+    }
+    int index = 0;
+    for (int i = 0; i < SIZE; i++) {
+      for (int j = 0; j < SIZE; j++) {
+        String value = compactString.substring(index, index + 1);
+        this.board[i][j] = BoardPoint.fromString(value);
+        index++;
+      }
+    }
   }
 }
