@@ -25,7 +25,7 @@ replay_pid*
 
 #Gradle
 .gradle/
-build/
+/build/
 gradle-wrapper.properties
 
 #IDE
@@ -39,11 +39,6 @@ gradle-wrapper.properties
 .classpath
 .project
 .settings/
-
-# Ignore Gradle wraper
-!gradlew
-!gradlew.bat
-.gradle/
 
 # Ignore local config files
 *.properties
