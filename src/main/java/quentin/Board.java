@@ -52,6 +52,10 @@ public class Board {
     return board;
   }
 
+  public BoardPoint getPoint(Position pos) {
+    return board[pos.row()][pos.col()];
+  }
+
   public BoardPoint getValues(int i, int j) {
     if (i < SIZE && j < SIZE) return board[i][j];
     else throw new RuntimeException("Coordinates not valid");
@@ -63,22 +67,31 @@ public class Board {
       if (board[row][col] == BoardPoint.WHITE || board[row][col] == BoardPoint.BLACK) return false;
 
       if (!isFirstMove) {
-        // check if the stone is orthogonally close another stone with the same color
+        // check if the stone is orthogonally close another stone with
+        // the same color
         try {
           if (board[row - 1][col] == player.color()) return true;
-        } catch (ArrayIndexOutOfBoundsException e) { // Ignore exception and continue execution
+        } catch (ArrayIndexOutOfBoundsException e) { // Ignore exception
+          // and continue
+          // execution
         }
         try {
           if (board[row][col - 1] == player.color()) return true;
-        } catch (ArrayIndexOutOfBoundsException e) { // Ignore exception and continue execution
+        } catch (ArrayIndexOutOfBoundsException e) { // Ignore exception
+          // and continue
+          // execution
         }
         try {
           if (board[row + 1][col] == player.color()) return true;
-        } catch (ArrayIndexOutOfBoundsException e) { // Ignore exception and continue execution
+        } catch (ArrayIndexOutOfBoundsException e) { // Ignore exception
+          // and continue
+          // execution
         }
         try {
           if (board[row][col + 1] == player.color()) return true;
-        } catch (ArrayIndexOutOfBoundsException e) { // Ignore exception and continue execution
+        } catch (ArrayIndexOutOfBoundsException e) { // Ignore exception
+          // and continue
+          // execution
         }
       } else return true;
     }
