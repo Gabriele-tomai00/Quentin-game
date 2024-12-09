@@ -38,6 +38,9 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
 
+    - name: Build gradle wrapper
+      run: ./gradlew wrapper
+      
     - name: Check code formatting with Spotless
       run: ./gradlew spotlessCheck
 
