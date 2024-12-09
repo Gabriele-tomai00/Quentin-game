@@ -33,14 +33,19 @@ public class Game {
       int blacks =
           (int) frontier.stream().map(board::getPoint).filter(a -> a == BoardPoint.BLACK).count();
       if (whites > blacks) {
-        // color all cells
-      } else if (whites == blacks) {
-        // color all cells
-
+        for (Position pos : territory) {
+          board.placeStone(BoardPoint.WHITE, pos.row(), pos.col());
+        }
+      } else if (whites < blacks) {
+        for (Position pos : territory) {
+          board.placeStone(BoardPoint.BLACK, pos.row(), pos.col());
+        }
       } else {
-        changeCurrentPlayer();
-        // color all cells
-        changeCurrentPlayer();
+        for (Position pos : territory) {
+          changeCurrentPlayer();
+          place(pos.row(), pos.col());
+          changeCurrentPlayer();
+        }
       }
     }
   }
@@ -72,8 +77,8 @@ public class Game {
     Set<Position> neighbors = new HashSet<Position>();
     if (row > 0) neighbors.add(new Position(row - 1, col));
     if (col > 0) neighbors.add(new Position(row, col - 1));
-    if (row < board.SIZE) neighbors.add(new Position(row + 1, col));
-    if (col < board.SIZE) neighbors.add(new Position(row, col + 1));
+    if (row < board.SIZE - 1) neighbors.add(new Position(row + 1, col));
+    if (col < board.SIZE - 1) neighbors.add(new Position(row, col + 1));
     return neighbors;
   }
 
