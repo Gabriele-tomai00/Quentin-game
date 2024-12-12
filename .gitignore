@@ -1,5 +1,6 @@
 # Compiled class file
 *.class
+bin/
 
 # Log file
 *.log
@@ -25,8 +26,7 @@ replay_pid*
 
 #Gradle
 .gradle/
-/build/
-gradle-wrapper.properties
+build/
 
 #IDE
 .vscode/
