@@ -20,81 +20,117 @@ public class Game {
     board = new Board();
   }
 
-  public void coverTerritories(int row, int col) {
-    Set<Position> neighbors = neighbors(new Position(row, col));
-    for (Position neigh : neighbors) {
-      Set<Position> territory = findTerritories(neigh.row(), neigh.col());
-      Set<Position> frontier = new HashSet<Position>();
-      for (Position cell : territory) {
-        frontier.addAll(neighbors(cell));
+  public void coverTerritories(Cell cell) {
+    Set<Cell> neighbors = neighbors(cell);
+    for (Cell neigh : neighbors) {
+      Set<Cell> territory = findTerritories(neigh);
+      Set<Cell> frontier = new HashSet<Cell>();
+      for (Cell tile : territory) {
+        frontier.addAll(neighbors(tile));
       }
-      int whites =
-          (int) frontier.stream().map(board::getPoint).filter(a -> a == BoardPoint.WHITE).count();
-      int blacks =
-          (int) frontier.stream().map(board::getPoint).filter(a -> a == BoardPoint.BLACK).count();
+      int whites = (int) frontier.stream()
+                                 .map(board::getPoint)
+                                 .filter(a -> a == BoardPoint.WHITE)
+                                 .count();
+      int blacks = (int) frontier.stream()
+                                 .map(board::getPoint)
+                                 .filter(a -> a == BoardPoint.BLACK)
+                                 .count();
       if (whites > blacks) {
-        for (Position pos : territory) {
-          board.placeStone(BoardPoint.WHITE, pos.row(), pos.col());
+        for (Cell tile : territory) {
+          board.placeStone(BoardPoint.WHITE, tile.row(), tile.col());
         }
       } else if (whites < blacks) {
-        for (Position pos : territory) {
-          board.placeStone(BoardPoint.BLACK, pos.row(), pos.col());
+        for (Cell tile : territory) {
+          board.placeStone(BoardPoint.BLACK, tile.row(), tile.col());
         }
       } else {
-        for (Position pos : territory) {
+        for (Cell tile : territory) {
           changeCurrentPlayer();
-          place(pos.row(), pos.col());
+          place(tile);
           changeCurrentPlayer();
         }
       }
     }
   }
 
-  public Set<Position> findTerritories(int i, int j) {
-    Set<Position> territory = new HashSet<Position>();
-    Deque<Position> visiting = new LinkedList<Position>();
-    visiting.add(new Position(i, j));
+  public Set<Cell> findTerritories(Cell cell) {
+    Set<Cell> territory = new HashSet<Cell>();
+    Deque<Cell> visiting = new LinkedList<Cell>();
+    visiting.add(cell);
     while (!visiting.isEmpty()) {
-      Position pos = visiting.pop();
-      Set<Position> neighbors = neighbors(pos);
-      if (neighbors.stream().map(board::getPoint).filter(a -> a != BoardPoint.EMPTY).count() >= 2) {
-        territory.add(pos);
-
-      } else {
+      Cell tile = visiting.pop();
+      Set<Cell> neighbors = neighbors(tile);
+      if (neighbors.stream()
+                   .map(board::getPoint)
+                   .filter(a -> a != BoardPoint.EMPTY)
+                   .count() < 2) {
         return Collections.emptySet();
       }
-      visiting.addAll(
-          neighbors.stream()
-              .filter(a -> board.getPoint(a) == BoardPoint.EMPTY && !territory.contains(a))
-              .toList());
+      territory.add(tile);
+      visiting.addAll(neighbors.stream()
+                               .filter(a -> board.getPoint(a) == BoardPoint.EMPTY && !territory.contains(a))
+                               .toList());
     }
     return territory;
   }
 
-  public Set<Position> neighbors(Position pos) {
+  public Set<Cell> neighbors(Cell pos) {
     int row = pos.row();
     int col = pos.col();
-    Set<Position> neighbors = new HashSet<Position>();
-    if (row > 0) neighbors.add(new Position(row - 1, col));
-    if (col > 0) neighbors.add(new Position(row, col - 1));
-    if (row < board.SIZE - 1) neighbors.add(new Position(row + 1, col));
-    if (col < board.SIZE - 1) neighbors.add(new Position(row, col + 1));
+    Set<Cell> neighbors = new HashSet<Cell>();
+    if (row > 0) neighbors.add(new Cell(row - 1, col));
+    if (col > 0) neighbors.add(new Cell(row, col - 1));
+    if (row < board.size() - 1) neighbors.add(new Cell(row + 1, col));
+    if (col < board.size() - 1) neighbors.add(new Cell(row, col + 1));
     return neighbors;
   }
 
+  public boolean isValid(Cell cell) {
+    if (board.getPoint(cell) != BoardPoint.EMPTY) { return false; } // throw new
+                                                                    // CellAlreadyTakenException();
+    int row = cell.row();
+    int col = cell.col();
+    if (row > 0 && col > 0 && board.getPoint(new Cell(row - 1, col - 1)) == currentPlayer.color()) {
+      if (board.getPoint(new Cell(row, col - 1)) != currentPlayer.color()
+          || board.getPoint(new Cell(row - 1, col)) != currentPlayer.color()) {
+        return false;
+      }
+    }
+    if (row > 0 && col < board.size() - 1 && board.getPoint(new Cell(row - 1, col + 1)) == currentPlayer.color()) {
+      if (board.getPoint(new Cell(row, col + 1)) != currentPlayer.color()
+          || board.getPoint(new Cell(row - 1, col)) != currentPlayer.color()) {
+        return false;
+      }
+    }
+    if (row < board.size() - 1 && col > 0 && board.getPoint(new Cell(row + 1, col - 1)) == currentPlayer.color()) {
+      if (board.getPoint(new Cell(row, col - 1)) != currentPlayer.color()
+          || board.getPoint(new Cell(row + 1, col)) != currentPlayer.color()) {
+        return false;
+      }
+    }
+    if (row < board.size() - 1 && col < board.size() - 1
+        && board.getPoint(new Cell(row + 1, col + 1)) == currentPlayer.color()) {
+      if (board.getPoint(new Cell(row, col + 1)) != currentPlayer.color()
+          || board.getPoint(new Cell(row + 1, col)) != currentPlayer.color()) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   public boolean canPlay() {
-    for (int row = 0; row < board.SIZE; row++) {
-      for (int col = 0; col < board.SIZE; col++) {
-        if (board.isMoveValid(currentPlayer, row, col, true)) return true;
+    for (int row = 0; row < board.size(); row++) {
+      for (int col = 0; col < board.size(); col++) {
+        if (isValid(new Cell(row, col))) { return true; }
       }
     }
     return false;
   }
 
-  public void place(int row, int col) {
-    if (board.isMoveValid(currentPlayer, row, col, true))
-      board.placeStone(currentPlayer.color(), row, col);
-    else throw new IllegalArgumentException("Not a valid move");
+  public void place(Cell cell) {
+    if (!isValid(cell)) { throw new IllegalArgumentException("Not a valid move"); }
+    board.placeStone(currentPlayer.color(), cell.row(), cell.col());
   }
 
   public Player getCurrenPlayer() {
@@ -108,5 +144,9 @@ public class Game {
 
   public Board getBoard() {
     return board;
+  }
+  
+  public int boardSize() {
+    return board.size();
   }
 }
