@@ -19,8 +19,14 @@ public class Board {
   public Board(String[][] initialBoard) {
     if (initialBoard.length != SIZE || initialBoard[0].length != SIZE) {
       throw new IllegalArgumentException(
-          "Matrix size must be: " + SIZE + "x" + SIZE + ". Your matrix is "
-              + initialBoard.length + "x" + initialBoard[0].length);
+          "Matrix size must be: "
+              + SIZE
+              + "x"
+              + SIZE
+              + ". Your matrix is "
+              + initialBoard.length
+              + "x"
+              + initialBoard[0].length);
     }
 
     // this.board = new BoardPoint[SIZE][SIZE];
@@ -30,7 +36,12 @@ public class Board {
         String cell = initialBoard[i][j];
         if (!cell.equals(".") && !cell.equals("B") && !cell.equals("W")) {
           throw new IllegalArgumentException(
-              "Not valid value in matrix: (" + cell + " in " + j + "," + i
+              "Not valid value in matrix: ("
+                  + cell
+                  + " in "
+                  + j
+                  + ","
+                  + i
                   + " position). The only allowed values are '.', 'B' and 'W'");
         }
         this.board[i][j] = BoardPoint.fromString(cell);
@@ -49,19 +60,16 @@ public class Board {
   public int size() {
     return SIZE;
   }
-  
+
   public BoardPoint getValues(int i, int j) {
     if (i < SIZE && j < SIZE) return board[i][j];
     else throw new RuntimeException("Coordinates not valid");
   }
 
-  public boolean isMoveValid(Player player, int row, int col,
-      boolean isFirstMove) {
+  public boolean isMoveValid(Player player, int row, int col, boolean isFirstMove) {
     // check if the cell is valid: inside the board
     if (row >= 0 && row < SIZE && col >= 0 && col < SIZE) {
-      if (board[row][col] == BoardPoint.WHITE
-          || board[row][col] == BoardPoint.BLACK)
-        return false;
+      if (board[row][col] == BoardPoint.WHITE || board[row][col] == BoardPoint.BLACK) return false;
 
       if (!isFirstMove) {
         // check if the stone is orthogonally close another stone with
@@ -105,28 +113,36 @@ public class Board {
       Arrays.fill(row, false);
     }
     if (color == BoardPoint.WHITE) {
-      for (int i = 0; i < SIZE; i++)
-        if (findWinnerPath(BoardPoint.WHITE, i, 0)) return true;
+      for (int i = 0; i < SIZE; i++) if (findWinnerPath(BoardPoint.WHITE, i, 0)) return true;
     } else if (color == BoardPoint.BLACK) {
-      for (int j = 0; j < SIZE; j++)
-        if (findWinnerPath(BoardPoint.BLACK, 0, j)) return true;
+      for (int j = 0; j < SIZE; j++) if (findWinnerPath(BoardPoint.BLACK, 0, j)) return true;
     } else throw new RuntimeException("Not valid color");
     return false;
   }
 
   public boolean findWinnerPath(BoardPoint color, int i, int j) {
-    if (visited[i][j] || board[i][j] != color) { return false; }
+    if (visited[i][j] || board[i][j] != color) {
+      return false;
+    }
     visited[i][j] = true;
 
     // orthogonal direction
     // right
-    if (j + 1 < SIZE && findWinnerPath(color, i, j + 1)) { return true; }
+    if (j + 1 < SIZE && findWinnerPath(color, i, j + 1)) {
+      return true;
+    }
     // left
-    if (j - 1 >= 0 && findWinnerPath(color, i, j - 1)) { return true; }
+    if (j - 1 >= 0 && findWinnerPath(color, i, j - 1)) {
+      return true;
+    }
     // up
-    if (i - 1 >= 0 && findWinnerPath(color, i - 1, j)) { return true; }
+    if (i - 1 >= 0 && findWinnerPath(color, i - 1, j)) {
+      return true;
+    }
     // down
-    if (i + 1 < SIZE && findWinnerPath(color, i + 1, j)) { return true; }
+    if (i + 1 < SIZE && findWinnerPath(color, i + 1, j)) {
+      return true;
+    }
 
     return color == BoardPoint.WHITE ? j == SIZE - 1 : i == SIZE - 1;
   }
@@ -134,26 +150,20 @@ public class Board {
   @Override
   public String toString() {
     StringBuilder toReturn = new StringBuilder();
-    toReturn.append(
-        "          0     1    2    3   4     5    6    7    8    9    10  11  12\n");
-    toReturn.append(
-        "             B     B    B    B   B     B    B    B    B    B    B   B\n");
+    toReturn.append("          0     1    2    3   4     5    6    7    8    9    10  11  12\n");
+    toReturn.append("             B     B    B    B   B     B    B    B    B    B    B   B\n");
     toReturn.append(
         "     W  ┌────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┐ W\n");
 
     for (int i = 0; i < SIZE; i++) {
       for (int j = 0; j < SIZE; j++) {
         if (j == 0) {
-          if (i > 9) toReturn.append(i)
-                             .append("      ");
-          else toReturn.append(i)
-                       .append("       ");
+          if (i > 9) toReturn.append(i).append("      ");
+          else toReturn.append(i).append("       ");
         }
         toReturn.append("│");
         if (board[i][j].equals(BoardPoint.EMPTY)) toReturn.append("    ");
-        else toReturn.append(" ")
-                     .append(board[i][j])
-                     .append("  ");
+        else toReturn.append(" ").append(board[i][j]).append("  ");
 
         if (j == SIZE - 1) toReturn.append("│");
       }
@@ -166,8 +176,7 @@ public class Board {
             "     W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W\n");
       }
     }
-    toReturn.append(
-        "          B     B    B    B   B     B    B    B    B    B    B   B     B\n");
+    toReturn.append("          B     B    B    B   B     B    B    B    B    B    B   B     B\n");
 
     return toReturn.toString();
   }
