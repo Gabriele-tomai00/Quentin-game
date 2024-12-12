@@ -42,7 +42,8 @@ public class GameTest {
     Board board = new Board();
     board.placeStone(BoardPoint.BLACK, 0, 0);
     game.place(new Cell(0, 0));
-    assertEquals(board.getBoard()[0][0], game.getBoard().getBoard()[0][0]);
+    assertEquals(board, game.getBoard());
+    assertThrows(IllegalArgumentException.class, () -> game.place(new Cell(0, 0)));
   }
 
   @Test
