@@ -21,12 +21,12 @@ public class Game {
   }
 
   public void coverTerritories(Cell cell) {
-    Set<Cell> neighbors = neighbors(cell);
+    Set<Cell> neighbors = getNeighbors(cell);
     for (Cell neigh : neighbors) {
       Set<Cell> territory = findTerritories(neigh);
       Set<Cell> frontier = new HashSet<Cell>();
       for (Cell tile : territory) {
-        frontier.addAll(neighbors(tile));
+        frontier.addAll(getNeighbors(tile));
       }
       int whites =
           (int) frontier.stream().map(board::getPoint).filter(a -> a == BoardPoint.WHITE).count();
@@ -56,7 +56,7 @@ public class Game {
     visiting.add(cell);
     while (!visiting.isEmpty()) {
       Cell tile = visiting.pop();
-      Set<Cell> neighbors = neighbors(tile);
+      Set<Cell> neighbors = getNeighbors(tile);
       if (neighbors.stream().map(board::getPoint).filter(a -> a != BoardPoint.EMPTY).count() < 2) {
         return Collections.emptySet();
       }
@@ -69,7 +69,7 @@ public class Game {
     return territory;
   }
 
-  public Set<Cell> neighbors(Cell pos) {
+  public Set<Cell> getNeighbors(Cell pos) {
     int row = pos.row();
     int col = pos.col();
     Set<Cell> neighbors = new HashSet<Cell>();
@@ -120,7 +120,7 @@ public class Game {
     return true;
   }
 
-  public boolean canPlay() {
+  public boolean canPlayerPlay() {
     for (int row = 0; row < board.size(); row++) {
       for (int col = 0; col < board.size(); col++) {
         if (isValid(new Cell(row, col))) {

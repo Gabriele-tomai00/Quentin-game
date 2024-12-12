@@ -27,7 +27,7 @@ public class GameTest {
 
   @Test
   public void canPlayerPlay() {
-    assertEquals(true, game.canPlay());
+    assertEquals(true, game.canPlayerPlay());
   }
 
   @Test
@@ -51,7 +51,7 @@ public class GameTest {
     neigbors.add(new Cell(0, 0));
     neigbors.add(new Cell(1, 1));
     neigbors.add(new Cell(2, 0));
-    assertEquals(neigbors, game.neighbors(new Cell(1, 0)));
+    assertEquals(neigbors, game.getNeighbors(new Cell(1, 0)));
   }
 
   @Test
@@ -89,10 +89,10 @@ public class GameTest {
     for (int i = 0; i < game.boardSize(); i++) {
       testSet.add(new Cell(i, 9));
     }
-    assertEquals(BoardPoint.BLACK, game.getBoard().getValues(0, 10));
-    assertEquals(BoardPoint.WHITE, game.getBoard().getValues(0, 8));
-    assertEquals(BoardPoint.EMPTY, game.getBoard().getValues(0, 9));
-    assertEquals(BoardPoint.BLACK, game.getBoard().getValues(10, 10));
+    assertEquals(BoardPoint.BLACK, game.getBoard().getPoint(new Cell(0, 10)));
+    assertEquals(BoardPoint.WHITE, game.getBoard().getPoint(new Cell(0, 8)));
+    assertEquals(BoardPoint.EMPTY, game.getBoard().getPoint(new Cell(0, 9)));
+    assertEquals(BoardPoint.BLACK, game.getBoard().getPoint(new Cell(10, 10)));
     assertEquals(testSet, game.findTerritories(new Cell(9, 9)));
   }
 
@@ -125,10 +125,10 @@ public class GameTest {
     game.coverTerritories(new Cell(12, 10));
     assertAll(
         "Territories are being covered",
-        () -> assertEquals(BoardPoint.BLACK, game.getBoard().getValues(1, 0)),
-        () -> assertEquals(BoardPoint.BLACK, game.getBoard().getValues(2, 0)),
-        () -> assertEquals(BoardPoint.EMPTY, game.getBoard().getValues(0, 3)),
-        () -> assertEquals(BoardPoint.BLACK, game.getBoard().getValues(2, 3)),
-        () -> assertEquals(BoardPoint.BLACK, game.getBoard().getValues(0, 9)));
+        () -> assertEquals(BoardPoint.BLACK, game.getBoard().getPoint(new Cell(1, 0))),
+        () -> assertEquals(BoardPoint.BLACK, game.getBoard().getPoint(new Cell(2, 0))),
+        () -> assertEquals(BoardPoint.EMPTY, game.getBoard().getPoint(new Cell(0, 3))),
+        () -> assertEquals(BoardPoint.BLACK, game.getBoard().getPoint(new Cell(2, 3))),
+        () -> assertEquals(BoardPoint.BLACK, game.getBoard().getPoint(new Cell(0, 9))));
   }
 }
