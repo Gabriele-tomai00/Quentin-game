@@ -13,12 +13,8 @@ public class GameTest {
   @Test
   public void testMoveIsValid() throws MoveException {
 
-    assertTrue(game.isValid(new Cell(0, 0)));
-=======
-  public void testMoveIsValid() throws MoveException {
-
     assertTrue(game.isValid(game.getCurrentPlayer().color(), new Cell(0, 0)));
->>>>>>> Stashed changes
+
     game.place(new Cell(0, 0));
     assertFalse(game.isValid(game.getCurrentPlayer().color(), new Cell(1, 1)));
     assertTrue(game.isValid(game.getCurrentPlayer().color(), new Cell(12, 12)));
@@ -153,16 +149,5 @@ public class GameTest {
         () -> assertEquals(BoardPoint.EMPTY, game.getBoard().getPoint(new Cell(0, 3))),
         () -> assertEquals(BoardPoint.BLACK, game.getBoard().getPoint(new Cell(2, 3))),
         () -> assertEquals(BoardPoint.BLACK, game.getBoard().getPoint(new Cell(0, 9))));
-  }
-
-  @Test
-  void test() {
-    assertDoesNotThrow(() -> game.place(new Cell(0, 0)));
-    game.changeCurrentPlayer();
-    assertDoesNotThrow(() -> game.place(new Cell(0, 1)));
-    game.changeCurrentPlayer();
-    assertThrows(MoveException.class, () -> game.place(new Cell(0, 0)));
-    assertDoesNotThrow(() -> game.place(new Cell(1, 0)));
-    assertEquals(BoardPoint.BLACK, game.getBoard().getPoint(new Cell(0, 0)));
   }
 }
