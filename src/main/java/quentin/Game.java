@@ -23,6 +23,9 @@ public class Game {
   public void coverTerritories(Cell cell) {
     Set<Cell> neighbors = getNeighbors(cell);
     for (Cell neigh : neighbors) {
+      if (board.getPoint(neigh) != BoardPoint.EMPTY) {
+        continue;
+      }
       Set<Cell> territory = findTerritories(neigh);
       Set<Cell> frontier = new HashSet<Cell>();
       for (Cell tile : territory) {
@@ -80,40 +83,35 @@ public class Game {
     return neighbors;
   }
 
-  public boolean isValid(Cell cell) {
+  public boolean isValid(BoardPoint color, Cell cell) throws CellAlreadyTakenException {
     if (board.getPoint(cell) != BoardPoint.EMPTY) {
-      return false;
-    } // throw new
-    // CellAlreadyTakenException();
+      throw new CellAlreadyTakenException(cell);
+    }
     int row = cell.row();
     int col = cell.col();
-    if (row > 0 && col > 0 && board.getPoint(new Cell(row - 1, col - 1)) == currentPlayer.color()) {
-      if (board.getPoint(new Cell(row, col - 1)) != currentPlayer.color()
-          && board.getPoint(new Cell(row - 1, col)) != currentPlayer.color()) {
+    if (row > 0 && col > 0 && board.getPoint(new Cell(row - 1, col - 1)) == color) {
+      if (board.getPoint(new Cell(row, col - 1)) != color
+          && board.getPoint(new Cell(row - 1, col)) != color) {
         return false;
       }
     }
-    if (row > 0
-        && col < board.size() - 1
-        && board.getPoint(new Cell(row - 1, col + 1)) == currentPlayer.color()) {
-      if (board.getPoint(new Cell(row, col + 1)) != currentPlayer.color()
-          && board.getPoint(new Cell(row - 1, col)) != currentPlayer.color()) {
+    if (row > 0 && col < board.size() - 1 && board.getPoint(new Cell(row - 1, col + 1)) == color) {
+      if (board.getPoint(new Cell(row, col + 1)) != color
+          && board.getPoint(new Cell(row - 1, col)) != color) {
         return false;
       }
     }
-    if (row < board.size() - 1
-        && col > 0
-        && board.getPoint(new Cell(row + 1, col - 1)) == currentPlayer.color()) {
-      if (board.getPoint(new Cell(row, col - 1)) != currentPlayer.color()
-          && board.getPoint(new Cell(row + 1, col)) != currentPlayer.color()) {
+    if (row < board.size() - 1 && col > 0 && board.getPoint(new Cell(row + 1, col - 1)) == color) {
+      if (board.getPoint(new Cell(row, col - 1)) != color
+          && board.getPoint(new Cell(row + 1, col)) != color) {
         return false;
       }
     }
     if (row < board.size() - 1
         && col < board.size() - 1
-        && board.getPoint(new Cell(row + 1, col + 1)) == currentPlayer.color()) {
-      if (board.getPoint(new Cell(row, col + 1)) != currentPlayer.color()
-          && board.getPoint(new Cell(row + 1, col)) != currentPlayer.color()) {
+        && board.getPoint(new Cell(row + 1, col + 1)) == color) {
+      if (board.getPoint(new Cell(row, col + 1)) != color
+          && board.getPoint(new Cell(row + 1, col)) != color) {
         return false;
       }
     }
@@ -123,22 +121,29 @@ public class Game {
   public boolean canPlayerPlay() {
     for (int row = 0; row < board.size(); row++) {
       for (int col = 0; col < board.size(); col++) {
-        if (isValid(new Cell(row, col))) {
-          return true;
+        try {
+          if (isValid(null, new Cell(row, col))) {
+            return true;
+          }
+        } catch (CellAlreadyTakenException e) {
+          // do nothing
         }
       }
     }
     return false;
   }
 
-  public void place(Cell cell) {
-    if (!isValid(cell)) {
-      throw new IllegalArgumentException("Not a valid move");
+  public void place(Cell cell) throws MoveException {
+    if (!isValid(null, cell)) {
+      throw new IllegalMoveException(
+          String.format(
+              "Cell %s is not connected orthogonally one or more diagonally connected cells of the same color",
+              cell));
     }
     board.placeStone(currentPlayer.color(), cell.row(), cell.col());
   }
 
-  public Player getCurrenPlayer() {
+  public Player getCurrentPlayer() {
     return currentPlayer;
   }
 
