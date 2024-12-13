@@ -83,7 +83,7 @@ public class Game {
     return neighbors;
   }
 
-  public boolean isValid(BoardPoint color, Cell cell) throws CellAlreadyTakenException {
+  public boolean isValid(Cell cell) throws CellAlreadyTakenException {
     if (board.getPoint(cell) != BoardPoint.EMPTY) {
       throw new CellAlreadyTakenException(cell);
     }
@@ -122,7 +122,7 @@ public class Game {
     for (int row = 0; row < board.size(); row++) {
       for (int col = 0; col < board.size(); col++) {
         try {
-          if (isValid(null, new Cell(row, col))) {
+          if (isValid(new Cell(row, col))) {
             return true;
           }
         } catch (CellAlreadyTakenException e) {
@@ -134,7 +134,7 @@ public class Game {
   }
 
   public void place(Cell cell) throws MoveException {
-    if (!isValid(null, cell)) {
+    if (!isValid(cell)) {
       throw new IllegalMoveException(
           String.format(
               "Cell %s is not connected orthogonally one or more diagonally connected cells of the same color",

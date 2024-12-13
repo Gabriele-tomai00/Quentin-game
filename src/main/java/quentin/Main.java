@@ -24,7 +24,7 @@ public class Main {
     try (Scanner scanner = new Scanner(System.in)) {
       while (true) {
         if (game.canPlayerPlay()) {
-          System.out.printf("%s turn:", game.getCurrentPlayer());
+          System.out.printf("%s turn:", game.getCurrenPlayer());
           while (true) {
             try {
               Cell cell = new Parser(scanner.next()).parse();
@@ -40,15 +40,15 @@ public class Main {
           System.out.print(CLEAR);
           System.out.println(game.getBoard());
         }
-        if (game.getBoard().hasWon(game.getCurrentPlayer().color())) {
+        if (game.getBoard().hasWon(game.getCurrenPlayer().color())) {
           System.out.print(CLEAR);
-          System.out.printf("%s has won", game.getCurrentPlayer());
+          System.out.printf("%s has won", game.getCurrenPlayer());
           break;
         }
         game.changeCurrentPlayer();
-        if (game.getBoard().hasWon(game.getCurrentPlayer().color())) {
+        if (game.getBoard().hasWon(game.getCurrenPlayer().color())) {
           System.out.print(CLEAR);
-          System.out.printf("%s has won", game.getCurrentPlayer());
+          System.out.printf("%s has won", game.getCurrenPlayer());
           break;
         }
       }
