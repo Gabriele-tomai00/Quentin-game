@@ -58,51 +58,13 @@ public class Board {
     return board;
   }
 
-  public BoardPoint getPoint(Position pos) {
-    return board[pos.row()][pos.col()];
+  public BoardPoint getPoint(Cell cell) {
+    return board[cell.row()][cell.col()];
   }
 
   public BoardPoint getValues(int i, int j) {
     if (i < SIZE && j < SIZE) return board[i][j];
     else throw new RuntimeException("Coordinates not valid");
-  }
-
-  public boolean isMoveValid(Player player, int row, int col, boolean isFirstMove) {
-    // check if the cell is valid: inside the board
-    if (row >= 0 && row < SIZE && col >= 0 && col < SIZE) {
-      if (board[row][col] == BoardPoint.WHITE || board[row][col] == BoardPoint.BLACK) return false;
-
-      if (!isFirstMove) {
-        // check if the stone is orthogonally close another stone with
-        // the same color
-        try {
-          if (board[row - 1][col] == player.color()) return true;
-        } catch (ArrayIndexOutOfBoundsException e) { // Ignore exception
-          // and continue
-          // execution
-        }
-        try {
-          if (board[row][col - 1] == player.color()) return true;
-        } catch (ArrayIndexOutOfBoundsException e) { // Ignore exception
-          // and continue
-          // execution
-        }
-        try {
-          if (board[row + 1][col] == player.color()) return true;
-        } catch (ArrayIndexOutOfBoundsException e) { // Ignore exception
-          // and continue
-          // execution
-        }
-        try {
-          if (board[row][col + 1] == player.color()) return true;
-        } catch (ArrayIndexOutOfBoundsException e) { // Ignore exception
-          // and continue
-          // execution
-        }
-      } else return true;
-    }
-
-    return false;
   }
 
   public void placeStone(BoardPoint stone, int row, int col) {
@@ -201,5 +163,21 @@ public class Board {
         index++;
       }
     }
+  }
+
+  public int size() {
+    return SIZE;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj instanceof Board) {
+      Board board = (Board) obj;
+      return Arrays.deepEquals(this.board, board.board);
+    }
+    return false;
   }
 }
