@@ -2,10 +2,17 @@ plugins {
     id("java")
     id("application")
     id("com.diffplug.spotless") version "6.17.0"
+    id("org.beryx.jlink") version "2.25.0"
 }
 
 application {
     mainClass.set("quentin.Main")
+}
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = application.mainClass
+    }
 }
 
 repositories {
@@ -23,10 +30,9 @@ tasks.test {
     useJUnitPlatform()
 }
 
-// Configurazione di Spotless
 spotless {
     java {
-        target("src/**/*.java")  // Seleziona i file Java da formattare
-        googleJavaFormat()  // Usa il formato di Google Java Style (tabulazione, spazi, ecc.)
+        target("src/**/*.java")
+        googleJavaFormat()
     }
 }
