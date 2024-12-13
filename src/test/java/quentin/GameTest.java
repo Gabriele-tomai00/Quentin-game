@@ -99,6 +99,11 @@ public class GameTest {
 
   @Test
   public void territoriesAreCovered() {
+    game.place(new Cell(0, 11));
+    game.place(new Cell(1, 11));
+    game.place(new Cell(1, 12));
+    game.coverTerritories(new Cell(1, 12));
+
     // small 2 cells black territory near top left corner
     game.place(new Cell(0, 0));
     for (int i = 0; i < 4; i++) {
@@ -126,6 +131,7 @@ public class GameTest {
     game.coverTerritories(new Cell(12, 10));
     assertAll(
         "Territories are being covered",
+        () -> assertEquals(BoardPoint.BLACK, game.getBoard().getPoint(new Cell(0, 12))),
         () -> assertEquals(BoardPoint.BLACK, game.getBoard().getPoint(new Cell(1, 0))),
         () -> assertEquals(BoardPoint.BLACK, game.getBoard().getPoint(new Cell(2, 0))),
         () -> assertEquals(BoardPoint.EMPTY, game.getBoard().getPoint(new Cell(0, 3))),
