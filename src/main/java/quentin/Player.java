@@ -8,4 +8,12 @@ public record Player(BoardPoint color) {
           "Error during player initialization, empty color not allowed");
     else this.color = color;
   }
+
+  @Override
+  public final String toString() {
+    return switch (color) {
+      case BLACK -> "Black player";
+      default -> "White player";
+    };
+  }
 }

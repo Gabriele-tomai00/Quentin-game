@@ -13,4 +13,10 @@ public record Cell(int row, int col) {
     }
     return false;
   }
+
+  @Override
+  public final String toString() {
+    // TODO Auto-generated method stub
+    return String.format("(%c, %d)", row + 'a', col + 1);
+  }
 }

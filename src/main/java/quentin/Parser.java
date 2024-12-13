@@ -27,19 +27,21 @@ public class Parser {
    *
    * }
    */
-  public Cell parse() {
+  public Cell parse() throws InvalidCellValuesException {
 
     int row;
     if (string.substring(0, 1).matches("[a-m]")) {
       row = string.charAt(0) - 'a';
     } else {
-      throw new IllegalArgumentException();
+      throw new InvalidCellValuesException(
+          String.format("Row values span from 'a' to 'm', received %c", string.charAt(0)));
     }
     int col;
     if (string.substring(1).matches("\\b(1[0-3]|[1-9])\\b")) {
       col = Integer.parseInt(string.substring(1)) - 1;
     } else {
-      throw new IllegalArgumentException();
+      throw new InvalidCellValuesException(
+          String.format("Column values span from '1' to '13', received: %s", string.substring(1)));
     }
     return new Cell(row, col);
   }
