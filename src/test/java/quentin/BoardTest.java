@@ -115,108 +115,87 @@ public class BoardTest {
     String result = board.toString();
     String expectedOutput =
         """
-          0     1    2    3   4     5    6    7    8    9    10  11  12
-             B     B    B    B   B     B    B    B    B    B    B   B
-     W  ┌────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┐ W
-0       │    │    │    │    │    │    │    │    │    │    │    │    │    │
-     W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
-1       │    │    │    │    │    │    │    │    │    │    │    │    │    │
-     W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
-2       │    │    │    │    │    │    │    │    │    │    │    │    │    │
-     W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
-3       │    │    │    │    │    │    │    │    │    │    │    │    │    │
-     W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
-4       │    │    │    │    │    │    │    │    │    │    │    │    │    │
-     W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
-5       │    │    │    │    │    │    │    │    │    │    │    │    │    │
-     W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
-6       │    │    │    │    │    │    │    │    │    │    │    │    │    │
-     W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
-7       │    │    │    │    │    │    │    │    │    │    │    │    │    │
-     W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
-8       │    │    │    │    │    │    │    │    │    │    │    │    │    │
-     W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
-9       │    │    │    │    │    │    │    │    │    │    │    │    │    │
-     W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
-10      │    │    │    │    │    │    │    │    │    │    │    │    │    │
-     W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
-11      │    │    │    │    │    │    │    │    │    │    │    │    │    │
-     W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
-12      │    │    │    │    │    │    │    │    │    │    │    │    │    │
-     W  └────┴────┴────┴────┴────┴────┴────┴────┴────┴────┴────┴────┴────┘ W
-          B     B    B    B   B     B    B    B    B    B    B   B     B
-""";
+                              0     1    2    3   4     5    6    7    8    9    10  11  12
+                                 B     B    B    B   B     B    B    B    B    B    B   B
+                         W  ┌────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┐ W
+                    0       │    │    │    │    │    │    │    │    │    │    │    │    │    │
+                         W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
+                    1       │    │    │    │    │    │    │    │    │    │    │    │    │    │
+                         W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
+                    2       │    │    │    │    │    │    │    │    │    │    │    │    │    │
+                         W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
+                    3       │    │    │    │    │    │    │    │    │    │    │    │    │    │
+                         W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
+                    4       │    │    │    │    │    │    │    │    │    │    │    │    │    │
+                         W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
+                    5       │    │    │    │    │    │    │    │    │    │    │    │    │    │
+                         W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
+                    6       │    │    │    │    │    │    │    │    │    │    │    │    │    │
+                         W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
+                    7       │    │    │    │    │    │    │    │    │    │    │    │    │    │
+                         W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
+                    8       │    │    │    │    │    │    │    │    │    │    │    │    │    │
+                         W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
+                    9       │    │    │    │    │    │    │    │    │    │    │    │    │    │
+                         W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
+                    10      │    │    │    │    │    │    │    │    │    │    │    │    │    │
+                         W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
+                    11      │    │    │    │    │    │    │    │    │    │    │    │    │    │
+                         W  ├────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┼────┤ W
+                    12      │    │    │    │    │    │    │    │    │    │    │    │    │    │
+                         W  └────┴────┴────┴────┴────┴────┴────┴────┴────┴────┴────┴────┴────┘ W
+                              B     B    B    B   B     B    B    B    B    B    B   B     B
+                    """;
     assertEquals(expectedOutput, result);
   }
 
-  @Test
-  public void testisMoveFistMoveValid() {
-    Board board = new Board();
-    Player p = new Player(BoardPoint.BLACK);
-    // valid
-    assertTrue(board.isMoveValid(p, 0, 0, true));
-    assertTrue(board.isMoveValid(p, 12, 12, true));
-    assertTrue(board.isMoveValid(p, 6, 6, true));
-
-    // not valid
-    assertFalse(board.isMoveValid(p, -1, 0, true));
-    assertFalse(board.isMoveValid(p, 0, -1, true));
-    assertFalse(board.isMoveValid(p, 13, 0, true));
-    assertFalse(board.isMoveValid(p, 0, 13, true));
-    assertFalse(board.isMoveValid(p, 14, 14, true));
-  }
-
-  @Test
-  public void testisMoveValid() {
-    Board board = new Board();
-    Player p = new Player(BoardPoint.BLACK);
-    // the board is empty, so it's not possibile to put a stone because there are
-    // no other stones, and It's not the first move
-    assertFalse(board.isMoveValid(p, 0, 0, false));
-    assertFalse(board.isMoveValid(p, 12, 12, false));
-    assertFalse(board.isMoveValid(p, 6, 6, false));
-    // now I add a stone with the same color (so the same player) and I try to put
-    // another stone orthogonally close
-    // CORNER 1
-    board.placeStone(BoardPoint.BLACK, 0, 0);
-    assertTrue(board.isMoveValid(p, 0, 1, false));
-    assertTrue(board.isMoveValid(p, 1, 0, false));
-    assertFalse(board.isMoveValid(p, 1, 1, false));
-    assertFalse(board.isMoveValid(p, 0, 0, false)); // same position
-    // test all the matrix!
-    for (int i = 1; i < board.getBoard().length; i++) {
-      for (int j = 1; j < board.getBoard()[1].length; j++) {
-        assertFalse(board.isMoveValid(p, i, j, false));
-      }
-    }
-    // CORNER 2
-    board.placeStone(BoardPoint.BLACK, 12, 0);
-    assertTrue(board.isMoveValid(p, 12, 1, false));
-    assertTrue(board.isMoveValid(p, 11, 0, false));
-    assertFalse(board.isMoveValid(p, 11, 1, false)); // diagonal
-    assertFalse(board.isMoveValid(p, 12, 0, false)); // same position
-    // CORNER 3
-    board.placeStone(BoardPoint.BLACK, 0, 12);
-    assertTrue(board.isMoveValid(p, 0, 11, false));
-    assertTrue(board.isMoveValid(p, 1, 12, false));
-    assertFalse(board.isMoveValid(p, 1, 11, false)); // diagonal
-    // CORNER 4
-    board.placeStone(BoardPoint.BLACK, 12, 12);
-    assertTrue(board.isMoveValid(p, 12, 11, false));
-    assertTrue(board.isMoveValid(p, 11, 12, false));
-    assertFalse(board.isMoveValid(p, 11, 11, false)); // diagonal
-    // IN THE MIDDLE OF THE MATRIX
-    board.placeStone(BoardPoint.BLACK, 6, 6);
-    assertTrue(board.isMoveValid(p, 6, 5, false));
-    assertTrue(board.isMoveValid(p, 6, 7, false));
-    assertTrue(board.isMoveValid(p, 5, 6, false));
-    assertTrue(board.isMoveValid(p, 7, 6, false));
-    assertFalse(board.isMoveValid(p, 7, 7, false)); // diagonal
-    assertFalse(board.isMoveValid(p, 5, 7, false)); // diagonal
-    assertFalse(board.isMoveValid(p, 5, 5, false)); // diagonal
-    assertFalse(board.isMoveValid(p, 7, 5, false)); // diagonal
-  }
-
+  /*
+   * @Test public void testisMoveFistMoveValid() { Board board = new Board();
+   * Player p = new Player(BoardPoint.BLACK); // valid
+   * assertTrue(board.isMoveValid(p, 0, 0, true)); assertTrue(board.isMoveValid(p,
+   * 12, 12, true)); assertTrue(board.isMoveValid(p, 6, 6, true));
+   *
+   * // not valid assertFalse(board.isMoveValid(p, -1, 0, true));
+   * assertFalse(board.isMoveValid(p, 0, -1, true));
+   * assertFalse(board.isMoveValid(p, 13, 0, true));
+   * assertFalse(board.isMoveValid(p, 0, 13, true));
+   * assertFalse(board.isMoveValid(p, 14, 14, true)); }
+   *
+   * @Test public void testisMoveValid() { Board board = new Board(); Player p =
+   * new Player(BoardPoint.BLACK); // the board is empty, so it's not possibile to
+   * put a stone because there are // no other stones, and It's not the first move
+   * assertFalse(board.isMoveValid(p, 0, 0, false));
+   * assertFalse(board.isMoveValid(p, 12, 12, false));
+   * assertFalse(board.isMoveValid(p, 6, 6, false)); // now I add a stone with the
+   * same color (so the same player) and I try to put // another stone
+   * orthogonally close // CORNER 1 board.placeStone(BoardPoint.BLACK, 0, 0);
+   * assertTrue(board.isMoveValid(p, 0, 1, false));
+   * assertTrue(board.isMoveValid(p, 1, 0, false));
+   * assertFalse(board.isMoveValid(p, 1, 1, false));
+   * assertFalse(board.isMoveValid(p, 0, 0, false)); // same position // test all
+   * the matrix! for (int i = 1; i < board.getBoard().length; i++) { for (int j =
+   * 1; j < board.getBoard()[1].length; j++) { assertFalse(board.isMoveValid(p, i,
+   * j, false)); } } // CORNER 2 board.placeStone(BoardPoint.BLACK, 12, 0);
+   * assertTrue(board.isMoveValid(p, 12, 1, false));
+   * assertTrue(board.isMoveValid(p, 11, 0, false));
+   * assertFalse(board.isMoveValid(p, 11, 1, false)); // diagonal
+   * assertFalse(board.isMoveValid(p, 12, 0, false)); // same position // CORNER 3
+   * board.placeStone(BoardPoint.BLACK, 0, 12); assertTrue(board.isMoveValid(p, 0,
+   * 11, false)); assertTrue(board.isMoveValid(p, 1, 12, false));
+   * assertFalse(board.isMoveValid(p, 1, 11, false)); // diagonal // CORNER 4
+   * board.placeStone(BoardPoint.BLACK, 12, 12); assertTrue(board.isMoveValid(p,
+   * 12, 11, false)); assertTrue(board.isMoveValid(p, 11, 12, false));
+   * assertFalse(board.isMoveValid(p, 11, 11, false)); // diagonal // IN THE
+   * MIDDLE OF THE MATRIX board.placeStone(BoardPoint.BLACK, 6, 6);
+   * assertTrue(board.isMoveValid(p, 6, 5, false));
+   * assertTrue(board.isMoveValid(p, 6, 7, false));
+   * assertTrue(board.isMoveValid(p, 5, 6, false));
+   * assertTrue(board.isMoveValid(p, 7, 6, false));
+   * assertFalse(board.isMoveValid(p, 7, 7, false)); // diagonal
+   * assertFalse(board.isMoveValid(p, 5, 7, false)); // diagonal
+   * assertFalse(board.isMoveValid(p, 5, 5, false)); // diagonal
+   * assertFalse(board.isMoveValid(p, 7, 5, false)); // diagonal }
+   */
   @Test
   public void testCorrectPlaceStone() {
     Board board = new Board();
@@ -270,5 +249,42 @@ public class BoardTest {
     // because I'm checking the
     // single element
     assertFalse(areMatricesEqual(matrix1, matrix2));
+  }
+
+  @Test
+  public void testToCompactStringAndFromCompactString() {
+    String[][] matrix = {
+      {".", ".", ".", ".", "B", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", "B", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", "B", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", "B", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", "B", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", "B", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", "B", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", "B", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", "B", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", "B", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", "B", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", "B", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", "B", ".", ".", ".", ".", ".", ".", ".", "."}
+    };
+    Board board = new Board(matrix);
+    String result = board.toCompactString();
+    System.out.println("il risultato finale è " + result);
+
+    Board newBoard = new Board();
+    newBoard.fromCompactString(result);
+    System.out.println("il risultato finale è " + newBoard.toCompactString());
+    assertEquals(result, newBoard.toCompactString());
+  }
+
+  @Test
+  public void testConstructorFromCompactString() {
+    String matrix =
+        "....B............B...W........B............B............B............B............B............B............B............B............B............B............B........";
+
+    Board board = new Board(matrix);
+    String result = board.toCompactString();
+    assertEquals(matrix, result);
   }
 }

@@ -1,12 +1,12 @@
 package quentin;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class Board {
 
-  private final int SIZE = 13; // Board size (specified in rules)
+  public final int SIZE = 13; // Board size (specified in rules)
   private final BoardPoint[][] board = new BoardPoint[SIZE][SIZE];
-
   private final boolean[][] visited = new boolean[SIZE][SIZE];
 
   public Board() {
@@ -49,59 +49,22 @@ public class Board {
     }
   }
 
+  public Board(String compactString) {
+    this();
+    this.fromCompactString(compactString);
+  }
+
   public BoardPoint[][] getBoard() {
-    return Arrays.copyOf(board, SIZE);
+    return board;
   }
 
-  public BoardPoint getPoint(Cell pos) {
-    return board[pos.row()][pos.col()];
-  }
-
-  public int size() {
-    return SIZE;
+  public BoardPoint getPoint(Cell cell) {
+    return board[cell.row()][cell.col()];
   }
 
   public BoardPoint getValues(int i, int j) {
     if (i < SIZE && j < SIZE) return board[i][j];
     else throw new RuntimeException("Coordinates not valid");
-  }
-
-  public boolean isMoveValid(Player player, int row, int col, boolean isFirstMove) {
-    // check if the cell is valid: inside the board
-    if (row >= 0 && row < SIZE && col >= 0 && col < SIZE) {
-      if (board[row][col] == BoardPoint.WHITE || board[row][col] == BoardPoint.BLACK) return false;
-
-      if (!isFirstMove) {
-        // check if the stone is orthogonally close another stone with
-        // the same color
-        try {
-          if (board[row - 1][col] == player.color()) return true;
-        } catch (ArrayIndexOutOfBoundsException e) { // Ignore exception
-          // and continue
-          // execution
-        }
-        try {
-          if (board[row][col - 1] == player.color()) return true;
-        } catch (ArrayIndexOutOfBoundsException e) { // Ignore exception
-          // and continue
-          // execution
-        }
-        try {
-          if (board[row + 1][col] == player.color()) return true;
-        } catch (ArrayIndexOutOfBoundsException e) { // Ignore exception
-          // and continue
-          // execution
-        }
-        try {
-          if (board[row][col + 1] == player.color()) return true;
-        } catch (ArrayIndexOutOfBoundsException e) { // Ignore exception
-          // and continue
-          // execution
-        }
-      } else return true;
-    }
-
-    return false;
   }
 
   public void placeStone(BoardPoint stone, int row, int col) {
@@ -179,5 +142,42 @@ public class Board {
     toReturn.append("          B     B    B    B   B     B    B    B    B    B    B   B     B\n");
 
     return toReturn.toString();
+  }
+
+  public String toCompactString() {
+    return Arrays.stream(board) // Creates a two-dimensional stream from the board array.
+        .flatMap(Arrays::stream) // two-dimensional stream into a one-dimensional stream
+        .map(BoardPoint::toString) // Converts each BoardPoint element to its string "W" "B" or "."
+        .collect(Collectors.joining()); // Joins all the elements of the stream into a single string
+  }
+
+  public void fromCompactString(String compactString) {
+    if (compactString.length() != SIZE * SIZE) {
+      throw new IllegalArgumentException("Invalid compact string length");
+    }
+    int index = 0;
+    for (int i = 0; i < SIZE; i++) {
+      for (int j = 0; j < SIZE; j++) {
+        String value = compactString.substring(index, index + 1);
+        this.board[i][j] = BoardPoint.fromString(value);
+        index++;
+      }
+    }
+  }
+
+  public int size() {
+    return SIZE;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj instanceof Board) {
+      Board board = (Board) obj;
+      return Arrays.deepEquals(this.board, board.board);
+    }
+    return false;
   }
 }
