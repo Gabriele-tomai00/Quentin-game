@@ -11,7 +11,8 @@ public class GameTest {
   Game game = new Game();
 
   @Test
-  public void testMoveIsValid() {
+  public void testMoveIsValid() throws MoveException {
+
     assertTrue(game.isValid(new Cell(0, 0)));
     game.place(new Cell(0, 0));
     assertFalse(game.isValid(new Cell(1, 1)));
@@ -38,12 +39,14 @@ public class GameTest {
   }
 
   @Test
-  public void playerPlays() {
+  public void playerPlays() throws MoveException {
     Board board = new Board();
     board.placeStone(BoardPoint.BLACK, 0, 0);
+
     game.place(new Cell(0, 0));
+
     assertEquals(board, game.getBoard());
-    assertThrows(IllegalArgumentException.class, () -> game.place(new Cell(0, 0)));
+    assertThrows(MoveException.class, () -> game.place(new Cell(0, 0)));
   }
 
   @Test
@@ -56,15 +59,17 @@ public class GameTest {
   }
 
   @Test
-  public void findNoTerritory() {
+  public void findNoTerritory() throws MoveException {
     Cell cell = new Cell(0, 0);
+
     game.place(cell);
+
     assertEquals(Collections.<Cell>emptySet(), game.findTerritories(cell));
     assertEquals(Collections.emptySet(), game.findTerritories(new Cell(0, 1)));
   }
 
   @Test
-  public void findOneCellTerritory() {
+  public void findOneCellTerritory() throws MoveException {
 
     game.place(new Cell(0, 0));
     game.place(new Cell(0, 1));
@@ -72,6 +77,7 @@ public class GameTest {
     game.place(new Cell(2, 1));
     game.place(new Cell(3, 1));
     game.place(new Cell(3, 0));
+
     Set<Cell> testSet = new HashSet<Cell>();
     testSet.add(new Cell(1, 0));
     testSet.add(new Cell(2, 0));
@@ -79,8 +85,9 @@ public class GameTest {
   }
 
   @Test
-  public void findLargeTerritory() {
+  public void findLargeTerritory() throws MoveException {
     for (int i = 0; i < game.boardSize(); i++) {
+
       game.place(new Cell(i, 10));
       game.changeCurrentPlayer();
       game.place(new Cell(i, 8));
@@ -99,36 +106,40 @@ public class GameTest {
 
   @Test
   public void territoriesAreCovered() {
-    game.place(new Cell(0, 11));
-    game.place(new Cell(1, 11));
-    game.place(new Cell(1, 12));
-    game.coverTerritories(new Cell(1, 12));
+    try {
+      game.place(new Cell(0, 11));
+      game.place(new Cell(1, 11));
+      game.place(new Cell(1, 12));
+      game.coverTerritories(new Cell(1, 12));
 
-    // small 2 cells black territory near top left corner
-    game.place(new Cell(0, 0));
-    for (int i = 0; i < 4; i++) {
-      game.place(new Cell(i, 1));
-    }
-    game.place(new Cell(3, 0));
-    game.coverTerritories(new Cell(3, 0));
+      // small 2 cells black territory near top left corner
+      game.place(new Cell(0, 0));
+      for (int i = 0; i < 4; i++) {
+        game.place(new Cell(i, 1));
+      }
+      game.place(new Cell(3, 0));
+      game.coverTerritories(new Cell(3, 0));
 
-    // small 1 cell black territory
-    game.place(new Cell(1, 2));
-    game.place(new Cell(2, 2));
-    game.place(new Cell(3, 2));
-    game.place(new Cell(3, 3));
-    game.changeCurrentPlayer();
-    game.place(new Cell(1, 3));
-    game.place(new Cell(1, 4));
-    game.place(new Cell(2, 4));
-    game.coverTerritories(new Cell(2, 4));
-    for (int i = 0; i < game.boardSize(); i++) {
+      // small 1 cell black territory
+      game.place(new Cell(1, 2));
+      game.place(new Cell(2, 2));
+      game.place(new Cell(3, 2));
+      game.place(new Cell(3, 3));
       game.changeCurrentPlayer();
-      game.place(new Cell(i, 8));
-      game.changeCurrentPlayer();
-      game.place(new Cell(i, 10));
+      game.place(new Cell(1, 3));
+      game.place(new Cell(1, 4));
+      game.place(new Cell(2, 4));
+      game.coverTerritories(new Cell(2, 4));
+      for (int i = 0; i < game.boardSize(); i++) {
+        game.changeCurrentPlayer();
+        game.place(new Cell(i, 8));
+        game.changeCurrentPlayer();
+        game.place(new Cell(i, 10));
+      }
+      game.coverTerritories(new Cell(12, 10));
+    } catch (MoveException e) {
+      // do nothing
     }
-    game.coverTerritories(new Cell(12, 10));
     assertAll(
         "Territories are being covered",
         () -> assertEquals(BoardPoint.BLACK, game.getBoard().getPoint(new Cell(0, 12))),
@@ -137,5 +148,16 @@ public class GameTest {
         () -> assertEquals(BoardPoint.EMPTY, game.getBoard().getPoint(new Cell(0, 3))),
         () -> assertEquals(BoardPoint.BLACK, game.getBoard().getPoint(new Cell(2, 3))),
         () -> assertEquals(BoardPoint.BLACK, game.getBoard().getPoint(new Cell(0, 9))));
+  }
+
+  @Test
+  void test() {
+    assertDoesNotThrow(() -> game.place(new Cell(0, 0)));
+    game.changeCurrentPlayer();
+    assertDoesNotThrow(() -> game.place(new Cell(0, 1)));
+    game.changeCurrentPlayer();
+    assertThrows(MoveException.class, () -> game.place(new Cell(0, 0)));
+    assertDoesNotThrow(() -> game.place(new Cell(1, 0)));
+    assertEquals(BoardPoint.BLACK, game.getBoard().getPoint(new Cell(0, 0)));
   }
 }

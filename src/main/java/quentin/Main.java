@@ -18,20 +18,23 @@ public class Main {
     System.out.println(
         "  \\___\\_\\\\____/ \\___|_| |_|\\__|_|_| |_|  \\_____|\\__,_|_| |_| |_|\\___|");
     System.out.println(
-        " by Luis Bolaños Mures                                                          ");
+        " by Luis Bolaños Mures                                                          \n\n\n");
 
+    System.out.println(game.getBoard());
     try (Scanner scanner = new Scanner(System.in)) {
       while (true) {
         if (game.canPlayerPlay()) {
-          System.out.printf("%s player turn:", game.getCurrenPlayer());
+          System.out.printf("%s turn:", game.getCurrenPlayer());
           while (true) {
             try {
               Cell cell = new Parser(scanner.next()).parse();
               game.place(cell);
               game.coverTerritories(cell);
               break;
-            } catch (Exception e) {
-              System.out.println("Invalid input!");
+            } catch (InvalidCellValuesException e) {
+              System.out.println(e);
+            } catch (MoveException e) {
+              System.out.println(e);
             }
           }
           System.out.print(CLEAR);

@@ -80,11 +80,10 @@ public class Game {
     return neighbors;
   }
 
-  public boolean isValid(Cell cell) {
+  public boolean isValid(Cell cell) throws CellAlreadyTakenException {
     if (board.getPoint(cell) != BoardPoint.EMPTY) {
-      return false;
-    } // throw new
-    // CellAlreadyTakenException();
+      throw new CellAlreadyTakenException(cell);
+    }
     int row = cell.row();
     int col = cell.col();
     if (row > 0 && col > 0 && board.getPoint(new Cell(row - 1, col - 1)) == currentPlayer.color()) {
@@ -123,17 +122,24 @@ public class Game {
   public boolean canPlayerPlay() {
     for (int row = 0; row < board.size(); row++) {
       for (int col = 0; col < board.size(); col++) {
-        if (isValid(new Cell(row, col))) {
-          return true;
+        try {
+          if (isValid(new Cell(row, col))) {
+            return true;
+          }
+        } catch (CellAlreadyTakenException e) {
+          // do nothing
         }
       }
     }
     return false;
   }
 
-  public void place(Cell cell) {
+  public void place(Cell cell) throws MoveException {
     if (!isValid(cell)) {
-      throw new IllegalArgumentException("Not a valid move");
+      throw new IllegalMoveException(
+          String.format(
+              "Cell %s is not connected orthogonally one or more diagonally connected cells of the same color",
+              cell));
     }
     board.placeStone(currentPlayer.color(), cell.row(), cell.col());
   }
