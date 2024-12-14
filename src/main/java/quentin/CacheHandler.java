@@ -10,8 +10,8 @@ public class CacheHandler {
   // the program uploads and downloads in List logCache during the game.
   public final List<BoardLog> logsInMemory;
   // If the program is closed, it uses the cache saved in disk
-  private static final String CACHE_DIR = System.getProperty("user.home") + "/.quentinCache";
-  private static final String CACHE_FILE = CACHE_DIR + "/quentin_cache.dat";
+  private static final String GAME_DIR = System.getProperty("user.home") + "/.quentinGame";
+  private static final String CACHE_FILE = GAME_DIR + "/last_match_cache.dat";
   private static final DateTimeFormatter TIMESTAMP_FORMATTER =
       DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
   private final BufferedWriter writer;
@@ -24,10 +24,10 @@ public class CacheHandler {
     this.logsInMemory = new ArrayList<>();
     this.moveIndex = -1;
 
-    // Crea la directory di cache, se non esiste
-    File cacheDirectory = new File(CACHE_DIR);
+    // Create directory, it doesn't exist
+    File cacheDirectory = new File(GAME_DIR);
     if (!cacheDirectory.exists() && !cacheDirectory.mkdirs()) {
-      throw new RuntimeException("Failed to create cache directory: " + CACHE_DIR);
+      throw new RuntimeException("Failed to create cache directory: " + GAME_DIR);
     }
 
     try {
