@@ -1,7 +1,8 @@
 package quentin;
 
-public abstract class GameStarter {
+public abstract class GameStarter<T> {
     private final Game game;
+    private T input;
 
     public GameStarter() {
         game = new Game();
@@ -16,7 +17,7 @@ public abstract class GameStarter {
                 displayMessage(String.format("%s turn:", game.getCurrentPlayer()));
                 while (true) {
                     try {
-                        Cell cell = getInput();
+                        Cell cell = getInput(input);
                         game.place(cell);
                         game.coverTerritories(cell);
                         break;
@@ -52,7 +53,7 @@ public abstract class GameStarter {
 
     protected abstract void displayWinner();
 
-    protected abstract Cell getInput() throws InvalidCellValuesException;
+    protected abstract Cell getInput(T input) throws InvalidCellValuesException;
 
     protected abstract void display();
 }

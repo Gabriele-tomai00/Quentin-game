@@ -2,15 +2,13 @@ package quentin;
 
 import java.util.Scanner;
 
-public class TerminalGame extends GameStarter {
+public class TerminalGame extends GameStarter<Scanner> {
 
     private final String CLEAR;
-    private final Scanner scanner;
 
     public TerminalGame() {
         super();
         CLEAR = "\033[H\033[2J";
-        this.scanner = new Scanner(System.in);
     }
 
     @Override
@@ -21,11 +19,6 @@ public class TerminalGame extends GameStarter {
     @Override
     protected void displayWinner() {
         System.out.print(CLEAR + String.format("%s has won", super.game().getCurrentPlayer()));
-    }
-
-    @Override
-    protected Cell getInput() throws InvalidCellValuesException {
-        return new Parser(scanner.next()).parse();
     }
 
     @Override
@@ -49,5 +42,10 @@ public class TerminalGame extends GameStarter {
                         + " \n\n\n");
 
         System.out.println(super.game().getBoard());
+    }
+
+    @Override
+    protected Cell getInput(Scanner scanner) throws InvalidCellValuesException {
+        return new Parser(scanner.next()).parse();
     }
 }

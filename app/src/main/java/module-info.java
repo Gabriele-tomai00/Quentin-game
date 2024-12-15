@@ -1,6 +1,7 @@
 module quentin.game {
     requires javafx.controls;
     requires javafx.fxml;
+    requires transitive javafx.graphics;
 
     exports quentin;
 
