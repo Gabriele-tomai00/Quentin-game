@@ -1,53 +1,58 @@
 package quentin;
 
-public class GameStarter {
-  private Game game;
-  private Displayer displayer;
-  private InputGetter inputter;
+public abstract class GameStarter {
+  private final Game game;
 
   public GameStarter() {
     game = new Game();
-
   }
 
   public void start() {
 
-    displayer.display();// System.out.println(game.getBoard());
+    startDisplay(); // System.out.println(game.getBoard());
 
     while (true) {
       if (game.canPlayerPlay()) {
-        displayer.displayMessage(String.format("%s turn:", game.getCurrentPlayer()));
+        displayMessage(String.format("%s turn:", game.getCurrentPlayer()));
         while (true) {
           try {
-            Cell cell = inputter.getInput();
+            Cell cell = getInput();
             game.place(cell);
             game.coverTerritories(cell);
             break;
           } catch (MoveException e) {
             System.out.println(e);
+          } catch (InvalidCellValuesException e) {
+            System.out.println(e);
           }
         }
-        displayer.display();// System.out.println(game.getBoard());
+        display(); // System.out.println(game.getBoard());
       }
-      if (game.getBoard()
-              .hasWon(game.getCurrentPlayer()
-                          .color())) {
-        displayer.displayWinner();
+      if (game.getBoard().hasWon(game.getCurrentPlayer().color())) {
+        displayWinner();
         // System.out.printf("%s has won", game.getCurrentPlayer());
         break;
       }
       game.changeCurrentPlayer();
-      if (game.getBoard()
-              .hasWon(game.getCurrentPlayer()
-                          .color())) {
-        displayer.displayWinner();
+      if (game.getBoard().hasWon(game.getCurrentPlayer().color())) {
+        displayWinner();
         // System.out.printf("%s has won", game.getCurrentPlayer());
         break;
       }
     }
   }
 
-  public void place() {
-
+  public Game game() {
+    return game;
   }
+
+  protected abstract void startDisplay();
+
+  protected abstract void displayMessage(String format);
+
+  protected abstract void displayWinner();
+
+  protected abstract Cell getInput() throws InvalidCellValuesException;
+
+  protected abstract void display();
 }
