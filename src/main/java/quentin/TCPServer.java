@@ -9,15 +9,20 @@ public class TCPServer {
   private PrintWriter out;
   private BufferedReader in;
   private static final String PASSWORD = "secretPassword"; // The correct password
+  public Boolean isClientAuth = false;
+  public int port;
+  public String recivedMessage;
 
   // Constructor: initializes the server socket on the given port
-  public TCPServer(int port) throws IOException {
-    serverSocket = new ServerSocket(port);
-    System.out.println("Server started, waiting for client...");
+  public TCPServer(int port1) throws IOException {
+    port = port1;
   }
 
   // Starts the server to accept client connections and handle communication
-  public void start() throws IOException {
+  public void startForAuth() throws IOException {
+    serverSocket = new ServerSocket(port);
+    System.out.println("Server started, waiting for client...");
+
     clientSocket = serverSocket.accept(); // Blocking call: waits for a client to connect
     out = new PrintWriter(clientSocket.getOutputStream(), true);
     in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -25,14 +30,14 @@ public class TCPServer {
     System.out.println("Client connected: " + clientSocket.getInetAddress());
 
     String message;
-    for (int attempt = 0; attempt < 3; attempt++) { // three attempts
+    for (int attempt = 0; attempt < 3; attempt++) {
       if ((message = in.readLine()) != null) {
         System.out.println("Received first message: " + message);
-        // Check if the first message contains the correct password
         if (!message.equals(PASSWORD)) {
           System.out.println("Invalid password, retry");
           out.println("Invalid password");
         } else {
+          isClientAuth = true;
           out.println("Password accepted");
           return;
         }
@@ -50,7 +55,10 @@ public class TCPServer {
               try {
                 String serverMessage;
                 while ((serverMessage = in.readLine()) != null) {
-                  System.out.println("Received from client: " + serverMessage);
+                  if (isClientAuth) {
+                    System.out.println("Received from client: " + serverMessage);
+                    recivedMessage = serverMessage;
+                  } else System.out.println("Can't receive from client because It's not auth");
                 }
               } catch (IOException e) {
                 e.printStackTrace();
@@ -61,7 +69,10 @@ public class TCPServer {
 
   // Sends a message to the client and waits for a response
   public void communicate(String message) throws IOException {
-    out.println(message);
+    // send only if client il authenticated
+    if (isClientAuth) {
+      out.println(message);
+    }
   }
 
   // Closes all resources used by the server
@@ -72,11 +83,17 @@ public class TCPServer {
     if (serverSocket != null) serverSocket.close();
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws InterruptedException {
     try {
       TCPServer server = new TCPServer(1234);
-      server.start(); // blocking
+      server.startForAuth(); // blocking
       server.listenForMessages();
+      Thread.sleep(1000);
+
+      for (int i = 1; i <= 100; i++) {
+        server.communicate(i + " Hello Client!"); // Send message
+        Thread.sleep(1000);
+      }
 
     } catch (IOException e) {
       e.printStackTrace();
