@@ -8,6 +8,7 @@ public class TCPServer {
   private Socket clientSocket;
   private PrintWriter out;
   private BufferedReader in;
+  private static final String PASSWORD = "secretPassword"; // The correct password
 
   // Constructor: initializes the server socket on the given port
   public TCPServer(int port) throws IOException {
@@ -24,10 +25,22 @@ public class TCPServer {
     System.out.println("Client connected: " + clientSocket.getInetAddress());
 
     String message;
-    if ((message = in.readLine()) != null) {
-      System.out.println("Received first message: " + message);
-      // out.println("Echo: " + message);  // Respond back with the received message
+    for (int attempt = 0; attempt < 3; attempt++) { // three attempts
+      if ((message = in.readLine()) != null) {
+        System.out.println("Received first message: " + message);
+        // Check if the first message contains the correct password
+        if (!message.equals(PASSWORD)) {
+          System.out.println("Invalid password, retry");
+          out.println("Invalid password");
+        } else {
+          out.println("Password accepted");
+          return;
+        }
+      }
     }
+    System.out.println("too many attempts, exiting");
+    out.println("too many attempts, exiting");
+    close(); // Close connection if password is incorrect
   }
 
   // Receives messages from the client (runs in a separate thread)
@@ -53,10 +66,10 @@ public class TCPServer {
 
   // Closes all resources used by the server
   public void close() throws IOException {
-    in.close();
-    out.close();
-    clientSocket.close();
-    serverSocket.close();
+    if (in != null) in.close();
+    if (out != null) out.close();
+    if (clientSocket != null) clientSocket.close();
+    if (serverSocket != null) serverSocket.close();
   }
 
   public static void main(String[] args) {
