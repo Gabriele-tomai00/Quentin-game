@@ -18,8 +18,22 @@ public class TCPClient {
   // Sends a message to the server and waits for a response
   public void communicate(String message) throws IOException {
     out.println(message);
-    String response = in.readLine(); // Blocking call: waits for the server's response
-    System.out.println("Server response: " + response);
+  }
+
+  // Receives messages from the server (runs in a separate thread)
+  public void listenForMessages() {
+    new Thread(
+            () -> {
+              try {
+                String serverMessage;
+                while ((serverMessage = in.readLine()) != null) {
+                  System.out.println("Received from server: " + serverMessage);
+                }
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
+            })
+        .start();
   }
 
   // Closes all resources used by the client
@@ -29,11 +43,17 @@ public class TCPClient {
     socket.close();
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws InterruptedException {
     try {
       TCPClient client = new TCPClient("127.0.0.1", 1234);
-      client.communicate("Hello Server!"); // Send message
+      client.listenForMessages();
+
+      for (int i = 1; i <= 100; i++) {
+        client.communicate(i + " Hello Server!"); // Send message
+        Thread.sleep(1000);
+      }
       client.close(); // Close connection
+
     } catch (IOException e) {
       e.printStackTrace();
     }

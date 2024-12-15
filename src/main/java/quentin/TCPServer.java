@@ -24,10 +24,31 @@ public class TCPServer {
     System.out.println("Client connected: " + clientSocket.getInetAddress());
 
     String message;
-    while ((message = in.readLine()) != null) {
-      System.out.println("Received: " + message);
-      out.println("Echo: " + message); // Respond back with the received message
+    if ((message = in.readLine()) != null) {
+      System.out.println("Received first message: " + message);
+      // out.println("Echo: " + message);  // Respond back with the received message
     }
+  }
+
+  // Receives messages from the client (runs in a separate thread)
+  public void listenForMessages() {
+    new Thread(
+            () -> {
+              try {
+                String serverMessage;
+                while ((serverMessage = in.readLine()) != null) {
+                  System.out.println("Received from client: " + serverMessage);
+                }
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
+            })
+        .start();
+  }
+
+  // Sends a message to the client and waits for a response
+  public void communicate(String message) throws IOException {
+    out.println(message);
   }
 
   // Closes all resources used by the server
@@ -41,7 +62,9 @@ public class TCPServer {
   public static void main(String[] args) {
     try {
       TCPServer server = new TCPServer(1234);
-      server.start(); // Start server
+      server.start(); // blocking
+      server.listenForMessages();
+
     } catch (IOException e) {
       e.printStackTrace();
     }
