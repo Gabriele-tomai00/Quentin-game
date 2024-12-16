@@ -36,7 +36,7 @@ java {
 }
 
 javafx {
-    version = "21"
+    version = "23.0.1"
     modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
@@ -83,8 +83,4 @@ spotless {
     // through git history (see "license" section below)
     // licenseHeader '/* (C)$YEAR */'
   }
-}
-
-run {
-	standardInput = System.in
 }

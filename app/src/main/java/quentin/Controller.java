@@ -7,55 +7,49 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-public class Controller extends GameStarter<MouseEvent> {
+public class Controller {
 
     private final Pane[][] panes;
-    private final Background white;
-    private final Background black;
+    private final Game game;
 
     public Controller() {
         super();
-        panes = new Pane[13][13];
-        white = Background.fill(Color.WHITE);
-        black = Background.fill(Color.BLACK);
+        this.panes = new Pane[13][13];
+        this.game = new Game();
     }
 
-    @FXML private GridPane gridPane;
+    @FXML public GridPane gridPane;
+    private Background black = Background.fill(Color.BLACK);
+    private Background white = Background.fill(Color.WHITE);
 
     @FXML
     public void initialize() {
         for (int i = 0; i < 13; i++) {
             for (int j = 0; j < 13; j++) {
-                panes[i][j].addEventHandler(MouseEvent.MOUSE_CLICKED, this::getInput);
-                // pane.setStyle("-fx-border-color: black; -fx-background-color: lightblue;");
+                panes[i][j] = new Pane();
+                panes[i][j].addEventHandler(MouseEvent.MOUSE_CLICKED, this::placeCell);
+                panes[i][j].setStyle("-fx-border-color: black; -fx-background-color: lightblue;");
                 // pane.setPrefSize(30, 30);
-                gridPane.add(panes[i][j], i, j);
+                gridPane.add(panes[i][j], j, i);
             }
         }
-        start();
     }
 
-    @Override
     protected void startDisplay() {
         // TODO Auto-generated method stub
 
     }
 
-    @Override
-    protected void displayMessage(String format) {
-        // TODO Auto-generated method stub
+    protected void displayMessage(String format) {}
 
-    }
-
-    @Override
     protected void displayWinner() {
         // TODO Auto-generated method stub
 
     }
 
-    @Override
     protected void display() {
-        BoardPoint[][] board = game().getBoard().getBoard();
+
+        BoardPoint[][] board = game.getBoard().getBoard();
         for (int i = 0; i < 13; i++) {
             for (int j = 0; j < 13; j++) {
                 if (board[i][j] == BoardPoint.BLACK) {
@@ -67,12 +61,28 @@ public class Controller extends GameStarter<MouseEvent> {
         }
     }
 
-    @Override
-    protected Cell getInput(MouseEvent e) {
+    protected void setColor(MouseEvent e) {
+        Pane source = (Pane) e.getSource();
+        Integer rowIndex = GridPane.getRowIndex(source);
+        Integer columnIndex = GridPane.getColumnIndex(source);
+        panes[rowIndex][columnIndex].setBackground(Background.fill(Color.BLACK));
+    }
+
+    protected void placeCell(MouseEvent e) {
         Pane source = (Pane) e.getSource();
         Integer columnIndex = GridPane.getColumnIndex(source);
         Integer rowIndex = GridPane.getRowIndex(source);
-        System.out.print(e);
-        return new Cell(rowIndex.intValue(), columnIndex.intValue());
+        Cell cell = new Cell(rowIndex.intValue(), columnIndex.intValue());
+        try {
+            game.place(cell);
+            game.coverTerritories(cell);
+            game.getBoard().hasWon(game.getCurrentPlayer().color());
+            game.changeCurrentPlayer();
+            game.getBoard().hasWon(game.getCurrentPlayer().color());
+            display();
+        } catch (MoveException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
     }
 }
