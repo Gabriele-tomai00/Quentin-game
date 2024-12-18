@@ -22,30 +22,34 @@ public class TCPServer {
   public void startForAuth() throws IOException {
     serverSocket = new ServerSocket(port);
     System.out.println("Server started, waiting for client...");
-
-    clientSocket = serverSocket.accept(); // Blocking call: waits for a client to connect
-    out = new PrintWriter(clientSocket.getOutputStream(), true);
-    in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-    System.out.println("Client connected: " + clientSocket.getInetAddress());
-
-    String message;
-    for (int attempt = 0; attempt < 3; attempt++) {
-      if ((message = in.readLine()) != null) {
-        System.out.println("Received first message: " + message);
-        if (!message.equals(PASSWORD)) {
-          System.out.println("Invalid password, retry");
-          out.println("Invalid password");
-        } else {
-          isClientAuth = true;
-          out.println("Password accepted");
-          return;
+    try {
+      clientSocket = serverSocket.accept(); // Blocking call: waits for a client to connect
+      out = new PrintWriter(clientSocket.getOutputStream(), true);
+      in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+      System.out.println("Client connected: " + clientSocket.getInetAddress());
+      String message;
+      for (int attempt = 0; attempt < 3; attempt++) {
+        if ((message = in.readLine()) != null) {
+          System.out.println("Received first message: " + message);
+          if (!message.equals(PASSWORD)) {
+            System.out.println("Invalid password, retry");
+            out.println("Invalid password");
+          } else {
+            isClientAuth = true;
+            out.println("Password accepted");
+            listenForMessages();
+            return;
+          }
         }
       }
+      System.out.println("too many attempts, exiting");
+      out.println("too many attempts, exiting");
+      close(); // Close connection if password is incorrect
+
+    } catch (SocketException e) {
+      // when close() is called, the function goes here
+      System.out.println("Server socket closed, stopping server...");
     }
-    System.out.println("too many attempts, exiting");
-    out.println("too many attempts, exiting");
-    close(); // Close connection if password is incorrect
   }
 
   // Receives messages from the client (runs in a separate thread)
@@ -61,7 +65,7 @@ public class TCPServer {
                   } else System.out.println("Can't receive from client because It's not auth");
                 }
               } catch (IOException e) {
-                e.printStackTrace();
+                // here when I call close() after a client connection
               }
             })
         .start();
@@ -76,11 +80,25 @@ public class TCPServer {
   }
 
   // Closes all resources used by the server
-  public void close() throws IOException {
-    if (in != null) in.close();
-    if (out != null) out.close();
-    if (clientSocket != null) clientSocket.close();
-    if (serverSocket != null) serverSocket.close();
+  public void close() {
+    System.out.println("S: inizio");
+    try {
+      if (clientSocket != null) {
+        clientSocket.close();
+      }
+      if (serverSocket != null) {
+        serverSocket.close();
+      }
+      if (in != null) {
+        in.close();
+      }
+      if (out != null) {
+        out.close();
+      }
+    } catch (IOException e) {
+      //
+    }
+    System.out.println("Server process closed");
   }
 
   public static void main(String[] args) throws InterruptedException {
