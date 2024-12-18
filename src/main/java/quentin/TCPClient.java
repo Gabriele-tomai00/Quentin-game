@@ -30,20 +30,24 @@ public class TCPClient {
       System.err.println("Unknown host: " + e.getMessage());
       state = "connection failed";
     }
+    System.out.println("Client correctly connected");
+    state = "connected";
+    running = true;
   }
 
   // Sends a message to the server and waits for a response
   public void communicate(String message) throws IOException {
-    if (Objects.equals(state, "ok")) out.println(message);
+    if (Objects.equals(state, "connected")) out.println(message);
   }
 
   public void communicatePWD(String pwd) throws IOException {
-    if (Objects.equals(state, "ok")) out.println(pwd);
+    if (Objects.equals(state, "connected")) out.println(pwd);
   }
 
   // Receives messages from the server (runs in a separate thread)
   public void listenForMessages() {
-    if (Objects.equals(state, "ok")) {
+    System.out.println("Dentro listenForMessages, state: " + state + " running: " + running);
+    if (Objects.equals(state, "connected")) {
       new Thread(
               () -> {
                 try {
@@ -76,7 +80,7 @@ public class TCPClient {
     try {
       TCPClient client = new TCPClient("127.0.0.1", 1234);
       client.start();
-      if (client.state.equals("ok")) {
+      if (client.state.equals("connected")) {
         System.out.println(client.state);
         client.listenForMessages();
 
