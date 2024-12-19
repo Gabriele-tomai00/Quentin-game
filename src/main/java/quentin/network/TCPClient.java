@@ -1,24 +1,29 @@
-package quentin;
+package quentin.network;
 
 import java.io.*;
 import java.net.*;
-import java.util.Objects;
 
-public class TCPClient {
+public class TCPClient implements TCPclientServerInterface {
   private Socket socket;
   private PrintWriter out;
   private BufferedReader in;
-  public String messageRecived;
-  public Boolean authenticated = false;
-  public int port;
-  public String address;
-  public String state;
-  public Boolean running = false;
+  private String messageReceived;
+  private Boolean authenticated = false;
+  private final int port;
+  private final String address;
+  private final String serverUsername;
+  private Boolean state;
+  private Boolean running = false;
 
   // Constructor: connects to the server at the given IP and port
-  public TCPClient(String ip, int p) throws IOException {
-    address = ip;
-    port = p;
+  public TCPClient(ServerInfo info) throws IOException {
+    address = info.IpAddress();
+    serverUsername = info.username();
+    port = info.Port();
+  }
+
+  public String getServerUsername() {
+    return serverUsername;
   }
 
   public void start() {
@@ -28,26 +33,25 @@ public class TCPClient {
       in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     } catch (Exception e) {
       System.err.println("Unknown host: " + e.getMessage());
-      state = "connection failed";
+      state = false;
     }
     System.out.println("Client correctly connected");
-    state = "connected";
+    state = true;
     running = true;
   }
 
   // Sends a message to the server and waits for a response
-  public void communicate(String message) throws IOException {
-    if (Objects.equals(state, "connected")) out.println(message);
+  public void sendMessage(String message) throws IOException {
+    if (state) out.println(message);
   }
 
   public void communicatePWD(String pwd) throws IOException {
-    if (Objects.equals(state, "connected")) out.println(pwd);
+    if (state) out.println(pwd);
   }
 
   // Receives messages from the server (runs in a separate thread)
   public void listenForMessages() {
-    System.out.println("Dentro listenForMessages, state: " + state + " running: " + running);
-    if (Objects.equals(state, "connected")) {
+    if (state) {
       new Thread(
               () -> {
                 try {
@@ -56,11 +60,13 @@ public class TCPClient {
                     System.out.println("Received from server: " + serverMessage);
                     if (serverMessage.equals("Password accepted")) {
                       authenticated = true;
-                      messageRecived = serverMessage;
+                      messageReceived = serverMessage;
+                    } else if (serverMessage.equals("server closed")) {
+                      stop();
                     }
                   }
                 } catch (IOException e) {
-                  e.printStackTrace();
+                  // here when I call close() after a client connection
                 }
               })
           .start();
@@ -68,20 +74,25 @@ public class TCPClient {
   }
 
   // Closes all resources used by the client
-  public void close() throws IOException {
+  public void stop() {
+    out.println("client closed");
     running = false;
-    in.close();
-    out.close();
-    socket.close();
-    System.out.println("Client process closed");
+    try {
+      in.close();
+      out.close();
+      socket.close();
+      System.out.println("Client process closed");
+    } catch (IOException e) {
+      //
+    }
   }
 
   public static void main(String[] args) throws InterruptedException {
     try {
-      TCPClient client = new TCPClient("127.0.0.1", 1234);
+      ServerInfo info = new ServerInfo("127.0.0.1", 1234, "server-username");
+      TCPClient client = new TCPClient(info);
       client.start();
-      if (client.state.equals("connected")) {
-        System.out.println(client.state);
+      if (client.running) {
         client.listenForMessages();
 
         // Send the first message with password for authentication
@@ -90,15 +101,15 @@ public class TCPClient {
 
         client.communicatePWD("secretPassword"); // Password message
         Thread.sleep(1000);
-        String responseAfterCode = client.messageRecived;
+        String responseAfterCode = client.messageReceived;
 
         Thread.sleep(3000);
-        client.close();
+        client.stop();
 
         // Only continue if the server accepted the password
         if ("Password accepted".equals(responseAfterCode)) {
           for (int i = 1; i <= 100; i++) {
-            client.communicate(i + " Hello Server!"); // Send message
+            client.sendMessage(i + " Hello Server!"); // Send message
             Thread.sleep(1000);
           }
         } else {

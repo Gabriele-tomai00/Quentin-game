@@ -8,6 +8,11 @@ public class UDPClient {
   private static final int UDP_SERVER_PORT = 9876;
   public Boolean discovery = true;
   private Thread discoveryThread;
+  private ServerInfo tcpServerInfo;
+
+  public ServerInfo getTcpServerInfo() {
+    return tcpServerInfo;
+  }
 
   public void startDiscovery() {
     discoveryThread =
@@ -36,15 +41,16 @@ public class UDPClient {
                     clientSocket.setSoTimeout(5000); // Timeout of 5 seconds
                     clientSocket.receive(receivePacket);
 
-                    ServerInfo receivedInfo = ServerInfo.fromBytes(receivePacket.getData());
-                    System.out.println("Received ServerInfo: " + receivedInfo);
+                    tcpServerInfo = ServerInfo.fromBytes(receivePacket.getData());
+                    System.out.println("Received ServerInfo: " + tcpServerInfo);
+
                     break; // Exit loop once a response is received
                   } catch (Exception e) {
                     System.out.println("No response from server. Retrying...");
                   }
 
                   // Wait for x seconds before retrying
-                  Thread.sleep(500);
+                  Thread.sleep(400);
                 }
               } catch (Exception e) {
                 e.printStackTrace();

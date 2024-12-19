@@ -1,32 +1,39 @@
-package quentin;
+package quentin.network;
 
 import java.io.*;
 import java.net.*;
 
-public class TCPServer {
+public class TCPServer implements TCPclientServerInterface {
   private ServerSocket serverSocket;
   private Socket clientSocket;
   private PrintWriter out;
   private BufferedReader in;
-  private static final String PASSWORD = "secretPassword"; // The correct password
+  private final String PASSWORD;
   public Boolean isClientAuth = false;
   public int port;
-  public String recivedMessage;
+  public String messageReceived;
+  private Thread waitMessageThread;
 
   // Constructor: initializes the server socket on the given port
-  public TCPServer(int port1) throws IOException {
+  public TCPServer(int port1, String pwd) throws IOException {
     port = port1;
+    PASSWORD = pwd;
   }
 
   // Starts the server to accept client connections and handle communication
-  public void startForAuth() throws IOException {
-    serverSocket = new ServerSocket(port);
-    System.out.println("Server started, waiting for client...");
+  public void start() {
+    try {
+      serverSocket = new ServerSocket(port);
+    } catch (IOException e) {
+      System.err.println("Error during socket creation: ");
+    }
+    System.out.println("TCP Server started on port " + port + ", waiting for client...");
     try {
       clientSocket = serverSocket.accept(); // Blocking call: waits for a client to connect
       out = new PrintWriter(clientSocket.getOutputStream(), true);
       in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
       System.out.println("Client connected: " + clientSocket.getInetAddress());
+      System.out.println("CODE: " + PASSWORD);
       String message;
       for (int attempt = 0; attempt < 3; attempt++) {
         if ((message = in.readLine()) != null) {
@@ -35,6 +42,7 @@ public class TCPServer {
             System.out.println("Invalid password, retry");
             out.println("Invalid password");
           } else {
+            System.out.println("Password accepted");
             isClientAuth = true;
             out.println("Password accepted");
             listenForMessages();
@@ -42,46 +50,50 @@ public class TCPServer {
           }
         }
       }
+      // can send and receive
       System.out.println("too many attempts, exiting");
       out.println("too many attempts, exiting");
-      close(); // Close connection if password is incorrect
+      stop(); // Close connection if password is incorrect
 
     } catch (SocketException e) {
       // when close() is called, the function goes here
       System.out.println("Server socket closed, stopping server...");
+    } catch (IOException e) {
+      System.err.println("IOException: problems with client connection");
     }
   }
 
   // Receives messages from the client (runs in a separate thread)
   public void listenForMessages() {
-    new Thread(
+    // here when I call close() after a client connection
+    waitMessageThread =
+        new Thread(
             () -> {
               try {
                 String serverMessage;
                 while ((serverMessage = in.readLine()) != null) {
                   if (isClientAuth) {
                     System.out.println("Received from client: " + serverMessage);
-                    recivedMessage = serverMessage;
+                    messageReceived = serverMessage;
                   } else System.out.println("Can't receive from client because It's not auth");
                 }
               } catch (IOException e) {
                 // here when I call close() after a client connection
               }
-            })
-        .start();
+            });
+    waitMessageThread.start();
   }
 
-  // Sends a message to the client and waits for a response
-  public void communicate(String message) throws IOException {
-    // send only if client il authenticated
+  public void sendMessage(String message) throws IOException {
+    // send only if client is authenticated
     if (isClientAuth) {
       out.println(message);
     }
   }
 
   // Closes all resources used by the server
-  public void close() {
-    System.out.println("S: inizio");
+  public void stop() {
+    out.println("server closed");
     try {
       if (clientSocket != null) {
         clientSocket.close();
@@ -98,18 +110,22 @@ public class TCPServer {
     } catch (IOException e) {
       //
     }
+    try {
+      waitMessageThread.join(); // Wait for the thread to terminate
+    } catch (InterruptedException e) {
+    }
     System.out.println("Server process closed");
   }
 
   public static void main(String[] args) throws InterruptedException {
     try {
-      TCPServer server = new TCPServer(1234);
-      server.startForAuth(); // blocking
+      TCPServer server = new TCPServer(1234, "pwd");
+      server.start(); // blocking
       server.listenForMessages();
       Thread.sleep(1000);
 
       for (int i = 1; i <= 100; i++) {
-        server.communicate(i + " Hello Client!"); // Send message
+        server.sendMessage(i + " Hello Client!"); // Send message
         Thread.sleep(1000);
       }
 
