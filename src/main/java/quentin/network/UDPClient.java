@@ -1,4 +1,4 @@
-package quentin;
+package quentin.network;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -31,16 +31,13 @@ public class UDPClient {
 
                     System.out.println("Broadcast request sent.");
 
-                    // Blocking call: waits for a response from the server
                     DatagramPacket receivePacket =
                         new DatagramPacket(receiveBuffer, receiveBuffer.length);
                     clientSocket.setSoTimeout(5000); // Timeout of 5 seconds
                     clientSocket.receive(receivePacket);
 
-                    String serverResponse =
-                        new String(receivePacket.getData(), 0, receivePacket.getLength());
-                    System.out.println("Response received: " + serverResponse);
-
+                    ServerInfo receivedInfo = ServerInfo.fromBytes(receivePacket.getData());
+                    System.out.println("Received ServerInfo: " + receivedInfo);
                     break; // Exit loop once a response is received
                   } catch (Exception e) {
                     System.out.println("No response from server. Retrying...");
@@ -60,7 +57,7 @@ public class UDPClient {
     discovery = false;
     discoveryThread.join();
     if (!discoveryThread.isAlive()) {
-      System.out.println("C: server discovery stopped for sure");
+      System.out.println("C: client discovery stopped for sure");
     }
   }
 

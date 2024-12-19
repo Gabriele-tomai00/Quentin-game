@@ -1,4 +1,4 @@
-package quentin;
+package quentin.network;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -9,6 +9,11 @@ public class UDPServer {
   private static final int UDP_SERVER_PORT = 9876;
   private volatile boolean discovery = true; // Use volatile for thread-safe visibility
   private Thread discoveryThread;
+  private String username = "default";
+
+  public UDPServer(String user) {
+    username = user;
+  }
 
   public void startServer() {
     discoveryThread =
@@ -18,9 +23,9 @@ public class UDPServer {
                 System.out.println("Server is listening on port " + UDP_SERVER_PORT);
 
                 byte[] receiveBuffer = new byte[1024];
-                byte[] sendBuffer;
-
-                serverSocket.setSoTimeout(1000); // Set timeout of 1 second
+                discovery = true;
+                serverSocket.setSoTimeout(
+                    1000); // Set timeout of 1 second for when I call close server
 
                 while (discovery) {
                   try {
@@ -37,12 +42,12 @@ public class UDPServer {
                         "Received request from client " + clientAddress + ":" + clientPort);
 
                     // Prepare the response message
-                    String responseMessage =
-                        "Server IP: "
-                            + InetAddress.getLocalHost().getHostAddress()
-                            + ", Port: "
-                            + UDP_SERVER_PORT;
-                    sendBuffer = responseMessage.getBytes();
+                    ServerInfo serverInfo =
+                        new ServerInfo(
+                            InetAddress.getLocalHost().getHostAddress(), UDP_SERVER_PORT, username);
+
+                    // Convertire in byte
+                    byte[] sendBuffer = serverInfo.toBytes();
 
                     // Send the response to the client
                     DatagramPacket sendPacket =
@@ -78,7 +83,7 @@ public class UDPServer {
   }
 
   public static void main(String[] args) throws InterruptedException {
-    UDPServer server = new UDPServer();
+    UDPServer server = new UDPServer("user-name");
     server.startServer(); // non-blocking
     Thread.sleep(1000);
     server.stopServer(); // blocking
