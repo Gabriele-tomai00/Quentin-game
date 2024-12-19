@@ -9,10 +9,12 @@ public class UDPServer {
   private static final int UDP_SERVER_PORT = 9876;
   private volatile boolean discovery = true; // Use volatile for thread-safe visibility
   private Thread discoveryThread;
-  private String username = "default";
+  private final String username;
+  private final int tcpPort;
 
-  public UDPServer(String user) {
+  public UDPServer(String user, int tcpPortToComunicate) {
     username = user;
+    tcpPort = tcpPortToComunicate;
   }
 
   public void startServer() {
@@ -20,7 +22,7 @@ public class UDPServer {
         new Thread(
             () -> {
               try (DatagramSocket serverSocket = new DatagramSocket(UDP_SERVER_PORT)) {
-                System.out.println("Server is listening on port " + UDP_SERVER_PORT);
+                System.out.println("UDP Server is listening on port " + UDP_SERVER_PORT);
 
                 byte[] receiveBuffer = new byte[1024];
                 discovery = true;
@@ -39,12 +41,12 @@ public class UDPServer {
                     int clientPort = receivePacket.getPort();
 
                     System.out.println(
-                        "Received request from client " + clientAddress + ":" + clientPort);
+                        "UDP: Received request from client " + clientAddress + ":" + clientPort);
 
                     // Prepare the response message
                     ServerInfo serverInfo =
                         new ServerInfo(
-                            InetAddress.getLocalHost().getHostAddress(), UDP_SERVER_PORT, username);
+                            InetAddress.getLocalHost().getHostAddress(), tcpPort, username);
 
                     // Convertire in byte
                     byte[] sendBuffer = serverInfo.toBytes();
@@ -55,7 +57,7 @@ public class UDPServer {
                             sendBuffer, sendBuffer.length, clientAddress, clientPort);
                     serverSocket.send(sendPacket);
 
-                    System.out.println("Response sent to client.");
+                    System.out.println("UDP: Response sent to client.");
                   } catch (SocketTimeoutException e) {
                     // Timeout occurred: Check if we need to stop
                     if (!discovery) {
@@ -80,12 +82,5 @@ public class UDPServer {
     if (!discoveryThread.isAlive()) {
       System.out.println("S: Server stopped successfully.");
     }
-  }
-
-  public static void main(String[] args) throws InterruptedException {
-    UDPServer server = new UDPServer("user-name");
-    server.startServer(); // non-blocking
-    Thread.sleep(1000);
-    server.stopServer(); // blocking
   }
 }
