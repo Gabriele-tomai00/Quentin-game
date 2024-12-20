@@ -17,6 +17,9 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
         primaryStage.setTitle("Quentin");
         primaryStage.setScene(new Scene(root));
+        primaryStage.setMinWidth(400);
+        primaryStage.setMinHeight(400);
+        // primaryStage.setResizable(false);
         primaryStage.show();
     }
 }
