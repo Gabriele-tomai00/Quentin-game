@@ -1,9 +1,6 @@
 package quentin.network;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketTimeoutException;
+import java.net.*;
 
 public class UDPServer {
   private static final int UDP_SERVER_PORT = 9876;
@@ -23,11 +20,10 @@ public class UDPServer {
             () -> {
               try (DatagramSocket serverSocket = new DatagramSocket(UDP_SERVER_PORT)) {
                 System.out.println("UDP Server is listening on port " + UDP_SERVER_PORT);
-
                 byte[] receiveBuffer = new byte[1024];
                 discovery = true;
                 serverSocket.setSoTimeout(
-                    1000); // Set timeout of 1 second for when I call close server
+                    1000); // Set timeout of 1 second for when I call stop server
 
                 while (discovery) {
                   try {
@@ -36,7 +32,6 @@ public class UDPServer {
                         new DatagramPacket(receiveBuffer, receiveBuffer.length);
                     serverSocket.receive(receivePacket);
 
-                    // Get client's address and port
                     InetAddress clientAddress = receivePacket.getAddress();
                     int clientPort = receivePacket.getPort();
 
@@ -48,7 +43,6 @@ public class UDPServer {
                         new ServerInfo(
                             InetAddress.getLocalHost().getHostAddress(), tcpPort, username);
 
-                    // Convertire in byte
                     byte[] sendBuffer = serverInfo.toBytes();
 
                     // Send the response to the client
@@ -64,23 +58,25 @@ public class UDPServer {
                       System.out.println("Timeout occurred, stopping server.");
                     }
                   } catch (Exception e) {
-                    e.printStackTrace();
+                    System.err.println("Unexpected error occurred in UDP server");
                   }
                 }
               } catch (Exception e) {
-                e.printStackTrace();
-              } finally {
-                System.out.println("Server has stopped.");
+                System.err.println("Error during server socket initialization in UDP server");
               }
             });
     discoveryThread.start();
   }
 
-  public void stopServer() throws InterruptedException {
+  public void stopServer() {
     discovery = false;
-    discoveryThread.join(); // Wait for the thread to terminate
-    if (!discoveryThread.isAlive()) {
-      System.out.println("S: Server stopped successfully.");
+    try {
+      discoveryThread.join(); // Wait for the thread to terminate
+      if (!discoveryThread.isAlive()) {
+        System.out.println("UDP server successfully stopped");
+      }
+    } catch (InterruptedException e) {
+      System.err.println("Error stopping UDP server");
     }
   }
 }

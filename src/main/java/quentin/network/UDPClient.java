@@ -1,8 +1,6 @@
 package quentin.network;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
+import java.net.*;
 
 public class UDPClient {
   private static final int UDP_SERVER_PORT = 9876;
@@ -34,43 +32,39 @@ public class UDPClient {
                             sendBuffer, sendBuffer.length, broadcastAddress, UDP_SERVER_PORT);
                     clientSocket.send(sendPacket);
 
-                    System.out.println("Broadcast request sent.");
+                    System.out.println("Broadcast request sent");
 
                     DatagramPacket receivePacket =
                         new DatagramPacket(receiveBuffer, receiveBuffer.length);
-                    clientSocket.setSoTimeout(5000); // Timeout of 5 seconds
+                    clientSocket.setSoTimeout(5000);
                     clientSocket.receive(receivePacket);
 
                     tcpServerInfo = ServerInfo.fromBytes(receivePacket.getData());
                     System.out.println("Received ServerInfo: " + tcpServerInfo);
 
-                    break; // Exit loop once a response is received
+                    break;
                   } catch (Exception e) {
-                    System.out.println("No response from server. Retrying...");
+                    // here if server is not being found yet
                   }
 
-                  // Wait for x seconds before retrying
                   Thread.sleep(400);
                 }
               } catch (Exception e) {
-                e.printStackTrace();
+                System.err.println("Unexpected error in udp client discovery");
               }
             });
     discoveryThread.start();
   }
 
-  public void stopDiscovery() throws InterruptedException {
+  public void stopDiscovery() {
     discovery = false;
-    discoveryThread.join();
-    if (!discoveryThread.isAlive()) {
-      System.out.println("C: client discovery stopped for sure");
+    try {
+      discoveryThread.join();
+      if (!discoveryThread.isAlive()) {
+        System.out.println("client discovery correctly stopped");
+      }
+    } catch (InterruptedException e) {
+      System.err.println("Error stopping udp client discovery");
     }
-  }
-
-  public static void main(String[] args) throws InterruptedException {
-    UDPClient client = new UDPClient();
-    client.startDiscovery(); // non-blocking
-    Thread.sleep(4000);
-    client.stopDiscovery(); // blocking
   }
 }
