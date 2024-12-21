@@ -7,6 +7,7 @@ public class UDPClient {
   public Boolean discovery = true;
   private Thread discoveryThread;
   private ServerInfo tcpServerInfo;
+  private Runnable onDiscoveredCallback;
 
   public ServerInfo getTcpServerInfo() {
     return tcpServerInfo;
@@ -41,6 +42,7 @@ public class UDPClient {
 
                     tcpServerInfo = ServerInfo.fromBytes(receivePacket.getData());
                     System.out.println("Received ServerInfo: " + tcpServerInfo);
+                    if (onDiscoveredCallback != null) onDiscoveredCallback.run();
 
                     break;
                   } catch (Exception e) {
@@ -66,5 +68,9 @@ public class UDPClient {
     } catch (InterruptedException e) {
       System.err.println("Error stopping udp client discovery");
     }
+  }
+
+  public void setOnDiscoveredCallback(Runnable callback) {
+    this.onDiscoveredCallback = callback;
   }
 }

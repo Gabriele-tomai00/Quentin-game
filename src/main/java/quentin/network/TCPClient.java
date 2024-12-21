@@ -12,18 +12,12 @@ public class TCPClient implements TCPclientServerInterface {
   private final int port;
   private final String address;
   private final String serverUsername;
-  private Boolean state;
-  private Boolean running = false;
+  private Boolean clientConnected = false;
 
-  // Constructor: connects to the server at the given IP and port
-  public TCPClient(ServerInfo info) throws IOException {
+  public TCPClient(ServerInfo info) {
     address = info.IpAddress();
     serverUsername = info.username();
     port = info.Port();
-  }
-
-  public String getServerUsername() {
-    return serverUsername;
   }
 
   public void start() {
@@ -31,95 +25,60 @@ public class TCPClient implements TCPclientServerInterface {
       socket = new Socket(address, port);
       out = new PrintWriter(socket.getOutputStream(), true);
       in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-    } catch (Exception e) {
-      System.err.println("Unknown host: " + e.getMessage());
-      state = false;
+      System.out.println("TCP Client correctly connected");
+      clientConnected = true;
+    } catch (IOException e) {
+      System.err.println("Error initializing the client connection: " + e.getMessage());
+      stop();
     }
-    System.out.println("Client correctly connected");
-    state = true;
-    running = true;
   }
 
-  // Sends a message to the server and waits for a response
-  public void sendMessage(String message) throws IOException {
-    if (state) out.println(message);
+  public void sendMessage(String message) {
+    if (clientConnected) {
+      System.out.println("message sent");
+      out.println(message);
+    } else System.out.println("message NOT sent");
   }
 
-  public void communicatePWD(String pwd) throws IOException {
-    if (state) out.println(pwd);
-  }
-
-  // Receives messages from the server (runs in a separate thread)
   public void listenForMessages() {
-    if (state) {
+    if (clientConnected) {
       new Thread(
               () -> {
                 try {
                   String serverMessage;
-                  while (running && (serverMessage = in.readLine()) != null) {
+                  while ((serverMessage = in.readLine()) != null) {
                     System.out.println("Received from server: " + serverMessage);
-                    if (serverMessage.equals("Password accepted")) {
-                      authenticated = true;
-                      messageReceived = serverMessage;
-                    } else if (serverMessage.equals("server closed")) {
-                      stop();
+
+                    if (!authenticated) {
+                      if (serverMessage.equals("Password accepted from TCP server")) {
+                        authenticated = true;
+                      } else if (serverMessage.equals("server closed")) {
+                        stop();
+                      }
                     }
+                    messageReceived = serverMessage;
                   }
                 } catch (IOException e) {
                   // here when I call close() after a client connection
                 }
               })
           .start();
-    }
+    } else System.out.println("Can't receive from server because It's not connected");
   }
 
-  // Closes all resources used by the client
   public void stop() {
     out.println("client closed");
-    running = false;
     try {
-      in.close();
-      out.close();
-      socket.close();
+      if (in != null) in.close();
+      if (out != null) out.close();
+      if (socket != null) socket.close();
       System.out.println("Client process closed");
     } catch (IOException e) {
       //
     }
   }
 
-  public static void main(String[] args) throws InterruptedException {
-    try {
-      ServerInfo info = new ServerInfo("127.0.0.1", 1234, "server-username");
-      TCPClient client = new TCPClient(info);
-      client.start();
-      if (client.running) {
-        client.listenForMessages();
-
-        // Send the first message with password for authentication
-        client.communicatePWD("firstP"); // Password message
-        Thread.sleep(1000);
-
-        client.communicatePWD("secretPassword"); // Password message
-        Thread.sleep(1000);
-        String responseAfterCode = client.messageReceived;
-
-        Thread.sleep(3000);
-        client.stop();
-
-        // Only continue if the server accepted the password
-        if ("Password accepted".equals(responseAfterCode)) {
-          for (int i = 1; i <= 100; i++) {
-            client.sendMessage(i + " Hello Server!"); // Send message
-            Thread.sleep(1000);
-          }
-        } else {
-          System.out.println("Invalid password, closing connection.");
-        }
-
-        //      client.close(); // Close connection
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+  public String getServerUsername() {
+    return serverUsername;
   }
 }

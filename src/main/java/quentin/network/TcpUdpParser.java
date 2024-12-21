@@ -7,12 +7,12 @@ public class TcpUdpParser {
   Client client = new Client();
   Server server = new Server();
 
-  public static void main(String[] args) throws IOException, InterruptedException {
+  public static void main(String[] args) {
     TcpUdpParser parser = new TcpUdpParser();
     parser.run();
   }
 
-  public void run() throws IOException, InterruptedException {
+  public void run() {
     Scanner scanner = new Scanner(System.in);
     System.out.println("Enter commands (type 'exit' to quit):");
 
@@ -38,9 +38,6 @@ public class TcpUdpParser {
         case "stopclient", "stopc":
           stopClient();
           break;
-        case "starttcpclient", "starttcpc":
-          startTCPclient();
-          break;
         case "sendtoc":
           sendC();
           break;
@@ -65,17 +62,12 @@ public class TcpUdpParser {
     new Thread(
             () -> {
               System.out.println("Starting server...");
-              try {
-                server.start();
-              } catch (IOException e) {
-                // throw new RuntimeException(e);
-              }
+              server.start();
             })
         .start();
-    forceWrap();
   }
 
-  private void stopServer() throws InterruptedException {
+  private void stopServer() {
     System.out.println("Stopping server...");
     server.stop();
   }
@@ -87,60 +79,33 @@ public class TcpUdpParser {
               try {
                 client.startDiscovery();
               } catch (IOException e) {
-                // throw new RuntimeException(e);
+                System.err.println("Error initializing the client connection");
               }
             })
         .start();
+    System.out.println("Once recived server info, type 'starttcpclient' to link with server");
   }
 
-  private void stopClient() throws InterruptedException {
+  private void stopClient() {
     client.stopDiscovery();
   }
 
-  private void startTCPclient() throws IOException {
-    client.linkWithTCPServer();
-  }
-
-  private void clientAuth() throws IOException {
+  private void clientAuth() {
     System.out.println("clientAuth command...");
-
-    // Crea un oggetto Scanner per leggere l'input dell'utente
     Scanner scanner = new Scanner(System.in);
-
     String password;
-    while (true) {
-      System.out.print("Enter a 5-digit numeric password: ");
-      password = scanner.nextLine().trim();
-
-      // Controlla che la password sia composta solo da 5 cifre
-      if (password.matches("\\d{5}")) {
-        break; // Esci dal ciclo se la password è valida
-      } else {
-        System.out.println("Invalid password. Please enter exactly 5 digits.");
-      }
-    }
-
-    // Invia la password al server
-    client.sendMessage(password);
-    System.out.println("Password sent to server: " + password);
+    System.out.print("Enter a 5-digit numeric password: ");
+    password = scanner.nextLine().trim();
+    client.trySendAuthentication(password);
   }
 
-  private void sendC() throws IOException {
+  private void sendC() {
     System.out.println("sendC command...");
     server.sendMessage("Hello Client!"); // Send message
   }
 
-  private void sendS() throws IOException {
+  private void sendS() {
     System.out.println("sendS command...");
     client.sendMessage("Hello Server!"); // Send message
-  }
-
-  private void forceWrap() {
-    try {
-      Thread.sleep(200);
-      System.out.println();
-    } catch (InterruptedException e) {
-      //
-    }
   }
 }

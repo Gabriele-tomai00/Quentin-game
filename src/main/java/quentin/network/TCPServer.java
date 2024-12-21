@@ -14,18 +14,17 @@ public class TCPServer implements TCPclientServerInterface {
   public String messageReceived;
   private Thread waitMessageThread;
 
-  // Constructor: initializes the server socket on the given port
   public TCPServer(int port1, String pwd) throws IOException {
     port = port1;
     PASSWORD = pwd;
   }
 
-  // Starts the server to accept client connections and handle communication
   public void start() {
     try {
       serverSocket = new ServerSocket(port);
     } catch (IOException e) {
-      System.err.println("Error during socket creation: ");
+      System.err.println("Error during socket creation in TCP Server");
+      return;
     }
     System.out.println("TCP Server started on port " + port + ", waiting for client...");
     try {
@@ -39,25 +38,22 @@ public class TCPServer implements TCPclientServerInterface {
         if ((message = in.readLine()) != null) {
           System.out.println("Received first message: " + message);
           if (!message.equals(PASSWORD)) {
-            System.out.println("Invalid password, retry");
-            out.println("Invalid password");
+            System.out.println("Invalid password, retry (attempt " + (attempt + 1) + "/3)");
+            out.println("Invalid password, retry (attempt " + (attempt + 1) + "/3)");
           } else {
-            System.out.println("Password accepted");
+            System.out.println("Password of TCP client accepted");
             isClientAuth = true;
-            out.println("Password accepted");
+            out.println("Password accepted from TCP server");
             listenForMessages();
             return;
           }
         }
       }
-      // can send and receive
-      System.out.println("too many attempts, exiting");
-      out.println("too many attempts, exiting");
-      stop(); // Close connection if password is incorrect
-
+      System.out.println("too many authentication attempts with TCP server, exiting");
+      out.println("too many authentication attempts with TCP server, exiting");
+      stop();
     } catch (SocketException e) {
       // when close() is called, the function goes here
-      System.out.println("Server socket closed, stopping server...");
     } catch (IOException e) {
       System.err.println("IOException: problems with client connection");
     }
@@ -84,16 +80,13 @@ public class TCPServer implements TCPclientServerInterface {
     waitMessageThread.start();
   }
 
-  public void sendMessage(String message) throws IOException {
-    // send only if client is authenticated
+  public void sendMessage(String message) {
     if (isClientAuth) {
       out.println(message);
     }
   }
 
-  // Closes all resources used by the server
   public void stop() {
-    out.println("server closed");
     try {
       if (clientSocket != null) {
         clientSocket.close();
@@ -111,26 +104,10 @@ public class TCPServer implements TCPclientServerInterface {
       //
     }
     try {
-      waitMessageThread.join(); // Wait for the thread to terminate
-    } catch (InterruptedException e) {
+      waitMessageThread.join();
+    } catch (Exception e) {
+      //
     }
-    System.out.println("Server process closed");
-  }
-
-  public static void main(String[] args) throws InterruptedException {
-    try {
-      TCPServer server = new TCPServer(1234, "pwd");
-      server.start(); // blocking
-      server.listenForMessages();
-      Thread.sleep(1000);
-
-      for (int i = 1; i <= 100; i++) {
-        server.sendMessage(i + " Hello Client!"); // Send message
-        Thread.sleep(1000);
-      }
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    System.out.println("TCP server successfully stopped");
   }
 }

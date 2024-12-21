@@ -6,7 +6,6 @@ import quentin.SettingHandler;
 
 public class Server {
 
-  private SettingHandler settingHandler;
   private UDPServer udpServer;
   private TCPServer tcpServer;
   public String codeForClientAuth;
@@ -19,19 +18,23 @@ public class Server {
   }
 
   public void setNetworkInfo() {
-    settingHandler = new SettingHandler();
+    SettingHandler settingHandler = new SettingHandler();
     username = settingHandler.getUsername();
     tcpPort = settingHandler.getPort();
   }
 
-  public void start() throws IOException {
+  public void start() {
     udpServer = new UDPServer(username, tcpPort);
     udpServer.startServer();
-    tcpServer = new TCPServer(tcpPort, codeForClientAuth);
+    try {
+      tcpServer = new TCPServer(tcpPort, codeForClientAuth);
+    } catch (IOException e) {
+      System.err.println("Error initializing the server connection");
+    }
     tcpServer.start();
   }
 
-  public void stop() throws InterruptedException {
+  public void stop() {
     udpServer.stopServer();
     tcpServer.stop();
   }
@@ -47,7 +50,7 @@ public class Server {
     codeForClientAuth = randomNumbers.toString();
   }
 
-  public void sendMessage(String message) throws IOException {
+  public void sendMessage(String message) {
     tcpServer.sendMessage(message);
   }
 
