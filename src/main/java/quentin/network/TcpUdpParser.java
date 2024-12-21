@@ -72,6 +72,7 @@ public class TcpUdpParser {
               }
             })
         .start();
+    forceWrap();
   }
 
   private void stopServer() throws InterruptedException {
@@ -132,5 +133,14 @@ public class TcpUdpParser {
   private void sendS() throws IOException {
     System.out.println("sendS command...");
     client.sendMessage("Hello Server!"); // Send message
+  }
+
+  private void forceWrap() {
+    try {
+      Thread.sleep(200);
+      System.out.println();
+    } catch (InterruptedException e) {
+      //
+    }
   }
 }
