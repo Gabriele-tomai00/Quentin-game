@@ -94,7 +94,7 @@ public class TcpParser {
 
   private void clientAuth() throws IOException {
     System.out.println("clientAuth command...");
-    client.communicatePWD("pwd"); // Password message
+    client.sendMessage("pwd"); // Password message
   }
 
   private void sendC() throws IOException {
