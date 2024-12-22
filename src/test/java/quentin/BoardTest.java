@@ -230,19 +230,61 @@ public class BoardTest {
     };
     Board board = new Board(matrix);
     String result = board.toCompactString();
-    System.out.println("il risultato finale è " + result);
+    assertEquals("4B12B12B12B12B12B12B12B12B12B12B12B12B8", result);
 
     Board newBoard = new Board();
     newBoard.fromCompactString(result);
-    System.out.println("il risultato finale è " + newBoard.toCompactString());
     assertEquals(result, newBoard.toCompactString());
+
+    String[][] matrix2 = {
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."}
+    };
+    Board board2 = new Board(matrix2);
+    String result2 = board2.toCompactString();
+    assertEquals("169", result2);
+
+    Board newBoard2 = new Board();
+    newBoard2.fromCompactString(result2);
+    assertEquals(result2, newBoard2.toCompactString());
+
+    String[][] matrix3 = {
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", "B", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", "B", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."},
+      {".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."}
+    };
+    Board board3 = new Board(matrix3);
+    String result3 = board3.toCompactString();
+    assertEquals("29B27B111", result3);
+    Board newBoard3 = new Board();
+    newBoard3.fromCompactString(result3);
+    assertEquals(result3, newBoard3.toCompactString());
   }
 
   @Test
   public void testConstructorFromCompactString() {
-    String matrix =
-        "....B............B...W........B............B............B............B............B............B............B............B............B............B............B........";
-
+    String matrix = "4B12B3W8B12B12B12B12B12B12B12B12B12B12B8";
     Board board = new Board(matrix);
     String result = board.toCompactString();
     assertEquals(matrix, result);
