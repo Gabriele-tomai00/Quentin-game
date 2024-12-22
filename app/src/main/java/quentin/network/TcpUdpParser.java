@@ -92,11 +92,12 @@ public class TcpUdpParser {
 
     private void clientAuth() {
         System.out.println("clientAuth command...");
-        Scanner scanner = new Scanner(System.in);
-        String password;
-        System.out.print("Enter a 5-digit numeric password: ");
-        password = scanner.nextLine().trim();
-        client.trySendAuthentication(password);
+        try (Scanner scanner = new Scanner(System.in)) {
+            String password;
+            System.out.print("Enter a 5-digit numeric password: ");
+            password = scanner.nextLine().trim();
+            client.trySendAuthentication(password);
+        }
     }
 
     private void sendC() {
