@@ -1,4 +1,3 @@
-/* (C)2024 */
 package quentin;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -150,5 +149,25 @@ public class GameTest {
                 () -> assertEquals(BoardPoint.EMPTY, game.getBoard().getPoint(new Cell(0, 3))),
                 () -> assertEquals(BoardPoint.BLACK, game.getBoard().getPoint(new Cell(2, 3))),
                 () -> assertEquals(BoardPoint.BLACK, game.getBoard().getPoint(new Cell(0, 9))));
+    }
+
+    @Test
+    public void letterToIndexTest() {
+        assertEquals(0, game.letterToIndex('A'));
+        assertEquals(1, game.letterToIndex('B'));
+        assertEquals(2, game.letterToIndex('C'));
+        assertEquals(3, game.letterToIndex('D'));
+        assertEquals(4, game.letterToIndex('E'));
+        assertEquals(5, game.letterToIndex('F'));
+        assertEquals(6, game.letterToIndex('G'));
+        assertEquals(7, game.letterToIndex('H'));
+        assertEquals(8, game.letterToIndex('I'));
+        assertEquals(9, game.letterToIndex('J'));
+        assertEquals(10, game.letterToIndex('K'));
+        assertEquals(11, game.letterToIndex('L'));
+        assertEquals(12, game.letterToIndex('M'));
+
+        assertEquals(-1, game.letterToIndex('O'));
+        assertEquals(-1, game.letterToIndex('Z'));
     }
 }

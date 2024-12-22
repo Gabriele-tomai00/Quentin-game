@@ -1,9 +1,6 @@
-/* (C)2024 */
 package quentin;
 
 import java.io.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,8 +10,6 @@ public class CacheHandler {
     // If the program is closed, it uses the cache saved in disk
     private static final String GAME_DIR = System.getProperty("user.home") + "/.quentinGame";
     private static final String CACHE_FILE = GAME_DIR + "/last_match_cache.dat";
-    private static final DateTimeFormatter TIMESTAMP_FORMATTER =
-            DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
     private final BufferedWriter writer;
     private int moveIndex; // helps to decide when and what logs to delete
 
@@ -42,24 +37,48 @@ public class CacheHandler {
         return moveIndex;
     }
 
-    public void saveLog(String compactBoard, Player nextPlayer) {
+    public void saveLog(Game game) {
         try {
             if (moveIndex != logsInMemory.size() - 1) {
                 removeElementsAfterIndex(moveIndex); // REMOVE ALL ELEMENT AFTER INDEX ELEMENT
             }
-
-            String timestamp = LocalDateTime.now().format(TIMESTAMP_FORMATTER);
-            writer.write(timestamp + " " + compactBoard + " " + nextPlayer.color());
+            String nextPlayer = game.getCurrentPlayer().color() == BoardPoint.WHITE ? "B" : "W";
+            writer.write(
+                    game.getTimestampOfLastMove()
+                            + " "
+                            + game.getBoard().toCompactString()
+                            + " "
+                            + nextPlayer
+                            + " "
+                            + game.getMoveCounter());
             writer.newLine();
-            writer.flush(); // Ensure the log is written immediately
             logsInMemory.add(
-                    parseStringLog(timestamp + " " + compactBoard + " " + nextPlayer.color()));
-
+                    parseStringLog(
+                            game.getTimestampOfLastMove()
+                                    + " "
+                                    + game.getBoard().toCompactString()
+                                    + " "
+                                    + nextPlayer
+                                    + " "
+                                    + game.getMoveCounter()));
+            if (logsInMemory.size() > 10) {
+                logsInMemory.remove(0);
+                if (moveIndex > 0) {
+                    moveIndex--;
+                }
+            }
         } catch (IOException e) {
             throw new RuntimeException("Error while saving to cache file", e);
         }
-        moveIndex = moveIndex + 1;
-        System.out.println("moveIndex " + moveIndex + ": " + compactBoard);
+        moveIndex++;
+    }
+
+    public void forceSaveLog() {
+        try {
+            writer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException("Error while saving to cache file");
+        }
     }
 
     public void removeElementsAfterIndex(int index) {
@@ -94,21 +113,26 @@ public class CacheHandler {
         return logsInMemory.size();
     }
 
+    public void decrementIndex() {
+        moveIndex--;
+    }
+
     public BoardLog readLastLog() {
         return readLog(logsInMemory.size() - 1);
     }
 
     private BoardLog parseStringLog(String logLine) {
         String[] toReturn = logLine.split(" ");
-        if (toReturn.length != 3) {
+        if (toReturn.length != 4) {
             throw new IllegalStateException("Log format is incorrect");
         }
-        return new BoardLog(toReturn[0], toReturn[1], toReturn[2]);
+        return new BoardLog(toReturn[0], toReturn[1], toReturn[2], Integer.parseInt(toReturn[3]));
     }
 
     public void clearCache() {
         emptyCacheFile();
         logsInMemory.clear();
+        moveIndex = -1;
     }
 
     public void emptyCacheFile() {
@@ -118,9 +142,5 @@ public class CacheHandler {
         } catch (IOException e) {
             throw new RuntimeException("Failed to clear the cache file", e);
         }
-    }
-
-    public int calculateMoveCounter() {
-        return moveIndex + 1;
     }
 }

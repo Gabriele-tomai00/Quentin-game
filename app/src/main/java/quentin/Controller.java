@@ -81,11 +81,11 @@ public class Controller {
             game.place(cell);
             game.coverTerritories(cell);
             display();
-            if (game.getBoard().hasWon(game.getCurrentPlayer().color())) {
+            if (game.hasWon(game.getCurrentPlayer())) {
                 displayWinner();
             }
             game.changeCurrentPlayer();
-            if (game.getBoard().hasWon(game.getCurrentPlayer().color())) {
+            if (game.hasWon(game.getCurrentPlayer())) {
                 displayWinner();
             }
             displayMessage(game.getCurrentPlayer() + "'s turn!");

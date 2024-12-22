@@ -57,4 +57,14 @@ public class Server {
     public String getCodeForClientAuth() {
         return codeForClientAuth;
     }
+
+    public Boolean isClientAuth() {
+        if (tcpServer == null) return false;
+        return tcpServer.getClientAuth();
+    }
+
+    public String getMessageReceived() {
+        if (tcpServer == null) return null;
+        return tcpServer.getMessageReceived();
+    }
 }

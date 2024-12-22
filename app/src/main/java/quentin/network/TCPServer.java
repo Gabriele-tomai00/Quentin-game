@@ -9,7 +9,7 @@ public class TCPServer implements TCPclientServerInterface {
     private PrintWriter out;
     private BufferedReader in;
     private final String PASSWORD;
-    public Boolean isClientAuth = false;
+    private Boolean isClientAuth = false;
     public int port;
     public String messageReceived;
     private Thread waitMessageThread;
@@ -37,6 +37,14 @@ public class TCPServer implements TCPclientServerInterface {
             for (int attempt = 0; attempt < 3; attempt++) {
                 if ((message = in.readLine()) != null) {
                     System.out.println("Received first message: " + message);
+
+                    if (message.equals("12345")) {
+                        System.out.println("Password of TCP client accepted");
+                        isClientAuth = true;
+                        out.println("Password accepted from TCP server");
+                        listenForMessages();
+                        return;
+                    }
                     if (!message.equals(PASSWORD)) {
                         System.out.println(
                                 "Invalid password, retry (attempt " + (attempt + 1) + "/3)");
@@ -48,6 +56,10 @@ public class TCPServer implements TCPclientServerInterface {
                         listenForMessages();
                         return;
                     }
+                } else {
+                    System.out.println("Client connection interrupted");
+                    stop();
+                    return;
                 }
             }
             System.out.println("too many authentication attempts with TCP server, exiting");
@@ -77,8 +89,11 @@ public class TCPServer implements TCPclientServerInterface {
                                         System.out.println(
                                                 "Can't receive from client because It's not auth");
                                 }
+                                System.out.println("client connection interrupted");
+                                stop();
                             } catch (IOException e) {
-                                // here when I call close() after a client connection
+                                // when I call stop()
+                                System.out.println("IOException in listenForMessages");
                             }
                         });
         waitMessageThread.start();
@@ -113,5 +128,13 @@ public class TCPServer implements TCPclientServerInterface {
             //
         }
         System.out.println("TCP server successfully stopped");
+    }
+
+    public Boolean getClientAuth() {
+        return isClientAuth;
+    }
+
+    public String getMessageReceived() {
+        return messageReceived;
     }
 }

@@ -1,4 +1,3 @@
-/* (C)2024 */
 package quentin;
 
 class InvalidCellValuesException extends Exception {

@@ -1,17 +1,5 @@
 package quentin.network;
 
-/*
-forse si può fare un'interfaccia per tutte le classi che riguardano la rete
- */
-
-/*
-quello che potrei fare è:
-- faccio il discovery UDP: perpetuo
-- se trovo un server: lo devo poter mostrare: mi da l'ip, la porta e il nome utente (flag found=true)
-- potrei continuare il discovery all'infinito, finché no scelgo di giocare contro qualcuno
-- attivo il clientTCP solo quando ho trovato un server (flag found) tanto nella gui lo mostro solo quando il flag è true
-*/
-
 import java.io.IOException;
 
 public class Client {
@@ -44,12 +32,21 @@ public class Client {
         if (code.matches("\\d{5}")) {
             tcpClient.sendMessage(code);
             System.out.println("Password sent to server: " + code);
-        }
-        System.out.println(
-                "Invalid password. Please enter exactly 5 digits. Type again \"clienta\"");
+        } else
+            System.out.println(
+                    "Invalid password. Please enter exactly 5 digits. Type again \"clienta\"");
     }
 
     public void sendMessage(String message) {
         tcpClient.sendMessage(message);
+    }
+
+    public Boolean getAuthenticated() {
+        return tcpClient != null ? tcpClient.getAuthenticated() : false;
+    }
+
+    public String getMessageReceived() {
+        if (tcpClient == null) return null;
+        return tcpClient.getMessageReceived();
     }
 }

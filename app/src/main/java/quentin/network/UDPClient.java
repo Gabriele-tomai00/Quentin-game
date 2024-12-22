@@ -8,55 +8,76 @@ public class UDPClient {
     private Thread discoveryThread;
     private ServerInfo tcpServerInfo;
     private Runnable onDiscoveredCallback;
+    private final String clientAddress;
+
+    public UDPClient() {
+        clientAddress = getCorrectAddress.getLocalIpAddress();
+    }
 
     public ServerInfo getTcpServerInfo() {
         return tcpServerInfo;
     }
 
     public void startDiscovery() {
+        System.out.println("address of udp client: " + clientAddress);
         discoveryThread =
                 new Thread(
                         () -> {
-                            try (DatagramSocket clientSocket = new DatagramSocket()) {
-                                System.out.println("C: server discovery started");
-                                byte[] sendBuffer = "Requesting server information".getBytes();
-                                byte[] receiveBuffer = new byte[1024];
+                            try {
+                                InetAddress localAddress = InetAddress.getByName(clientAddress);
+                                SocketAddress bindAddress = new InetSocketAddress(localAddress, 0);
+                                try (DatagramSocket clientSocket =
+                                        new DatagramSocket(bindAddress)) {
+                                    System.out.println(
+                                            "C: client discovery started using address: "
+                                                    + clientAddress);
+                                    byte[] sendBuffer = "Requesting server information".getBytes();
+                                    byte[] receiveBuffer = new byte[1024];
 
-                                clientSocket.setBroadcast(true); // Enable broadcast mode
+                                    clientSocket.setBroadcast(
+                                            true); // Abilita la modalità broadcast
 
-                                while (discovery) {
-                                    try {
-                                        // Send a broadcast request
-                                        InetAddress broadcastAddress =
-                                                InetAddress.getByName("255.255.255.255");
-                                        DatagramPacket sendPacket =
-                                                new DatagramPacket(
-                                                        sendBuffer,
-                                                        sendBuffer.length,
-                                                        broadcastAddress,
-                                                        UDP_SERVER_PORT);
-                                        clientSocket.send(sendPacket);
+                                    while (discovery) {
+                                        try {
+                                            // Invia una richiesta broadcast
+                                            InetAddress broadcastAddress =
+                                                    InetAddress.getByName("255.255.255.255");
+                                            DatagramPacket sendPacket =
+                                                    new DatagramPacket(
+                                                            sendBuffer,
+                                                            sendBuffer.length,
+                                                            broadcastAddress,
+                                                            UDP_SERVER_PORT);
+                                            clientSocket.send(sendPacket);
 
-                                        System.out.println("Broadcast request sent");
+                                            System.out.println(
+                                                    "Broadcast request sent (to: "
+                                                            + broadcastAddress
+                                                            + " port: "
+                                                            + UDP_SERVER_PORT
+                                                            + ")");
 
-                                        DatagramPacket receivePacket =
-                                                new DatagramPacket(
-                                                        receiveBuffer, receiveBuffer.length);
-                                        clientSocket.setSoTimeout(5000);
-                                        clientSocket.receive(receivePacket);
+                                            DatagramPacket receivePacket =
+                                                    new DatagramPacket(
+                                                            receiveBuffer, receiveBuffer.length);
+                                            clientSocket.setSoTimeout(5000);
+                                            clientSocket.receive(receivePacket);
 
-                                        tcpServerInfo =
-                                                ServerInfo.fromBytes(receivePacket.getData());
-                                        System.out.println("Received ServerInfo: " + tcpServerInfo);
-                                        if (onDiscoveredCallback != null)
-                                            onDiscoveredCallback.run();
+                                            tcpServerInfo =
+                                                    ServerInfo.fromBytes(receivePacket.getData());
+                                            System.out.println(
+                                                    "Received ServerInfo: " + tcpServerInfo);
+                                            if (onDiscoveredCallback != null)
+                                                onDiscoveredCallback.run();
 
-                                        break;
-                                    } catch (Exception e) {
-                                        // here if server is not being found yet
+                                            break;
+                                        } catch (Exception e) {
+                                            // Gestione del caso in cui il server non è ancora stato
+                                            // trovato
+                                        }
+
+                                        Thread.sleep(400);
                                     }
-
-                                    Thread.sleep(400);
                                 }
                             } catch (Exception e) {
                                 System.err.println("Unexpected error in udp client discovery");
