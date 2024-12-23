@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import quentin.exceptions.CellAlreadyTakenException;
+import quentin.exceptions.IllegalMoveException;
 
 public class Game {
   private final Board board;

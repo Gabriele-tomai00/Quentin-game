@@ -1,6 +1,8 @@
 package quentin;
 
 import java.util.Scanner;
+import quentin.exceptions.InvalidCellValuesException;
+import quentin.exceptions.MoveException;
 
 public class TerminalGame implements GameStarter {
 
