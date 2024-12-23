@@ -38,7 +38,6 @@ public class CacheHandler {
   }
 
   public void saveLog(Game game) {
-    System.out.println("moveIndex: " + moveIndex + " logsInMemory.size(): " + logsInMemory.size());
     try {
       if (moveIndex != logsInMemory.size() - 1) {
         removeElementsAfterIndex(moveIndex); // REMOVE ALL ELEMENT AFTER INDEX ELEMENT
@@ -49,7 +48,9 @@ public class CacheHandler {
               + " "
               + game.getBoard().toCompactString()
               + " "
-              + nextPlayer);
+              + nextPlayer
+              + " "
+              + game.getMoveCounter());
       writer.newLine();
       logsInMemory.add(
           parseStringLog(
@@ -57,7 +58,9 @@ public class CacheHandler {
                   + " "
                   + game.getBoard().toCompactString()
                   + " "
-                  + nextPlayer));
+                  + nextPlayer
+                  + " "
+                  + game.getMoveCounter()));
       if (logsInMemory.size() > 10) {
         logsInMemory.remove(0);
         if (moveIndex > 0) {
@@ -120,15 +123,16 @@ public class CacheHandler {
 
   private BoardLog parseStringLog(String logLine) {
     String[] toReturn = logLine.split(" ");
-    if (toReturn.length != 3) {
+    if (toReturn.length != 4) {
       throw new IllegalStateException("Log format is incorrect");
     }
-    return new BoardLog(toReturn[0], toReturn[1], toReturn[2]);
+    return new BoardLog(toReturn[0], toReturn[1], toReturn[2], Integer.parseInt(toReturn[3]));
   }
 
   public void clearCache() {
     emptyCacheFile();
     logsInMemory.clear();
+    moveIndex = -1;
   }
 
   public void emptyCacheFile() {
