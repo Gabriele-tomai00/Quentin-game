@@ -10,6 +10,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import quentin.exceptions.MoveException;
 
 public class Controller {
 

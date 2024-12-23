@@ -10,6 +10,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import quentin.exceptions.CellAlreadyTakenException;
+import quentin.exceptions.IllegalMoveException;
+import quentin.exceptions.MoveException;
 
 public class GameTest {
     Game game = new Game();

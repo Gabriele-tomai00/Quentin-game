@@ -1,5 +1,7 @@
 package quentin;
 
+import quentin.exceptions.InvalidCellValuesException;
+
 public class Parser {
 
     private final String string;
