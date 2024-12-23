@@ -25,6 +25,6 @@ class ParserTest {
                 assertThrows(InvalidCellValuesException.class, () -> new Parser("n1").parse());
         String expectedMessage =
                 String.format("Row values span from 'a' to 'm', received %c", "n3".charAt(0));
-        assertTrue(exception.getMessage().contains(expectedMessage));
+        assertTrue(expectedMessage.contains(exception.getMessage()));
     }
 }

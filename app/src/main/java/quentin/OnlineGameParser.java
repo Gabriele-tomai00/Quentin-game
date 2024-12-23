@@ -2,11 +2,12 @@ package quentin;
 
 import java.io.IOException;
 import java.util.Scanner;
+
 import quentin.network.Client;
 import quentin.network.Server;
 
 public class OnlineGameParser {
-    private Game game;
+    private LocalGame game;
     Scanner scanner;
     Client client = new Client();
     Server server = new Server();
@@ -97,7 +98,7 @@ public class OnlineGameParser {
     }
 
     private void initialize() {
-        game = new Game();
+        game = new LocalGame();
         if (!isOnline) return;
         System.out.println("New game started!");
         System.out.println(game.getBoard());
@@ -311,8 +312,8 @@ public class OnlineGameParser {
 
     private void sendBoard() {
         if (!isOnline) return;
-        if (isServer) server.sendMessage(game.board.toCompactString());
-        else client.sendMessage(game.board.toCompactString());
+        if (isServer) server.sendMessage(game.getBoard().toCompactString());
+        else client.sendMessage(game.getBoard().toCompactString());
 
         System.out.println("Board sent to " + (isServer ? "client" : "server"));
     }
@@ -325,7 +326,7 @@ public class OnlineGameParser {
             return false;
         }
         try {
-            game.board.fromCompactString(compactBoard);
+            game.getBoard().fromCompactString(compactBoard);
             System.err.println("Compact string accettata: " + compactBoard);
             lastMessageReceived = compactBoard;
             return true;

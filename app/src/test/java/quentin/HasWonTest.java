@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test; // Test of JUnit 5
 
 public class HasWonTest {
 
-    Game game = new Game();
+    LocalGame game = new LocalGame();
 
     @Test
     public void hasWonException() {
