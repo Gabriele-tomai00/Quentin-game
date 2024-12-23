@@ -84,6 +84,7 @@ public class TerminalGame implements GameStarter {
             }
         }
     }
+
   }
 
     //    private void initialize() {
@@ -129,8 +130,11 @@ public class TerminalGame implements GameStarter {
     public void displayMessage(String format) {
         System.out.printf("%s please place a stone:", game.getCurrentPlayer());
     }
-    System.out.println(game.getBoard());
-    System.out.println("It's your turn: " + game.getCurrentPlayer());
+  }
+
+  @Override
+  public void displayMessage(String format) {
+    System.out.printf("%s please place a stone:", game.getCurrentPlayer());
   }
 
     private void makeMove(String input) {
