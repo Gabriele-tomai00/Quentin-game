@@ -33,7 +33,12 @@ public class CacheHandler {
     }
   }
 
+  public int getMoveIndex() {
+    return moveIndex;
+  }
+
   public void saveLog(Game game) {
+    System.out.println("moveIndex: " + moveIndex + " logsInMemory.size(): " + logsInMemory.size());
     try {
       if (moveIndex != logsInMemory.size() - 1) {
         removeElementsAfterIndex(moveIndex); // REMOVE ALL ELEMENT AFTER INDEX ELEMENT
@@ -53,18 +58,23 @@ public class CacheHandler {
                   + game.getBoard().toCompactString()
                   + " "
                   + nextPlayer));
-
+      if (logsInMemory.size() > 10) {
+        logsInMemory.remove(0);
+        if (moveIndex > 0) {
+          moveIndex--;
+        }
+      }
     } catch (IOException e) {
       throw new RuntimeException("Error while saving to cache file", e);
     }
-    moveIndex = moveIndex + 1;
+    moveIndex++;
   }
 
   public void forceSaveLog() {
     try {
       writer.flush();
     } catch (IOException e) {
-      throw new RuntimeException("Error while saving to cache file", e);
+      throw new RuntimeException("Error while saving to cache file");
     }
   }
 
@@ -98,6 +108,10 @@ public class CacheHandler {
 
   public int getLogCounter() {
     return logsInMemory.size();
+  }
+
+  public void decrementIndex() {
+    moveIndex--;
   }
 
   public BoardLog readLastLog() {
