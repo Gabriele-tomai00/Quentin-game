@@ -46,8 +46,9 @@ public class Game {
   public boolean findWinnerPath(BoardPoint color, Cell startPoint) {
     Set<Cell> visited = new HashSet<Cell>();
     Deque<Cell> toVisit = new LinkedList<Cell>();
-//        visited.add(startPoint);
+
     toVisit.push(startPoint);
+
     while (!toVisit.isEmpty()) {
       Cell visiting = toVisit.pop();
       if ((color == BoardPoint.WHITE && visiting.col() == boardSize() - 1)
@@ -63,18 +64,39 @@ public class Game {
     return false;
   }
 
+  public void place(Cell cell) {
+    if (isFirstMove) {
+      cacheHandler.saveLog(this);
+      isFirstMove = false;
+    }
+
+    if (!isMoveValid(currentPlayer.color(), cell)) { throw new IllegalMoveException(cell); }
+    timestampOfLastMove = LocalDateTime.now()
+                                       .format(TIMESTAMP_FORMATTER);
+    board.placeStone(currentPlayer.color(), cell.row(), cell.col());
+    moveCounter++;
+    cacheHandler.saveLog(this);
+    // System.out.println(
+    // "FINE PLEACE: indice dal cache: "
+    // + cacheHandler.getMoveIndex()
+    // + " moveCounter: "
+    // + moveCounter);
+  }
+
   public void coverTerritories(Cell cell) {
     Set<Cell> neighbors = getNeighbors(cell);
-    for (Cell neigh : neighbors) {
-      if (board.getPoint(neigh) != BoardPoint.EMPTY) { continue; }
-      Set<Cell> territory = findTerritories(neigh);
+    for (Cell neighbor : neighbors) {
+      if (board.getPoint(neighbor) != BoardPoint.EMPTY) { continue; }
+      Set<Cell> territory = findTerritories(neighbor);
       Set<Cell> frontier = new HashSet<Cell>();
       for (Cell tile : territory) { frontier.addAll(getNeighbors(tile)); }
       int whites = (int) frontier.stream()
+                                 .parallel()
                                  .map(board::getPoint)
                                  .filter(a -> a == BoardPoint.WHITE)
                                  .count();
       int blacks = (int) frontier.stream()
+                                 .parallel()
                                  .map(board::getPoint)
                                  .filter(a -> a == BoardPoint.BLACK)
                                  .count();
@@ -92,21 +114,27 @@ public class Game {
     }
   }
 
-  public Set<Cell> findTerritories(Cell cell) {
+  public Player getCurrentPlayer() {
+    return currentPlayer;
+  }
+
+  public Set<Cell> findTerritories(Cell startingCell) {
     Set<Cell> territory = new HashSet<Cell>();
     Deque<Cell> visiting = new LinkedList<Cell>();
-    visiting.add(cell);
+    visiting.add(startingCell);
+
     while (!visiting.isEmpty()) {
-      Cell tile = visiting.pop();
-      Set<Cell> neighbors = getNeighbors(tile);
+      Cell cell = visiting.pop();
+      Set<Cell> neighbors = getNeighbors(cell);
       if (neighbors.stream()
                    .map(board::getPoint)
                    .filter(a -> a != BoardPoint.EMPTY)
                    .count() < 2) {
         return Collections.emptySet();
       }
-      territory.add(tile);
+      territory.add(cell);
       visiting.addAll(neighbors.stream()
+                               .parallel()
                                .filter(a -> board.getPoint(a) == BoardPoint.EMPTY && !territory.contains(a))
                                .toList());
     }
@@ -117,18 +145,14 @@ public class Game {
     int row = pos.row();
     int col = pos.col();
     Set<Cell> neighbors = new HashSet<Cell>();
-    if (row > 0)
-      neighbors.add(new Cell(row - 1, col));
-    if (col > 0)
-      neighbors.add(new Cell(row, col - 1));
-    if (row < board.size() - 1)
-      neighbors.add(new Cell(row + 1, col));
-    if (col < board.size() - 1)
-      neighbors.add(new Cell(row, col + 1));
+    if (row > 0) { neighbors.add(new Cell(row - 1, col)); }
+    if (col > 0) { neighbors.add(new Cell(row, col - 1)); }
+    if (row < board.size() - 1) { neighbors.add(new Cell(row + 1, col)); }
+    if (col < board.size() - 1) { neighbors.add(new Cell(row, col + 1)); }
     return neighbors;
   }
 
-  public boolean isValid(BoardPoint color, Cell cell) throws CellAlreadyTakenException {
+  public boolean isMoveValid(BoardPoint color, Cell cell) {
     if (board.getPoint(cell) != BoardPoint.EMPTY) { throw new CellAlreadyTakenException(cell); }
     int row = cell.row();
     int col = cell.col();
@@ -153,52 +177,6 @@ public class Game {
       }
     }
     return true;
-  }
-
-  public void place(Cell cell) throws MoveException {
-    if (isFirstMove) {
-      cacheHandler.saveLog(this);
-      isFirstMove = false;
-    }
-
-    if (!isValid(currentPlayer.color(), cell)) {
-      throw new IllegalMoveException(String.format("Cell %s is not connected orthogonally one or more diagonally connected"
-          + " cells of the same color", cell));
-    }
-    timestampOfLastMove = LocalDateTime.now()
-                                       .format(TIMESTAMP_FORMATTER);
-    board.placeStone(currentPlayer.color(), cell.row(), cell.col());
-    moveCounter++;
-    cacheHandler.saveLog(this);
-    // System.out.println(
-    // "FINE PLEACE: indice dal cache: "
-    // + cacheHandler.getMoveIndex()
-    // + " moveCounter: "
-    // + moveCounter);
-  }
-
-  public boolean canPlayerPlay() {
-    for (int row = 0; row < board.size(); row++) {
-      for (int col = 0; col < board.size(); col++) {
-        try {
-          if (isValid(currentPlayer.color(), new Cell(row, col))) { return true; }
-        } catch (CellAlreadyTakenException e) {
-          // do nothing
-        }
-      }
-    }
-    return false;
-  }
-
-  public Player getCurrentPlayer() {
-    return currentPlayer;
-  }
-
-  public void changeCurrentPlayer() {
-    if (currentPlayer.color() == BoardPoint.WHITE)
-      currentPlayer = black;
-    else
-      currentPlayer = white;
   }
 
   public int letterToIndex(char letter) {
@@ -271,6 +249,22 @@ public class Game {
 
   public int getMoveCounter() {
     return moveCounter;
+  }
+
+  public boolean canPlayerPlay() {
+    for (int row = 0; row < board.size(); row++) {
+      for (int col = 0; col < board.size(); col++) {
+        if (isMoveValid(currentPlayer.color(), new Cell(row, col))) { return true; }
+      }
+    }
+    return false;
+  }
+
+  public void changeCurrentPlayer() {
+    if (currentPlayer.color() == BoardPoint.WHITE)
+      currentPlayer = black;
+    else
+      currentPlayer = white;
   }
 
   public Board getBoard() {
