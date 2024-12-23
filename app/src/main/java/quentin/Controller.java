@@ -12,25 +12,26 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import quentin.exceptions.MoveException;
 
-public class Controller {
+public class Controller implements GameStarter {
 
     private final Pane[][] panes;
     private LocalGame game;
+    @FXML private GridPane board;
+    @FXML private GridPane base;
+    @FXML private Label textField;
+    @FXML private Label winnerText;
+
+    @FXML private Button displayWinner;
+    @FXML private Button reset;
+    @FXML private Label startPane;
+    private Background black = Background.fill(Color.BLACK);
+    private Background white = Background.fill(Color.WHITE);
 
     public Controller() {
         super();
         this.panes = new Pane[13][13];
         this.game = new LocalGame();
     }
-
-    @FXML private GridPane gridPane;
-    @FXML private Label textField;
-    @FXML private Label winnerText;
-
-    @FXML private Button displayWinner;
-    @FXML private Button reset;
-    private Background black = Background.fill(Color.BLACK);
-    private Background white = Background.fill(Color.WHITE);
 
     @FXML
     public void initialize() {
@@ -40,24 +41,33 @@ public class Controller {
                 panes[i][j].addEventHandler(MouseEvent.MOUSE_CLICKED, this::placeCell);
                 panes[i][j].setStyle("-fx-border-color: grey");
                 // pane.setPrefSize(30, 30);
-                gridPane.add(panes[i][j], j, i);
+                board.add(panes[i][j], j, i);
             }
         }
+    }
+
+    public void start() {
         displayMessage(game.getCurrentPlayer() + "'s turn!");
+        startPane.toBack();
+        base.setEffect(null);
+        base.setOpacity(1);
+        display();
     }
 
-    protected void displayMessage(Object obj) {
-        textField.setText(obj instanceof String ? (String) obj : obj.toString());
+    @Override
+    public void displayMessage(String message) {
+        textField.setText(message);
     }
 
-    protected void displayWinner() {
+    public void displayWinner() {
         winnerText.setText(new String(game.getCurrentPlayer() + " wins").toUpperCase());
         winnerText.toFront();
-        gridPane.setEffect(new BoxBlur());
-        gridPane.setOpacity(.5);
+        base.setEffect(new BoxBlur());
+        base.setOpacity(.5);
+        startPane.setOpacity(0);
     }
 
-    protected void display() {
+    public void display() {
 
         BoardPoint[][] board = game.getBoard().getBoard();
         for (int i = 0; i < 13; i++) {
@@ -91,7 +101,6 @@ public class Controller {
             }
             displayMessage(game.getCurrentPlayer() + "'s turn!");
         } catch (MoveException e1) {
-            // TODO Auto-generated catch block
             displayMessage(e1.getMessage());
         }
     }
@@ -99,12 +108,21 @@ public class Controller {
     public void reset(ActionEvent e) {
         game = new LocalGame();
         winnerText.toBack();
-        gridPane.setEffect(null);
-        gridPane.setOpacity(1);
-        display();
+        startPane.toFront();
+        base.setOpacity(.5);
+        base.setEffect(new BoxBlur());
+        winnerText.setText("");
+        startPane.setOpacity(1);
+        textField.setText(null);
     }
 
     public void displayWinner(ActionEvent e) {
         displayWinner();
+    }
+
+    @Override
+    public void startDisplay() {
+        // TODO Auto-generated method stub
+
     }
 }

@@ -2,7 +2,6 @@ package quentin;
 
 import java.io.IOException;
 import java.util.Scanner;
-
 import quentin.network.Client;
 import quentin.network.Server;
 
