@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test; // Test of JUnit 5
 
+import quentin.exceptions.MoveException;
+
 public class CacheHandlerTest {
   LocalGame game = new LocalGame();
 
