@@ -1,6 +1,10 @@
 package quentin;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -11,20 +15,37 @@ public class GameTest {
     Game game = new Game();
 
     @Test
-    public void testMoveIsValid() throws MoveException {
-
-        assertTrue(game.isValid(game.getCurrentPlayer().color(), new Cell(0, 0)));
-
+    public void testMoveIsValid() {
+        assertTrue(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(0, 0)));
         game.place(new Cell(0, 0));
-        assertFalse(game.isValid(game.getCurrentPlayer().color(), new Cell(1, 1)));
-        assertTrue(game.isValid(game.getCurrentPlayer().color(), new Cell(12, 12)));
+        assertTrue(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(12, 12)));
+        // Now it is not valid
+        assertFalse(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(1, 1)));
         game.place(new Cell(0, 1));
-        assertTrue(game.isValid(game.getCurrentPlayer().color(), new Cell(1, 1)));
+        // Now it is
+        assertTrue(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(1, 1)));
         game.changeCurrentPlayer();
         game.place(new Cell(1, 1));
         game.changeCurrentPlayer();
-        assertTrue(game.isValid(game.getCurrentPlayer().color(), new Cell(2, 1)));
+        assertTrue(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(2, 1)));
         game.place(new Cell(2, 1));
+    }
+
+    @Test
+    void exceptionsTest() {
+        game.place(new Cell(0, 0));
+        MoveException exception =
+                assertThrows(
+                        CellAlreadyTakenException.class,
+                        () -> game.isMoveValid(game.getCurrentPlayer().color(), new Cell(0, 0)));
+        String expectedMessage = "Cell (a, 1) is not empty!";
+        String actualMessage = exception.getMessage();
+        assertTrue(expectedMessage.contains(actualMessage));
+        MoveException exception2 =
+                assertThrows(IllegalMoveException.class, () -> game.place(new Cell(1, 1)));
+        expectedMessage = "Cell (b, 2), is not connected to other cells of the same color!";
+        actualMessage = exception2.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test

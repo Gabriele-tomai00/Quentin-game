@@ -27,7 +27,7 @@ public class Parser {
      *
      * }
      */
-    public Cell parse() throws InvalidCellValuesException {
+    public Cell parse() {
 
         int row;
         if (string.substring(0, 1).matches("[a-m]")) {

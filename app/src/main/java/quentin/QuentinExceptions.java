@@ -1,6 +1,6 @@
 package quentin;
 
-class InvalidCellValuesException extends Exception {
+class InvalidCellValuesException extends RuntimeException {
 
     private static final long serialVersionUID = -297542594333253705L;
 
@@ -9,32 +9,31 @@ class InvalidCellValuesException extends Exception {
     }
 }
 
-class MoveException extends Exception {
+class MoveException extends RuntimeException {
 
     private static final long serialVersionUID = 4207157178820508022L;
+    private final Cell cell;
 
-    public MoveException() {
-        super();
+    public MoveException(Cell cell) {
+        this.cell = cell;
     }
 
-    public MoveException(String message) {
-        super(message);
+    public Cell getCell() {
+        return cell;
     }
 }
 
 class CellAlreadyTakenException extends MoveException {
 
     private static final long serialVersionUID = 3817524499307938631L;
-    private final Cell cell;
 
     public CellAlreadyTakenException(Cell cell) {
-        super();
-        this.cell = cell;
+        super(cell);
     }
 
     @Override
-    public String toString() {
-        return String.format("Cell %s is not empty!", cell);
+    public String getMessage() {
+        return String.format("Cell %s is not empty!", getCell());
     }
 }
 
@@ -42,11 +41,13 @@ class IllegalMoveException extends MoveException {
 
     private static final long serialVersionUID = 2693504242559053588L;
 
-    public IllegalMoveException() {
-        super();
+    public IllegalMoveException(Cell cell) {
+        super(cell);
     }
 
-    public IllegalMoveException(String message) {
-        super(message);
+    @Override
+    public String getMessage() {
+        return String.format(
+                "Cell %s, is not connected to other cells of the same color!", getCell());
     }
 }
