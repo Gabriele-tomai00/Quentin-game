@@ -10,7 +10,5 @@ public interface GameStarter {
 
   public void displayWinner();
 
-  public Cell getInput();
-
   public void display();
 }

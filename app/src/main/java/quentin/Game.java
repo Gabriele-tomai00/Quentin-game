@@ -10,10 +10,8 @@ import java.util.List;
 import java.util.Set;
 
 public class Game {
-  private final Player white;
-  private final Player black;
-  public final Board board;
-  private Player currentPlayer;
+  private final Board board;
+  protected Player currentPlayer;
   private final CacheHandler cacheHandler;
   private Boolean matchInProgress;
   private String timestampOfLastMove;
@@ -22,9 +20,14 @@ public class Game {
   private boolean isFirstMove = true;
 
   public Game() {
-    white = new Player(BoardPoint.WHITE);
-    black = new Player(BoardPoint.BLACK);
-    currentPlayer = black;
+    currentPlayer = new Player(BoardPoint.BLACK);
+    board = new Board();
+    cacheHandler = new CacheHandler();
+    matchInProgress = true;
+  }
+
+  public Game(BoardPoint color) {
+    currentPlayer = new Player(color);
     board = new Board();
     cacheHandler = new CacheHandler();
     matchInProgress = true;
@@ -43,7 +46,7 @@ public class Game {
     return false;
   }
 
-  public boolean findWinnerPath(BoardPoint color, Cell startPoint) {
+  boolean findWinnerPath(BoardPoint color, Cell startPoint) {
     Set<Cell> visited = new HashSet<Cell>();
     Deque<Cell> toVisit = new LinkedList<Cell>();
 
@@ -62,25 +65,6 @@ public class Game {
       visited.add(visiting);
     }
     return false;
-  }
-
-  public void place(Cell cell) {
-    if (isFirstMove) {
-      cacheHandler.saveLog(this);
-      isFirstMove = false;
-    }
-
-    if (!isMoveValid(currentPlayer.color(), cell)) { throw new IllegalMoveException(cell); }
-    timestampOfLastMove = LocalDateTime.now()
-                                       .format(TIMESTAMP_FORMATTER);
-    board.placeStone(currentPlayer.color(), cell.row(), cell.col());
-    moveCounter++;
-    cacheHandler.saveLog(this);
-    // System.out.println(
-    // "FINE PLEACE: indice dal cache: "
-    // + cacheHandler.getMoveIndex()
-    // + " moveCounter: "
-    // + moveCounter);
   }
 
   public void coverTerritories(Cell cell) {
@@ -106,19 +90,14 @@ public class Game {
         for (Cell tile : territory) { board.placeStone(BoardPoint.BLACK, tile.row(), tile.col()); }
       } else {
         for (Cell tile : territory) {
-          changeCurrentPlayer();
-          board.placeStone(currentPlayer.color(), tile.row(), tile.col());
-          changeCurrentPlayer();
+          BoardPoint color = currentPlayer.color() == BoardPoint.BLACK ? BoardPoint.WHITE : BoardPoint.BLACK;
+          board.placeStone(color, tile.row(), tile.col());
         }
       }
     }
   }
 
-  public Player getCurrentPlayer() {
-    return currentPlayer;
-  }
-
-  public Set<Cell> findTerritories(Cell startingCell) {
+  Set<Cell> findTerritories(Cell startingCell) {
     Set<Cell> territory = new HashSet<Cell>();
     Deque<Cell> visiting = new LinkedList<Cell>();
     visiting.add(startingCell);
@@ -141,7 +120,7 @@ public class Game {
     return territory;
   }
 
-  public Set<Cell> getNeighbors(Cell pos) {
+  Set<Cell> getNeighbors(Cell pos) {
     int row = pos.row();
     int col = pos.col();
     Set<Cell> neighbors = new HashSet<Cell>();
@@ -177,6 +156,29 @@ public class Game {
       }
     }
     return true;
+  }
+
+  public void place(Cell cell) {
+    if (isFirstMove) {
+      cacheHandler.saveLog(this);
+      isFirstMove = false;
+    }
+
+    if (!isMoveValid(currentPlayer.color(), cell)) { throw new IllegalMoveException(cell); }
+    timestampOfLastMove = LocalDateTime.now()
+                                       .format(TIMESTAMP_FORMATTER);
+    board.placeStone(currentPlayer.color(), cell.row(), cell.col());
+    moveCounter++;
+    cacheHandler.saveLog(this);
+    // System.out.println(
+    // "FINE PLEACE: indice dal cache: "
+    // + cacheHandler.getMoveIndex()
+    // + " moveCounter: "
+    // + moveCounter);
+  }
+
+  public Player getCurrentPlayer() {
+    return currentPlayer;
   }
 
   public int letterToIndex(char letter) {
@@ -258,13 +260,6 @@ public class Game {
       }
     }
     return false;
-  }
-
-  public void changeCurrentPlayer() {
-    if (currentPlayer.color() == BoardPoint.WHITE)
-      currentPlayer = black;
-    else
-      currentPlayer = white;
   }
 
   public Board getBoard() {

@@ -14,12 +14,12 @@ import javafx.scene.paint.Color;
 public class Controller {
 
     private final Pane[][] panes;
-    private Game game;
+    private LocalGame game;
 
     public Controller() {
         super();
         this.panes = new Pane[13][13];
-        this.game = new Game();
+        this.game = new LocalGame();
     }
 
     @FXML private GridPane gridPane;
@@ -96,7 +96,7 @@ public class Controller {
     }
 
     public void reset(ActionEvent e) {
-        game = new Game();
+        game = new LocalGame();
         winnerText.toBack();
         gridPane.setEffect(null);
         gridPane.setOpacity(1);
