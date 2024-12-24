@@ -1,4 +1,3 @@
-/* (C)2024 */
 package quentin;
 
 import static org.junit.jupiter.api.Assertions.*;

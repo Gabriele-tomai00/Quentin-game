@@ -1,6 +1,7 @@
-/* (C)2024 */
 package quentin;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
@@ -11,14 +12,23 @@ public class Game {
 
     private final Player white;
     private final Player black;
-    private final Board board;
+    public final Board board;
     private Player currentPlayer;
+    private final CacheHandler cacheHandler;
+    private Boolean matchInProgress;
+    private String timestampOfLastMove;
+    private static final DateTimeFormatter TIMESTAMP_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+    private int moveCounter = 0;
+    private boolean isFirstMove = true;
 
     public Game() {
         white = new Player(BoardPoint.WHITE);
         black = new Player(BoardPoint.BLACK);
         currentPlayer = black;
         board = new Board();
+        cacheHandler = new CacheHandler();
+        matchInProgress = true;
     }
 
     public void coverTerritories(Cell cell) {
@@ -28,7 +38,7 @@ public class Game {
                 continue;
             }
             Set<Cell> territory = findTerritories(neigh);
-            Set<Cell> frontier = new HashSet<Cell>();
+            Set<Cell> frontier = new HashSet<>();
             for (Cell tile : territory) {
                 frontier.addAll(getNeighbors(tile));
             }
@@ -63,8 +73,8 @@ public class Game {
     }
 
     public Set<Cell> findTerritories(Cell cell) {
-        Set<Cell> territory = new HashSet<Cell>();
-        Deque<Cell> visiting = new LinkedList<Cell>();
+        Set<Cell> territory = new HashSet<>();
+        Deque<Cell> visiting = new LinkedList<>();
         visiting.add(cell);
         while (!visiting.isEmpty()) {
             Cell tile = visiting.pop();
@@ -88,7 +98,7 @@ public class Game {
     public Set<Cell> getNeighbors(Cell pos) {
         int row = pos.row();
         int col = pos.col();
-        Set<Cell> neighbors = new HashSet<Cell>();
+        Set<Cell> neighbors = new HashSet<>();
         if (row > 0) neighbors.add(new Cell(row - 1, col));
         if (col > 0) neighbors.add(new Cell(row, col - 1));
         if (row < board.size() - 1) neighbors.add(new Cell(row + 1, col));
@@ -127,10 +137,8 @@ public class Game {
         if (row < board.size() - 1
                 && col < board.size() - 1
                 && board.getPoint(new Cell(row + 1, col + 1)) == color) {
-            if (board.getPoint(new Cell(row, col + 1)) != color
-                    && board.getPoint(new Cell(row + 1, col)) != color) {
-                return false;
-            }
+            return board.getPoint(new Cell(row, col + 1)) == color
+                    || board.getPoint(new Cell(row + 1, col)) == color;
         }
         return true;
     }
@@ -151,14 +159,28 @@ public class Game {
     }
 
     public void place(Cell cell) throws MoveException {
+        if (isFirstMove) {
+            cacheHandler.saveLog(this);
+            isFirstMove = false;
+        }
+
         if (!isValid(currentPlayer.color(), cell)) {
+            System.out.println("Invalid move");
             throw new IllegalMoveException(
                     String.format(
                             "Cell %s is not connected orthogonally one or more diagonally connected"
                                     + " cells of the same color",
                             cell));
         }
+        timestampOfLastMove = LocalDateTime.now().format(TIMESTAMP_FORMATTER);
         board.placeStone(currentPlayer.color(), cell.row(), cell.col());
+        moveCounter++;
+        cacheHandler.saveLog(this);
+        System.out.println(
+                "FINE PLEACE: indice dal cache: "
+                        + cacheHandler.getMoveIndex()
+                        + " moveCounter: "
+                        + moveCounter);
     }
 
     public Player getCurrentPlayer() {
@@ -176,5 +198,78 @@ public class Game {
 
     public int boardSize() {
         return board.size();
+    }
+
+    public int letterToIndex(char letter) {
+        // Convert the character to uppercase to handle both cases
+        char upperLetter = Character.toUpperCase(letter);
+        if (upperLetter < 'A' || upperLetter > 'M') {
+            return -1;
+        }
+        return upperLetter - 'A';
+    }
+
+    public Boolean currentPlayerHasWon() {
+        if (board.hasWon(currentPlayer.color())) {
+            matchInProgress = false;
+            return true;
+        } else return false;
+    }
+
+    public void stop() {
+        cacheHandler.forceSaveLog();
+    }
+
+    public Boolean isInProgress() {
+        return matchInProgress;
+    }
+
+    public boolean isOldMatch() {
+        try {
+            cacheHandler.loadLogsInMemoryFromDisk();
+            cacheHandler.readLastLog();
+        } catch (Exception e) {
+            System.out.println("NO Previous match found");
+            return false;
+        }
+        return true;
+    }
+
+    public void getOldMatch() {
+        BoardLog log = cacheHandler.readLastLog();
+        board.fromCompactString(log.board());
+        timestampOfLastMove = log.timestamp();
+        currentPlayer = new Player(BoardPoint.fromString(log.nextMove()));
+        moveCounter = log.moveCounter();
+        matchInProgress = true;
+        cacheHandler.clearCache();
+    }
+
+    public void removeOldMatches() {
+        cacheHandler.clearCache();
+    }
+
+    public String getTimestampOfLastMove() {
+        return timestampOfLastMove;
+    }
+
+    public void goBackOneMove() {
+        if (cacheHandler.getMoveIndex() <= 0) {
+            System.out.println("No previous move found");
+            return;
+        }
+        try {
+            cacheHandler.decrementIndex();
+            BoardLog log = cacheHandler.readLog(cacheHandler.getMoveIndex());
+            board.fromCompactString(log.board());
+            currentPlayer = new Player(BoardPoint.fromString(log.nextMove()));
+            moveCounter--;
+        } catch (Exception e) {
+            System.out.println("No previous move found");
+        }
+    }
+
+    public int getMoveCounter() {
+        return moveCounter;
     }
 }
