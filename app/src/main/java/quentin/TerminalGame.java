@@ -85,7 +85,10 @@ public class TerminalGame implements GameStarter {
         }
     }
 
-  }
+    private void undoMove() {
+        game.goBackOneMove();
+        System.out.println(game.getBoard());
+    }
 
     //    private void initialize() {
     //        try (BufferedReader br = new BufferedReader(new FileReader(new File(CLEAR)))) {
