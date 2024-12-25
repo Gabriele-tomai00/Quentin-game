@@ -176,11 +176,11 @@ public class Game {
         board.placeStone(currentPlayer.color(), cell.row(), cell.col());
         moveCounter++;
         cacheHandler.saveLog(this);
-        System.out.println(
-                "FINE PLEACE: indice dal cache: "
-                        + cacheHandler.getMoveIndex()
-                        + " moveCounter: "
-                        + moveCounter);
+        //        System.out.println(
+        //                "FINE PLEACE: indice dal cache: "
+        //                        + cacheHandler.getMoveIndex()
+        //                        + " moveCounter: "
+        //                        + moveCounter);
     }
 
     public Player getCurrentPlayer() {
