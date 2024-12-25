@@ -49,7 +49,7 @@ public class TCPClient implements TCPclientServerInterface {
                                     while ((serverMessage = in.readLine()) != null) {
                                         System.out.println(
                                                 "Received from server: " + serverMessage);
-
+                                        messageReceived = serverMessage;
                                         if (!authenticated) {
                                             if (serverMessage.equals(
                                                     "Password accepted from TCP server")) {
@@ -82,5 +82,13 @@ public class TCPClient implements TCPclientServerInterface {
 
     public String getServerUsername() {
         return serverUsername;
+    }
+
+    public Boolean getAuthenticated() {
+        return authenticated;
+    }
+
+    public String getMessageReceived() {
+        return messageReceived;
     }
 }

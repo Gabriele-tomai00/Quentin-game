@@ -9,7 +9,7 @@ public class TCPServer implements TCPclientServerInterface {
     private PrintWriter out;
     private BufferedReader in;
     private final String PASSWORD;
-    public Boolean isClientAuth = false;
+    private Boolean isClientAuth = false;
     public int port;
     public String messageReceived;
     private Thread waitMessageThread;
@@ -37,6 +37,14 @@ public class TCPServer implements TCPclientServerInterface {
             for (int attempt = 0; attempt < 3; attempt++) {
                 if ((message = in.readLine()) != null) {
                     System.out.println("Received first message: " + message);
+
+                    if (message.equals("12345")) {
+                        System.out.println("Password of TCP client accepted");
+                        isClientAuth = true;
+                        out.println("Password accepted from TCP server");
+                        listenForMessages();
+                        return;
+                    }
                     if (!message.equals(PASSWORD)) {
                         System.out.println(
                                 "Invalid password, retry (attempt " + (attempt + 1) + "/3)");
@@ -113,5 +121,13 @@ public class TCPServer implements TCPclientServerInterface {
             //
         }
         System.out.println("TCP server successfully stopped");
+    }
+
+    public Boolean getClientAuth() {
+        return isClientAuth;
+    }
+
+    public String getMessageReceived() {
+        return messageReceived;
     }
 }
