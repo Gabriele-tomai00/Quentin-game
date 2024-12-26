@@ -8,10 +8,12 @@ public class UDPServer {
     private Thread discoveryThread;
     private final String username;
     private final int tcpPort;
+    private final String address;
 
     public UDPServer(String user, int tcpPortToComunicate) {
         username = user;
         tcpPort = tcpPortToComunicate;
+        address = getCorrectAddress.getLocalIpAddress();
     }
 
     public void startServer() {
@@ -21,7 +23,10 @@ public class UDPServer {
                             try (DatagramSocket serverSocket =
                                     new DatagramSocket(UDP_SERVER_PORT)) {
                                 System.out.println(
-                                        "UDP Server is listening on port " + UDP_SERVER_PORT);
+                                        "UDP Server is listening: ip "
+                                                + address
+                                                + " port "
+                                                + UDP_SERVER_PORT);
                                 byte[] receiveBuffer = new byte[1024];
                                 discovery = true;
                                 serverSocket.setSoTimeout(
@@ -47,10 +52,7 @@ public class UDPServer {
 
                                         // Prepare the response message
                                         ServerInfo serverInfo =
-                                                new ServerInfo(
-                                                        InetAddress.getLocalHost().getHostAddress(),
-                                                        tcpPort,
-                                                        username);
+                                                new ServerInfo(address, tcpPort, username);
 
                                         byte[] sendBuffer = serverInfo.toBytes();
 
@@ -63,7 +65,11 @@ public class UDPServer {
                                                         clientPort);
                                         serverSocket.send(sendPacket);
 
-                                        System.out.println("UDP: Response sent to client.");
+                                        System.out.println(
+                                                "UDP: Response sent to client: "
+                                                        + serverInfo
+                                                        + " clientAddress: "
+                                                        + clientAddress);
                                     } catch (SocketTimeoutException e) {
                                         // Timeout occurred: Check if we need to stop
                                         if (!discovery) {
