@@ -107,52 +107,63 @@ public class OnlineGameParser {
             System.out.print("It's your turn to play ");
         } else if (isClient) {
             System.out.println("I'm client");
-            isWaiting = true;
             game.changeCurrentPlayer();
             waitMove();
         }
     }
 
     private void waitMove() {
-        if (isClient) {
-            System.out.println("Waiting for messages...");
-            while (true) {
-                String message = client.getMessageReceived();
-                if (isMessageValid(message)) {
-                    System.out.println("Message valid.");
-                    break; // Exit when board is valid
-                }
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    System.err.println("Thread interrupted while waiting for messages.");
-                    return;
-                }
-            }
-            System.out.println("out of while");
-        } else if (isServer) {
-            System.out.println("Waiting for messages...");
-            while (true) {
-                String message = server.getMessageReceived();
-                if (isMessageValid(message)) {
-                    System.out.println("Message valid.");
-                    break; // Esce dal ciclo quando il messaggio è valido
-                }
-                try {
-                    Thread.sleep(500); // Attendi un po' prima di riprovare
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    System.err.println("Thread interrupted while waiting for messages.");
-                    return; // Esci in caso di interruzione
-                }
-            }
-            System.out.println("out of while");
-        }
-        System.out.println(game.getBoard());
-
-        isWaiting = false;
-        System.out.print("It's your turn to play ");
+        Thread threadWaitMove =
+                new Thread(
+                        () -> {
+                            isWaiting = true;
+                            System.out.println("Waiting for messages...");
+                            if (isClient) {
+                                while (true) {
+                                    String message = client.getMessageReceived();
+                                    if (isMessageValid(message)) {
+                                        System.out.println("Message valid.");
+                                        break; // Exit when board is valid
+                                    }
+                                    try {
+                                        Thread.sleep(500);
+                                    } catch (InterruptedException e) {
+                                        Thread.currentThread().interrupt();
+                                        System.err.println(
+                                                "Thread interrupted while waiting for messages.");
+                                        return;
+                                    }
+                                }
+                            } else if (isServer) {
+                                while (true) {
+                                    String message = server.getMessageReceived();
+                                    if (isMessageValid(message)) {
+                                        System.out.println("Message valid.");
+                                        break;
+                                    }
+                                    try {
+                                        Thread.sleep(500);
+                                    } catch (InterruptedException e) {
+                                        Thread.currentThread().interrupt();
+                                        System.err.println(
+                                                "Thread interrupted while waiting for messages.");
+                                        return;
+                                    }
+                                }
+                            }
+                            System.out.println(game.getBoard());
+                            if (!game.canPlayerPlay()) {
+                                System.out.println(
+                                        "You/The "
+                                                + game.getCurrentPlayer()
+                                                + " player can't play");
+                                waitMove();
+                            } else {
+                                isWaiting = false;
+                                System.out.print("It's your turn to play ");
+                            }
+                        });
+        threadWaitMove.start();
     }
 
     private void makeMove(String input) {
@@ -161,12 +172,14 @@ public class OnlineGameParser {
             System.out.println("There is not a game in progress");
             return;
         }
-        if (isOnline && isWaiting) {
-            System.out.print("Wait you turn ");
-            waitMove();
+        if (!isOnline) {
+            System.out.println("There is no online game");
             return;
         }
-        if (isOnline && !isWaiting) {
+        if (isWaiting) {
+            System.out.print("Wait you turn ");
+            waitMove();
+        } else {
             // your turn
             System.out.println("Your turn");
             char letter = input.charAt(0);
@@ -184,9 +197,11 @@ public class OnlineGameParser {
                 return;
             }
             sendBoard();
-            isWaiting = !isWaiting; // swap turn
             System.out.print(game.getBoard());
-            waitMove();
+            if (!game.canPlayerPlay()) {
+                System.out.print("The next player " + game.getCurrentPlayer() + " can't play");
+                System.out.println("It' your turn again");
+            } else waitMove();
         }
 
         //        if (!isOnline) {
@@ -202,18 +217,13 @@ public class OnlineGameParser {
     }
 
     private void startServer() {
-        isOnline = true;
         isServer = true;
-        new Thread(
-                        () -> {
-                            System.out.println("Starting server...");
-                            server.start();
-                        })
-                .start();
-
         Thread waitAuthOfClient =
                 new Thread(
                         () -> {
+                            System.out.println("Starting server...");
+                            server.start();
+
                             while (!server.isClientAuth()) {
                                 try {
                                     Thread.sleep(100);
@@ -224,23 +234,21 @@ public class OnlineGameParser {
                                                     + " authentication");
                                     return; // Esce dal thread in caso di interruzione
                                 }
+                                if (!isOnline) {
+                                    return;
+                                }
                             }
+                            isOnline = true;
+                            initialize();
                         });
         waitAuthOfClient.start();
-        try {
-            waitAuthOfClient.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        initialize();
     }
 
     private void stopServer() {
-        if (isOnline) {
-            System.out.println("Stopping server...");
-            server.stop();
-            isServer = false;
-        } else System.out.println("You can't stop a server in offline mode");
+        System.out.println("Stopping server...");
+        server.stop();
+        isServer = false;
+        isOnline = false;
     }
 
     private void startClient() {
@@ -309,7 +317,6 @@ public class OnlineGameParser {
 
     private Boolean isMessageValid(String compactBoard) {
         if (compactBoard == null) {
-            // System.err.println("Received null message.");
             return false;
         }
         if (compactBoard.equals(lastMessageReceived)) {
