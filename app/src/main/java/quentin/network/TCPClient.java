@@ -25,7 +25,7 @@ public class TCPClient implements TCPclientServerInterface {
             socket = new Socket(address, port);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            System.out.println("TCP Client correctly connected");
+            System.out.println("TCP Client correctly connected, now you must send the password");
             clientConnected = true;
         } catch (IOException e) {
             System.err.println("Error initializing the client connection: " + e.getMessage());
@@ -60,6 +60,8 @@ public class TCPClient implements TCPclientServerInterface {
                                         }
                                         messageReceived = serverMessage;
                                     }
+                                    System.out.println("server connection interrupted");
+                                    stop();
                                 } catch (IOException e) {
                                     // here when I call close() after a client connection
                                 }

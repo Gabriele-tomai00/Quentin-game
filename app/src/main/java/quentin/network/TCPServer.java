@@ -56,6 +56,10 @@ public class TCPServer implements TCPclientServerInterface {
                         listenForMessages();
                         return;
                     }
+                } else {
+                    System.out.println("Client connection interrupted");
+                    stop();
+                    return;
                 }
             }
             System.out.println("too many authentication attempts with TCP server, exiting");
@@ -85,8 +89,11 @@ public class TCPServer implements TCPclientServerInterface {
                                         System.out.println(
                                                 "Can't receive from client because It's not auth");
                                 }
+                                System.out.println("client connection interrupted");
+                                stop();
                             } catch (IOException e) {
-                                // here when I call close() after a client connection
+                                // when I call stop()
+                                System.out.println("IOException in listenForMessages");
                             }
                         });
         waitMessageThread.start();
