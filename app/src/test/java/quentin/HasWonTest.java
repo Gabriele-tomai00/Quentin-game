@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test; // Test of JUnit 5
 import quentin.exceptions.MoveException;
+import quentin.game.BoardPoint;
+import quentin.game.Cell;
 
 public class HasWonTest {
 

@@ -1,6 +1,7 @@
 package quentin;
 
 import quentin.exceptions.InvalidCellValuesException;
+import quentin.game.Cell;
 
 public class Parser {
 

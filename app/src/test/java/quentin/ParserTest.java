@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import quentin.exceptions.InvalidCellValuesException;
+import quentin.game.Cell;
 
 class ParserTest {
 

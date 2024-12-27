@@ -1,15 +1,18 @@
 package quentin;
 
 import java.util.Scanner;
+import quentin.cache.CachedGame;
+import quentin.game.BoardPoint;
+import quentin.game.Cell;
 
 public class TerminalGame implements GameStarter {
 
     private final String CLEAR;
-    private LocalGame game;
+    private CachedGame game;
     private Scanner scanner;
 
     public TerminalGame(Scanner scanner) {
-        game = new LocalGame();
+        game = new CachedGame();
         CLEAR = "\033[H\033[2J";
         this.scanner = scanner;
     }
@@ -38,7 +41,7 @@ public class TerminalGame implements GameStarter {
                     undoMove();
                     break;
                 case "exit":
-                    if (game != null) game.stop();
+                    // if (game != null) game.stop();
                     return;
                 default:
                     if (command.matches(coordinatePattern)) {
@@ -83,7 +86,7 @@ public class TerminalGame implements GameStarter {
     }
 
     private void initialize() {
-        game = new LocalGame();
+        game = new CachedGame();
         if (game.isOldMatch()) {
             System.out.println("Old match found, do you want to continue? Y or N");
             String answer = scanner.nextLine().trim().toLowerCase();
@@ -122,7 +125,7 @@ public class TerminalGame implements GameStarter {
             return;
         }
         game.coverTerritories(cell);
-        if (game.currentPlayerHasWon()) {
+        if (game.hasWon(game.getCurrentPlayer())) {
             System.out.println(game.getCurrentPlayer() + " has won!");
             return;
         }

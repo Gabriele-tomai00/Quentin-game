@@ -3,6 +3,7 @@ package quentin;
 import static org.junit.jupiter.api.Assertions.*; // JUnit 5
 
 import org.junit.jupiter.api.Test; // Test of JUnit 5
+import quentin.game.BoardPoint;
 
 public class BoardPointTest {
 
