@@ -10,18 +10,22 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import quentin.cache.CachedGame;
 import quentin.exceptions.CellAlreadyTakenException;
 import quentin.exceptions.IllegalMoveException;
 import quentin.exceptions.MoveException;
+import quentin.game.Board;
+import quentin.game.BoardPoint;
+import quentin.game.Cell;
 
 public class GameTest {
-    Game game = new Game();
+    CachedGame game = new CachedGame();
     LocalGame localGame = new LocalGame();
 
     @Test
     public void initializationTest() {
-        assertEquals(BoardPoint.BLACK, game.currentPlayer.color());
-        assertEquals(BoardPoint.BLACK, localGame.currentPlayer.color());
+        assertEquals(BoardPoint.BLACK, game.getCurrentPlayer().color());
+        assertEquals(BoardPoint.BLACK, localGame.getCurrentPlayer().color());
     }
 
     @Test

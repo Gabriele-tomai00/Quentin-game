@@ -1,4 +1,4 @@
-package quentin;
+package quentin.game;
 
 import java.util.Objects;
 

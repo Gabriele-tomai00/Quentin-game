@@ -1,6 +1,6 @@
 package quentin.exceptions;
 
-import quentin.Cell;
+import quentin.game.Cell;
 
 public class CellAlreadyTakenException extends MoveException {
 

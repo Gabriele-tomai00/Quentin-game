@@ -2,11 +2,13 @@ package quentin;
 
 import java.io.IOException;
 import java.util.Scanner;
+import quentin.cache.CachedGame;
+import quentin.game.Cell;
 import quentin.network.Client;
 import quentin.network.Server;
 
 public class OnlineGameParser {
-    private LocalGame game;
+    private CachedGame game;
     Scanner scanner;
     Client client = new Client();
     Server server = new Server();
@@ -44,7 +46,7 @@ public class OnlineGameParser {
                     break;
                 case "exit":
                     scanner.close();
-                    if (game != null) game.stop();
+                    // if (game != null) game.stop();
                     return;
                 // for online game
                 case "ss", "startserver", "starts":
@@ -90,14 +92,14 @@ public class OnlineGameParser {
     }
 
     private void printGamePrompt() {
-        //        if (isOnline && isWaiting) {
-        //            System.out.print("Waiting opponent player...");
-        //        }
+        // if (isOnline && isWaiting) {
+        // System.out.print("Waiting opponent player...");
+        // }
         System.out.print(" > ");
     }
 
     private void initialize() {
-        game = new LocalGame();
+        game = new CachedGame();
         if (!isOnline) return;
         System.out.println("New game started!");
         System.out.println(game.getBoard());
@@ -192,7 +194,7 @@ public class OnlineGameParser {
                 return;
             }
             game.coverTerritories(cell);
-            if (game.currentPlayerHasWon()) {
+            if (game.hasWon(game.getCurrentPlayer())) {
                 System.out.println(game.getCurrentPlayer() + " has won!");
                 return;
             }
@@ -204,16 +206,16 @@ public class OnlineGameParser {
             } else waitMove();
         }
 
-        //        if (!isOnline) {
-        //            game.changeCurrentPlayer();
-        //            if (!game.canPlayerPlay()) {
-        //                System.out.print("The next player " + game.getCurrentPlayer() + " can't
+        // if (!isOnline) {
+        // game.changeCurrentPlayer();
+        // if (!game.canPlayerPlay()) {
+        // System.out.print("The next player " + game.getCurrentPlayer() + " can't
         // play");
-        //                game.changeCurrentPlayer();
-        //                System.out.println(", so the next player is " + game.getCurrentPlayer());
-        //                return;
-        //            }
-        //        }
+        // game.changeCurrentPlayer();
+        // System.out.println(", so the next player is " + game.getCurrentPlayer());
+        // return;
+        // }
+        // }
     }
 
     private void startServer() {
@@ -295,10 +297,10 @@ public class OnlineGameParser {
         if (!isOnline) {
             return;
         }
-        //        Scanner scanner = new Scanner(System.in);
-        //        String password;
-        //        System.out.print("Enter a 5-digit numeric password: ");
-        //        password = scanner.nextLine().trim();
+        // Scanner scanner = new Scanner(System.in);
+        // String password;
+        // System.out.print("Enter a 5-digit numeric password: ");
+        // password = scanner.nextLine().trim();
         String password = "12345";
         client.trySendAuthentication(password);
         try {

@@ -11,6 +11,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import quentin.exceptions.MoveException;
+import quentin.game.BoardPoint;
+import quentin.game.Cell;
 
 public class Controller implements GameStarter {
 

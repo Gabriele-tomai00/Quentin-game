@@ -1,84 +1,63 @@
-package quentin;
+package quentin.cache;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.LinkedList;
+import quentin.game.BoardPoint;
 
 public class CacheHandler {
     // the program uploads and downloads in List logCache during the game.
-    public final List<BoardLog> logsInMemory;
+    public final LinkedList<BoardLog> logsInMemory;
     // If the program is closed, it uses the cache saved in disk
     private static final String GAME_DIR = System.getProperty("user.home") + "/.quentinGame";
     private static final String CACHE_FILE = GAME_DIR + "/last_match_cache.dat";
-    private final BufferedWriter writer;
     private int moveIndex; // helps to decide when and what logs to delete
 
     // LOG STRUCTURE: yyyyMMdd_HHmmss board next_move
-    // example: 20241208_172807 1....B............B............B............B............B W
+    // example: 20241208_172807
+    // 1....B............B............B............B............B W
 
     public CacheHandler() {
-        this.logsInMemory = new ArrayList<>();
-        this.moveIndex = -1;
+        logsInMemory = new LinkedList<>();
+        moveIndex = -1;
 
         // Create directory, it doesn't exist
         File cacheDirectory = new File(GAME_DIR);
         if (!cacheDirectory.exists() && !cacheDirectory.mkdirs()) {
             throw new RuntimeException("Failed to create cache directory: " + GAME_DIR);
         }
-
-        try {
-            this.writer = new BufferedWriter(new FileWriter(CACHE_FILE, true));
-        } catch (IOException e) {
-            throw new RuntimeException("Error initializing file writer", e);
-        }
     }
 
-    public int getMoveIndex() {
-        return moveIndex;
-    }
-
-    public void saveLog(Game game) {
-        try {
+    public void saveLog(CachedGame game) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(CACHE_FILE, true))) {
             if (moveIndex != logsInMemory.size() - 1) {
-                removeElementsAfterIndex(moveIndex); // REMOVE ALL ELEMENT AFTER INDEX ELEMENT
+                removeElementsAfterIndex(moveIndex);
             }
             String nextPlayer = game.getCurrentPlayer().color() == BoardPoint.WHITE ? "B" : "W";
-            writer.write(
+            String boardLog =
                     game.getTimestampOfLastMove()
                             + " "
                             + game.getBoard().toCompactString()
                             + " "
                             + nextPlayer
                             + " "
-                            + game.getMoveCounter());
-            writer.newLine();
-            logsInMemory.add(
-                    parseStringLog(
-                            game.getTimestampOfLastMove()
-                                    + " "
-                                    + game.getBoard().toCompactString()
-                                    + " "
-                                    + nextPlayer
-                                    + " "
-                                    + game.getMoveCounter()));
+                            + game.getMoveCounter();
+            writer.write(boardLog + System.lineSeparator());
+            logsInMemory.push(parseStringLog(boardLog));
             if (logsInMemory.size() > 10) {
-                logsInMemory.remove(0);
+                logsInMemory.pop();
                 if (moveIndex > 0) {
                     moveIndex--;
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException("Error while saving to cache file", e);
+            System.err.printf("Error while saving to cache filen due to: %s%n", e.getMessage());
         }
         moveIndex++;
-    }
-
-    public void forceSaveLog() {
-        try {
-            writer.flush();
-        } catch (IOException e) {
-            throw new RuntimeException("Error while saving to cache file");
-        }
     }
 
     public void removeElementsAfterIndex(int index) {
@@ -93,10 +72,10 @@ public class CacheHandler {
         try (BufferedReader reader = new BufferedReader(new FileReader(CACHE_FILE))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                logsInMemory.add(parseStringLog(line));
+                logsInMemory.push(parseStringLog(line));
             }
         } catch (IOException e) {
-            throw new IllegalStateException("Problem with reading log file", e);
+            System.err.printf("Problem with reading file due to: %s%n", e.getMessage());
         }
     }
 
@@ -107,10 +86,6 @@ public class CacheHandler {
         }
         moveIndex = index;
         return logsInMemory.get(index);
-    }
-
-    public int getLogCounter() {
-        return logsInMemory.size();
     }
 
     public void decrementIndex() {
@@ -138,9 +113,16 @@ public class CacheHandler {
     public void emptyCacheFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(CACHE_FILE))) {
             writer.write("");
-            writer.flush();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to clear the cache file", e);
+            System.err.printf("Failed to clear the cache file due to: %s%n", e);
         }
+    }
+
+    public int getMoveIndex() {
+        return moveIndex;
+    }
+
+    public int getLogCounter() {
+        return logsInMemory.size();
     }
 }

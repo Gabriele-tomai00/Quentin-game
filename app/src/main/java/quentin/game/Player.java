@@ -1,4 +1,4 @@
-package quentin;
+package quentin.game;
 
 public record Player(BoardPoint color) {
 
