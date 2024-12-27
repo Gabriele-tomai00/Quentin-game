@@ -66,7 +66,7 @@ public class Main {
     }
 
     private static void startLocalGame(Scanner scanner) {
-        TerminalGame parser = new TerminalGame(scanner);
+        LocalGameParser parser = new LocalGameParser(scanner);
         parser.run();
         System.out.println("Returning to main menu...");
     }

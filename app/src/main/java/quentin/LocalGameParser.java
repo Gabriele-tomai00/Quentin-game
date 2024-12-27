@@ -2,11 +2,11 @@ package quentin;
 
 import java.util.Scanner;
 
-public class TerminalGame {
+public class LocalGameParser {
     private Game game;
     Scanner scanner;
 
-    public TerminalGame(Scanner scanner) {
+    public LocalGameParser(Scanner scanner) {
         this.scanner = scanner;
     }
 
