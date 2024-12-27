@@ -30,11 +30,16 @@ public class Server {
             tcpServer = new TCPServer(tcpPort, codeForClientAuth);
         } catch (IOException e) {
             System.err.println("Error initializing the server connection");
+            return;
         }
         tcpServer.start();
     }
 
     public void stop() {
+        if (udpServer == null) {
+            System.out.println("UDP server not running");
+            return;
+        }
         udpServer.stopServer();
         tcpServer.stop();
     }

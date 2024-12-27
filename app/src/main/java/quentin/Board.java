@@ -124,7 +124,7 @@ public class Board {
                 }
                 toReturn.append("│");
                 if (board[i][j].equals(BoardPoint.WHITE)) toReturn.append(" ██ ");
-                else if (board[i][j].equals(BoardPoint.BLACK)) toReturn.append(" ▭▭ ");
+                else if (board[i][j].equals(BoardPoint.BLACK)) toReturn.append(" xx ");
                 else if (board[i][j].equals(BoardPoint.EMPTY)) toReturn.append("    ");
 
                 if (j == SIZE - 1) toReturn.append("│█");

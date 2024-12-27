@@ -252,7 +252,6 @@ public class OnlineGameParser {
     }
 
     private void startClient() {
-        isOnline = true;
         isClient = true;
         new Thread(
                         () -> {
@@ -281,12 +280,15 @@ public class OnlineGameParser {
                             }
                         });
         waitAuth.start();
+        isOnline = true;
         System.out.println("type 'clientauth' to authenticate the client");
     }
 
     private void stopClient() {
-        if (isOnline) client.stopDiscovery();
-        else System.out.println("You can't stop a client in offline mode");
+        if (isOnline) {
+            client.stopDiscovery();
+            isOnline = false;
+        } else System.out.println("You can't stop a client in offline mode");
     }
 
     private void clientAuth() {

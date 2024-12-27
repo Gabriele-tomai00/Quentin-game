@@ -96,7 +96,7 @@ public class UDPServer {
             if (!discoveryThread.isAlive()) {
                 System.out.println("UDP server successfully stopped");
             }
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             System.err.println("Error stopping UDP server");
         }
     }
