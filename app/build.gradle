@@ -83,4 +83,12 @@ spotless {
     // through git history (see "license" section below)
     // licenseHeader '/* (C)$YEAR */'
   }
+
+    jar {
+        manifest {
+            attributes(
+                    'Main-Class': 'quentin.Main'
+            )
+        }
+    }
 }
