@@ -1,4 +1,4 @@
-package quentin;
+package quentin.game;
 
 public abstract class GameStarter {
     private final Game game;

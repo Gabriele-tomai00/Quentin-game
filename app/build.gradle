@@ -41,7 +41,7 @@ javafx {
 }
 
 application {
-    mainClass = "quentin.Main"
+    mainClass = "quentin.cache.Main"
     mainModule = "quentin.game"
 }
 

@@ -2,9 +2,10 @@ package quentin.cache;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import quentin.LocalGame;
+
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
+import quentin.game.LocalGame;
 import quentin.game.Player;
 
 public class CachedGame extends LocalGame {

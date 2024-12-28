@@ -1,9 +1,4 @@
-package quentin;
-
-import quentin.game.Board;
-import quentin.game.BoardPoint;
-import quentin.game.Game;
-import quentin.game.Player;
+package quentin.game;
 
 public class LocalGame implements Game {
 
