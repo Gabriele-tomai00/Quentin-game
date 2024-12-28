@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test; // Test of JUnit 5
 import quentin.exceptions.MoveException;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
+import quentin.game.LocalGame;
 
 public class HasWonTest {
 

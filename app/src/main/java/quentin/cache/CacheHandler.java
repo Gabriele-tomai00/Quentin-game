@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
+
 import quentin.game.BoardPoint;
 
 public class CacheHandler {
@@ -15,6 +17,9 @@ public class CacheHandler {
     // If the program is closed, it uses the cache saved in disk
     private static final String GAME_DIR = System.getProperty("user.home") + "/.quentinGame";
     private static final String CACHE_FILE = GAME_DIR + "/last_match_cache.dat";
+    private static final DateTimeFormatter TIMESTAMP_FORMATTER =
+        DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+
     private int moveIndex; // helps to decide when and what logs to delete
 
     // LOG STRUCTURE: yyyyMMdd_HHmmss board next_move
@@ -32,20 +37,14 @@ public class CacheHandler {
         }
     }
 
+    //  Cache and cacheWriter: write to disk and add to cache
     public void saveLog(CachedGame game) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(CACHE_FILE, true))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(CACHE_FILE))) {
             if (moveIndex != logsInMemory.size() - 1) {
                 removeElementsAfterIndex(moveIndex);
             }
             String nextPlayer = game.getCurrentPlayer().color() == BoardPoint.WHITE ? "B" : "W";
-            String boardLog =
-                    game.getTimestampOfLastMove()
-                            + " "
-                            + game.getBoard().toCompactString()
-                            + " "
-                            + nextPlayer
-                            + " "
-                            + game.getMoveCounter();
+            String boardLog = extracted(game, nextPlayer);
             writer.write(boardLog + System.lineSeparator());
             logsInMemory.push(parseStringLog(boardLog));
             if (logsInMemory.size() > 10) {
@@ -60,6 +59,19 @@ public class CacheHandler {
         moveIndex++;
     }
 
+    private String extracted(CachedGame game, String nextPlayer) {
+      String boardLog =
+              game.getTimestampOfLastMove()
+                      + " "
+                      + game.getBoard().toCompactString()
+                      + " "
+                      + nextPlayer
+                      + " "
+                      + game.getMoveCounter();
+      return boardLog;
+    }
+
+    //  Cache: clear elements if not ok
     public void removeElementsAfterIndex(int index) {
         if (index > 0 && index <= logsInMemory.size()) {
             logsInMemory.subList(index + 1, logsInMemory.size()).clear();
@@ -67,6 +79,7 @@ public class CacheHandler {
         }
     }
 
+    //  CacheWriter: load from disk a log
     public void loadLogsInMemoryFromDisk() {
         // loads all the cache logs on the memory list
         try (BufferedReader reader = new BufferedReader(new FileReader(CACHE_FILE))) {
@@ -79,6 +92,7 @@ public class CacheHandler {
         }
     }
 
+    //  Cache: gets a log from memory
     public BoardLog readLog(int index) {
         if (index > logsInMemory.size() || index < 0) {
             throw new IndexOutOfBoundsException(
@@ -92,10 +106,12 @@ public class CacheHandler {
         moveIndex--;
     }
 
+    //  Cache
     public BoardLog readLastLog() {
         return readLog(logsInMemory.size() - 1);
     }
 
+    //  LogParser
     private BoardLog parseStringLog(String logLine) {
         String[] toReturn = logLine.split(" ");
         if (toReturn.length != 4) {
@@ -104,12 +120,14 @@ public class CacheHandler {
         return new BoardLog(toReturn[0], toReturn[1], toReturn[2], Integer.parseInt(toReturn[3]));
     }
 
+    //  Cache
     public void clearCache() {
         emptyCacheFile();
         logsInMemory.clear();
         moveIndex = -1;
     }
 
+    //  CacheWriter
     public void emptyCacheFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(CACHE_FILE))) {
             writer.write("");
@@ -118,10 +136,12 @@ public class CacheHandler {
         }
     }
 
+    //  Cache
     public int getMoveIndex() {
         return moveIndex;
     }
 
+    //  Cache
     public int getLogCounter() {
         return logsInMemory.size();
     }

@@ -176,4 +176,8 @@ public class Board {
         }
         return false;
     }
+
+    public void setBoard(Board board) {
+        Arrays.fill(this.board, board);
+    }
 }

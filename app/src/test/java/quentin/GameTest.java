@@ -17,6 +17,7 @@ import quentin.exceptions.MoveException;
 import quentin.game.Board;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
+import quentin.game.LocalGame;
 
 public class GameTest {
     CachedGame game = new CachedGame();

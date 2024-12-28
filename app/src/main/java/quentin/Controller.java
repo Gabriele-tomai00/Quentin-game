@@ -13,6 +13,8 @@ import javafx.scene.paint.Color;
 import quentin.exceptions.MoveException;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
+import quentin.game.GameStarter;
+import quentin.game.LocalGame;
 
 public class Controller implements GameStarter {
 

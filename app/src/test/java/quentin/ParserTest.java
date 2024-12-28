@@ -15,16 +15,18 @@ class ParserTest {
     void testParsedInput() {
         assertAll(
                 "Parse some input",
-                () -> assertEquals(new Cell(0, 0), new Parser("a1").parse()),
+                () -> assertEquals(new Cell(0, 0), new MoveParser("a1").parse()),
                 () ->
                         assertThrows(
-                                InvalidCellValuesException.class, () -> new Parser("n3").parse()),
-                () -> assertEquals(new Cell(12, 12), new Parser("m13").parse()),
+                                InvalidCellValuesException.class,
+                                () -> new MoveParser("n3").parse()),
+                () -> assertEquals(new Cell(12, 12), new MoveParser("m13").parse()),
                 () ->
                         assertThrows(
-                                InvalidCellValuesException.class, () -> new Parser("a14").parse()));
+                                InvalidCellValuesException.class,
+                                () -> new MoveParser("a14").parse()));
         Exception exception =
-                assertThrows(InvalidCellValuesException.class, () -> new Parser("n1").parse());
+                assertThrows(InvalidCellValuesException.class, () -> new MoveParser("n1").parse());
         String expectedMessage =
                 String.format("Row values span from 'a' to 'm', received %c", "n3".charAt(0));
         assertTrue(expectedMessage.contains(exception.getMessage()));

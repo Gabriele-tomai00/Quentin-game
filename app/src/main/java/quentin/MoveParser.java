@@ -3,11 +3,11 @@ package quentin;
 import quentin.exceptions.InvalidCellValuesException;
 import quentin.game.Cell;
 
-public class Parser {
+public class MoveParser {
 
     private final String string;
 
-    public Parser(String string) {
+    public MoveParser(String string) {
         this.string = string.replace(" ", "");
     }
 

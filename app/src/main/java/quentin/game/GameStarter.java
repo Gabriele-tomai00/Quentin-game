@@ -1,4 +1,4 @@
-package quentin;
+package quentin.game;
 
 public interface GameStarter {
 
