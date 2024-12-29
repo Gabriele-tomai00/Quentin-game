@@ -1,5 +1,6 @@
 package quentin.cache;
 
+import java.util.Scanner;
 import quentin.game.LocalGame;
 import quentin.game.SimpleGameStarter;
 
@@ -15,23 +16,40 @@ public class CachedGameStarter extends SimpleGameStarter {
 
     public CachedGameStarter(Cache<LocalGame> cache) {
         super();
+        game = cache.getLog();
         this.cache = cache;
     }
 
     @Override
-    public boolean processInput(String nextLine) {
+    public boolean processInput(Scanner scanner) {
         boolean exitGame = false;
-        switch (nextLine) {
-            case "back" -> {
-                game = cache.goBack();
+        while (true) {
+            displayMessage(game.getCurrentPlayer() + " >");
+            String command = scanner.next();
+            try {
+                switch (command) {
+                    case "back" -> {
+                        game = cache.goBack();
+                    }
+                    case "forward" -> {
+                        game = cache.goForward();
+                    }
+                    case "exit" -> {
+                        exitGame = true;
+                        gameFinished = false;
+                    }
+                    case "help" -> showHelper();
+                    default -> {
+                        makeMove(command);
+                        exitGame = hasWon();
+                        cache.saveLog(new LocalGame(game));
+                    }
+                }
+            } catch (RuntimeException e) {
+                displayMessage(e.getMessage() + "\n");
+                continue;
             }
-            case "forward" -> game = cache.goForward();
-            case "exit" -> {
-                exitGame = true;
-                gameFinished = false;
-            }
-            case "help" -> showHelper();
-            default -> super.processInput(nextLine);
+            break;
         }
         return exitGame;
     }

@@ -3,22 +3,55 @@ package quentin.cache;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
-
 import quentin.game.BoardPoint;
+import quentin.game.LocalGame;
 
 public class CacheHandler {
+
+    @SuppressWarnings("unchecked")
+    public static CachedGameStarter initialize() {
+        if (new File(GAME_DIR).exists()) {
+            try (ObjectInputStream input =
+                    new ObjectInputStream(new FileInputStream(new File(CACHE_FILE)))) {
+                return new CachedGameStarter((Cache<LocalGame>) input.readObject());
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return new CachedGameStarter();
+    }
+
+    public static void saveCache(Cache<LocalGame> cache) {
+        File cacheDirectory = new File(GAME_DIR);
+        if (!cacheDirectory.exists() && !cacheDirectory.mkdirs()) {
+            throw new RuntimeException("Failed to create cache directory: " + GAME_DIR);
+        }
+        try (ObjectOutputStream output =
+                new ObjectOutputStream(new FileOutputStream(new File(CACHE_FILE)))) {
+            output.writeObject(cache);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     // the program uploads and downloads in List logCache during the game.
     public final LinkedList<BoardLog> logsInMemory;
     // If the program is closed, it uses the cache saved in disk
     private static final String GAME_DIR = System.getProperty("user.home") + "/.quentinGame";
     private static final String CACHE_FILE = GAME_DIR + "/last_match_cache.dat";
     private static final DateTimeFormatter TIMESTAMP_FORMATTER =
-        DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+            DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
     private int moveIndex; // helps to decide when and what logs to delete
 
@@ -37,7 +70,7 @@ public class CacheHandler {
         }
     }
 
-    //  Cache and cacheWriter: write to disk and add to cache
+    // Cache and cacheWriter: write to disk and add to cache
     public void saveLog(CachedGame game) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(CACHE_FILE))) {
             if (moveIndex != logsInMemory.size() - 1) {
@@ -60,18 +93,18 @@ public class CacheHandler {
     }
 
     private String extracted(CachedGame game, String nextPlayer) {
-      String boardLog =
-              game.getTimestampOfLastMove()
-                      + " "
-                      + game.getBoard().toCompactString()
-                      + " "
-                      + nextPlayer
-                      + " "
-                      + game.getMoveCounter();
-      return boardLog;
+        String boardLog =
+                game.getTimestampOfLastMove()
+                        + " "
+                        + game.getBoard().toCompactString()
+                        + " "
+                        + nextPlayer
+                        + " "
+                        + game.getMoveCounter();
+        return boardLog;
     }
 
-    //  Cache: clear elements if not ok
+    // Cache: clear elements if not ok
     public void removeElementsAfterIndex(int index) {
         if (index > 0 && index <= logsInMemory.size()) {
             logsInMemory.subList(index + 1, logsInMemory.size()).clear();
@@ -79,7 +112,7 @@ public class CacheHandler {
         }
     }
 
-    //  CacheWriter: load from disk a log
+    // CacheWriter: load from disk a log
     public void loadLogsInMemoryFromDisk() {
         // loads all the cache logs on the memory list
         try (BufferedReader reader = new BufferedReader(new FileReader(CACHE_FILE))) {
@@ -92,7 +125,7 @@ public class CacheHandler {
         }
     }
 
-    //  Cache: gets a log from memory
+    // Cache: gets a log from memory
     public BoardLog readLog(int index) {
         if (index > logsInMemory.size() || index < 0) {
             throw new IndexOutOfBoundsException(
@@ -106,12 +139,12 @@ public class CacheHandler {
         moveIndex--;
     }
 
-    //  Cache
+    // Cache
     public BoardLog readLastLog() {
         return readLog(logsInMemory.size() - 1);
     }
 
-    //  LogParser
+    // LogParser
     private BoardLog parseStringLog(String logLine) {
         String[] toReturn = logLine.split(" ");
         if (toReturn.length != 4) {
@@ -120,14 +153,14 @@ public class CacheHandler {
         return new BoardLog(toReturn[0], toReturn[1], toReturn[2], Integer.parseInt(toReturn[3]));
     }
 
-    //  Cache
+    // Cache
     public void clearCache() {
         emptyCacheFile();
         logsInMemory.clear();
         moveIndex = -1;
     }
 
-    //  CacheWriter
+    // CacheWriter
     public void emptyCacheFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(CACHE_FILE))) {
             writer.write("");
@@ -136,12 +169,12 @@ public class CacheHandler {
         }
     }
 
-    //  Cache
+    // Cache
     public int getMoveIndex() {
         return moveIndex;
     }
 
-    //  Cache
+    // Cache
     public int getLogCounter() {
         return logsInMemory.size();
     }

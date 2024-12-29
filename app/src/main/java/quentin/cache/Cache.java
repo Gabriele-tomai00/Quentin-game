@@ -1,10 +1,11 @@
 package quentin.cache;
 
+import java.io.Serializable;
 import java.util.LinkedList;
-import java.util.List;
 
-public class Cache<E> {
+public class Cache<E> implements Serializable {
 
+    private static final long serialVersionUID = 7440346358324416350L;
     private final LinkedList<E> memory;
     private int currentLog;
 
@@ -22,9 +23,6 @@ public class Cache<E> {
         while (memory.size() > 10) {
             memory.removeLast();
         }
-        if (currentLog > 0) {
-            currentLog--;
-        }
     }
 
     public E goBack() {
@@ -32,8 +30,13 @@ public class Cache<E> {
     }
 
     public E goBack(int moves) {
-        currentLog -= moves;
-        return memory.get(currentLog);
+        if (currentLog + moves < memory.size()) {
+            currentLog += moves;
+            return memory.get(currentLog);
+        } else {
+            throw new IndexOutOfBoundsException(
+                    String.format("Index: %d, Size: %d", currentLog + moves, memory.size()));
+        }
     }
 
     public E goForward() {
@@ -41,16 +44,12 @@ public class Cache<E> {
     }
 
     public E goForward(int moves) {
-        currentLog += moves;
-        return memory.get(currentLog);
-    }
-
-    public void loadLogs(List<E> logs) {
-        for (E log : logs) {
-            memory.addFirst(log);
-        }
-        while (memory.size() > 10) {
-            memory.removeLast();
+        if (currentLog - moves >= 0) {
+            currentLog -= moves;
+            return memory.get(currentLog);
+        } else {
+            throw new IndexOutOfBoundsException(
+                    String.format("Index: %d, currentLog: %d", currentLog - moves, currentLog));
         }
     }
 
@@ -67,6 +66,17 @@ public class Cache<E> {
     }
 
     public E getLog() {
-        return memory.peek();
+        return memory.get(currentLog);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof Cache<?> cache) {
+            return this.memory.equals(cache.memory);
+        }
+        return false;
     }
 }
