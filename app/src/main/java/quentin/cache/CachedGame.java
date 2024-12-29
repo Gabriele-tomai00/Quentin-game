@@ -2,7 +2,6 @@ package quentin.cache;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
 import quentin.game.LocalGame;
@@ -10,6 +9,7 @@ import quentin.game.Player;
 
 public class CachedGame extends LocalGame {
 
+    private static final long serialVersionUID = -4261028139676729108L;
     private final CacheHandler cacheHandler;
     private Boolean matchInProgress;
     private String timestampOfLastMove;
