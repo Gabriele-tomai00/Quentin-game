@@ -92,3 +92,6 @@ spotless {
         }
     }
 }
+run {
+    standardInput = System.in
+}
