@@ -2,13 +2,13 @@ package quentin;
 
 import java.io.IOException;
 import java.util.Scanner;
-import quentin.cache.CachedGame;
 import quentin.game.Cell;
+import quentin.game.LocalGame;
 import quentin.network.Client;
 import quentin.network.Server;
 
 public class OnlineGameParser {
-    private CachedGame game;
+    private LocalGame game;
     Scanner scanner;
     Client client = new Client();
     Server server = new Server();
@@ -99,7 +99,7 @@ public class OnlineGameParser {
     }
 
     private void initialize() {
-        game = new CachedGame();
+        game = new LocalGame();
         if (!isOnline) return;
         System.out.println("New game started!");
         System.out.println(game.getBoard());

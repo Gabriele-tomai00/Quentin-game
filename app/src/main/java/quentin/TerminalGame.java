@@ -12,6 +12,7 @@ import quentin.game.BoardPoint;
 import quentin.game.Cell;
 import quentin.game.GameStarter;
 import quentin.game.LocalGame;
+import quentin.game.MoveParser;
 import quentin.game.Player;
 
 public class TerminalGame implements GameStarter {
@@ -103,7 +104,7 @@ public class TerminalGame implements GameStarter {
                         new BoardLog(
                                 strings[0], strings[1], strings[2], Integer.valueOf(strings[3])));
             }
-            cache.loadLogs(logs);
+            logs.stream().forEach(cache::saveLog);
             if (cache.getMemorySize() > 0) {
                 System.out.println("Old match found, do you want to continue? Y or N");
                 String answer = scanner.nextLine().trim().toLowerCase();
