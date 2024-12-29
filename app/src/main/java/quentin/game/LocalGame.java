@@ -2,16 +2,21 @@ package quentin.game;
 
 public class LocalGame implements Game {
 
-    private final Player white;
-    private final Player black;
+    private static final long serialVersionUID = -8782140056307981297L;
+    private static final Player white = new Player(BoardPoint.WHITE);
+    private static final Player black = new Player(BoardPoint.BLACK);
     private Player currentPlayer;
     private final Board board;
 
     public LocalGame() {
-        white = new Player(BoardPoint.WHITE);
-        black = new Player(BoardPoint.BLACK);
         currentPlayer = black;
         board = new Board();
+    }
+
+    public LocalGame(LocalGame game) {
+        this.board = new Board();
+        board.setBoard(game.getBoard());
+        this.currentPlayer = new Player(game.getCurrentPlayer().color());
     }
 
     public void changeCurrentPlayer() {
@@ -34,5 +39,19 @@ public class LocalGame implements Game {
 
     public void setCurrentPlayer(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof Game game) {
+            if (this.getBoard().equals(game.getBoard())
+                    && this.getCurrentPlayer().equals(game.getCurrentPlayer())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

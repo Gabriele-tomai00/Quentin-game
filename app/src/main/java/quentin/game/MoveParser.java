@@ -1,7 +1,6 @@
-package quentin;
+package quentin.game;
 
 import quentin.exceptions.InvalidCellValuesException;
-import quentin.game.Cell;
 
 public class MoveParser {
 

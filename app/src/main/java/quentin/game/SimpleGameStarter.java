@@ -1,7 +1,6 @@
 package quentin.game;
 
 import java.util.Scanner;
-import quentin.MoveParser;
 
 public class SimpleGameStarter implements GameStarter {
 
@@ -22,46 +21,56 @@ public class SimpleGameStarter implements GameStarter {
                     continue;
                 }
                 display();
-                displayMessage(String.format("%s >", game.getCurrentPlayer()));
-                if (processInput(scanner.nextLine())) {
-                    break;
-                }
-                if (game.hasWon(game.getCurrentPlayer())) {
-                    displayWinner();
-                    break;
-                }
-                game.changeCurrentPlayer();
-                if (game.hasWon(game.getCurrentPlayer())) {
-                    displayWinner();
+                if (processInput(scanner)) {
                     break;
                 }
             }
         }
+        display();
     }
 
-    public boolean processInput(String nextLine) {
+    public boolean processInput(Scanner scanner) {
         boolean exitGame = false;
         while (true) {
+            displayMessage(String.format("%s >", game.getCurrentPlayer()));
             try {
-                Cell cell = new MoveParser(nextLine).parse();
-                game.place(cell);
-                game.coverTerritories(cell);
+                makeMove(scanner.next());
                 break;
             } catch (RuntimeException e) {
                 displayMessage(e.getMessage());
             }
         }
+        exitGame = hasWon();
         return exitGame;
+    }
+
+    public boolean hasWon() {
+        if (game.hasWon(game.getCurrentPlayer())) {
+            displayWinner();
+            return true;
+        }
+        game.changeCurrentPlayer();
+        if (game.hasWon(game.getCurrentPlayer())) {
+            displayWinner();
+            return true;
+        }
+        return false;
+    }
+
+    public void makeMove(String input) {
+        Cell cell = new MoveParser(input).parse();
+        game.place(cell);
+        game.coverTerritories(cell);
     }
 
     @Override
     public void displayMessage(String format) {
-        System.out.println(format);
+        System.out.print(format);
     }
 
     @Override
     public void displayWinner() {
-        System.out.print(
+        System.out.println(
                 CLEAR + String.format("%s has won", game.getCurrentPlayer()).toUpperCase());
     }
 

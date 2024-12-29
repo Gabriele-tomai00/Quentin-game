@@ -1,10 +1,12 @@
 package quentin.game;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class Board {
+public class Board implements Serializable {
 
-    private final int SIZE = 13; // Board size (specified in rules)
+    private static final long serialVersionUID = 8169137628862217460L;
+    private final int SIZE = 13;
     private final BoardPoint[][] board = new BoardPoint[SIZE][SIZE];
 
     public Board() {
@@ -178,6 +180,8 @@ public class Board {
     }
 
     public void setBoard(Board board) {
-        Arrays.fill(this.board, board);
+        for (int row = 0; row < board.SIZE; row++) {
+            System.arraycopy(board.getBoard()[row], 0, this.board[row], 0, SIZE);
+        }
     }
 }
