@@ -1,6 +1,8 @@
 package quentin.game;
 
-public record Player(BoardPoint color) {
+import java.io.Serializable;
+
+public record Player(BoardPoint color) implements Serializable {
 
     public Player(BoardPoint color) {
         if (color == BoardPoint.EMPTY)
@@ -15,5 +17,19 @@ public record Player(BoardPoint color) {
             case BLACK -> "Black player";
             default -> "White player";
         };
+    }
+
+    @Override
+    public final boolean equals(Object arg0) {
+        if (this == arg0) {
+            return true;
+        }
+        if (arg0 == null) {
+            return false;
+        }
+        if (arg0 instanceof Player player) {
+            return player.color == this.color;
+        }
+        return false;
     }
 }

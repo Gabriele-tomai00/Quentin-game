@@ -1,5 +1,6 @@
 package quentin.game;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
@@ -8,8 +9,9 @@ import java.util.List;
 import java.util.Set;
 import quentin.exceptions.CellAlreadyTakenException;
 import quentin.exceptions.IllegalMoveException;
+import quentin.exceptions.MoveException;
 
-public interface Game {
+public interface Game extends Serializable {
     public default boolean hasWon(Player player) {
         if (player.color() == BoardPoint.WHITE) {
             for (Cell cell = new Cell(0, 0);
@@ -198,8 +200,12 @@ public interface Game {
     public default boolean canPlayerPlay() {
         for (int row = 0; row < boardSize(); row++) {
             for (int col = 0; col < boardSize(); col++) {
-                if (isMoveValid(getCurrentPlayer().color(), new Cell(row, col))) {
-                    return true;
+                try {
+                    if (isMoveValid(getCurrentPlayer().color(), new Cell(row, col))) {
+                        return true;
+                    }
+                } catch (MoveException e) {
+                    //                  do nothing
                 }
             }
         }
