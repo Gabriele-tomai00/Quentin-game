@@ -84,3 +84,6 @@ spotless {
     // licenseHeader '/* (C)$YEAR */'
   }
 }
+run {
+    standardInput = System.in
+}
