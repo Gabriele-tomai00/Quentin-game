@@ -1,4 +1,4 @@
-package quentin;
+package quentin.game;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -7,14 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import quentin.exceptions.InvalidCellValuesException;
-import quentin.game.Cell;
 
 class ParserTest {
 
     @Test
     void testParsedInput() {
         assertAll(
-                "Parse some input",
                 () -> assertEquals(new Cell(0, 0), new MoveParser("a1").parse()),
                 () ->
                         assertThrows(

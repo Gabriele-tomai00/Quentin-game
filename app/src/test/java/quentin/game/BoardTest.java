@@ -1,13 +1,18 @@
-package quentin;
+package quentin.game;
 
-import static org.junit.jupiter.api.Assertions.*; // JUnit 5
+// JUnit 5
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test; // Test of JUnit 5
-import quentin.game.Board;
-import quentin.game.BoardPoint;
-import quentin.game.Player;
 
 public class BoardTest {
+
+    Board board = new Board();
 
     public static boolean areMatricesEqual(String[][] matrix1, String[][] matrix2) {
         if (matrix1.length != matrix2.length || matrix1[0].length != matrix2[0].length) {
@@ -292,5 +297,13 @@ public class BoardTest {
         Board board = new Board(matrix);
         String result = board.toCompactString();
         assertEquals(matrix, result);
+    }
+
+    @Test
+    public void gameCopyIsEqual() {
+        board.placeStone(BoardPoint.BLACK, 0, 0);
+        Board board2 = new Board();
+        board2.setBoard(board);
+        assertEquals(board, board2);
     }
 }

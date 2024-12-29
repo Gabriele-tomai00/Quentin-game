@@ -1,4 +1,4 @@
-package quentin;
+package quentin.game;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -6,9 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test; // Test of JUnit 5
 import quentin.exceptions.MoveException;
-import quentin.game.BoardPoint;
-import quentin.game.Cell;
-import quentin.game.LocalGame;
 
 public class HasWonTest {
 
