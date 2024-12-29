@@ -1,10 +1,10 @@
-package quentin;
+package quentin.game;
 
-import static org.junit.jupiter.api.Assertions.*; // JUnit 5
+// JUnit 5
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test; // Test of JUnit 5
-import quentin.game.BoardPoint;
-import quentin.game.Player;
 
 public class PlayerTest {
 
