@@ -31,17 +31,17 @@ public class MoveParser {
      */
     public Cell parse() {
 
-        int row;
+        int col;
         if (string.substring(0, 1).matches("[a-m]")) {
-            row = string.charAt(0) - 'a';
+            col = string.charAt(0) - 'a';
         } else {
             throw new InvalidCellValuesException(
                     String.format(
                             "Row values span from 'a' to 'm', received %c", string.charAt(0)));
         }
-        int col;
+        int row;
         if (string.substring(1).matches("\\b(1[0-3]|[1-9])\\b")) {
-            col = Integer.parseInt(string.substring(1)) - 1;
+            row = Integer.parseInt(string.substring(1)) - 1;
         } else {
             throw new InvalidCellValuesException(
                     String.format(
