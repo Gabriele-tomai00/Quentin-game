@@ -1,12 +1,13 @@
 package quentin.game;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class Board {
+public class Board implements Serializable {
 
-    public final int SIZE = 13; // Board size (specified in rules)
+    private static final long serialVersionUID = 8169137628862217460L;
+    private final int SIZE = 13;
     private final BoardPoint[][] board = new BoardPoint[SIZE][SIZE];
-    private final boolean[][] visited = new boolean[SIZE][SIZE];
 
     public Board() {
         for (BoardPoint[] row : board) {
@@ -31,7 +32,6 @@ public class Board {
         // this.board = new BoardPoint[SIZE][SIZE];
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
-                visited[i][j] = false;
                 String cell = initialBoard[i][j];
                 if (!cell.equals(".") && !cell.equals("B") && !cell.equals("W")) {
                     throw new IllegalArgumentException(
@@ -54,59 +54,15 @@ public class Board {
     }
 
     public BoardPoint[][] getBoard() {
-        return board;
+        return Arrays.copyOf(board, SIZE);
     }
 
     public BoardPoint getPoint(Cell cell) {
         return board[cell.row()][cell.col()];
     }
 
-    public BoardPoint getValues(int i, int j) {
-        if (i < SIZE && j < SIZE) return board[i][j];
-        else throw new RuntimeException("Coordinates not valid");
-    }
-
     public void placeStone(BoardPoint stone, int row, int col) {
         board[row][col] = stone;
-    }
-
-    public boolean hasWon(BoardPoint color) {
-        for (boolean[] row : visited) {
-            Arrays.fill(row, false);
-        }
-        if (color == BoardPoint.WHITE) {
-            for (int i = 0; i < SIZE; i++) if (findWinnerPath(BoardPoint.WHITE, i, 0)) return true;
-        } else if (color == BoardPoint.BLACK) {
-            for (int j = 0; j < SIZE; j++) if (findWinnerPath(BoardPoint.BLACK, 0, j)) return true;
-        } else throw new RuntimeException("Not valid color");
-        return false;
-    }
-
-    public boolean findWinnerPath(BoardPoint color, int i, int j) {
-        if (visited[i][j] || board[i][j] != color) {
-            return false;
-        }
-        visited[i][j] = true;
-
-        // orthogonal direction
-        // right
-        if (j + 1 < SIZE && findWinnerPath(color, i, j + 1)) {
-            return true;
-        }
-        // left
-        if (j - 1 >= 0 && findWinnerPath(color, i, j - 1)) {
-            return true;
-        }
-        // up
-        if (i - 1 >= 0 && findWinnerPath(color, i - 1, j)) {
-            return true;
-        }
-        // down
-        if (i + 1 < SIZE && findWinnerPath(color, i + 1, j)) {
-            return true;
-        }
-
-        return color == BoardPoint.WHITE ? j == SIZE - 1 : i == SIZE - 1;
     }
 
     @Override
@@ -124,7 +80,7 @@ public class Board {
                 }
                 toReturn.append("│");
                 if (board[i][j].equals(BoardPoint.WHITE)) toReturn.append(" ██ ");
-                else if (board[i][j].equals(BoardPoint.BLACK)) toReturn.append(" xx ");
+                else if (board[i][j].equals(BoardPoint.BLACK)) toReturn.append(" ▭▭ ");
                 else if (board[i][j].equals(BoardPoint.EMPTY)) toReturn.append("    ");
 
                 if (j == SIZE - 1) toReturn.append("│█");
@@ -217,13 +173,15 @@ public class Board {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof Board board2) {
-            return Arrays.deepEquals(this.board, board2.board);
+        if (obj instanceof Board board) {
+            return Arrays.deepEquals(this.board, board.board);
         }
         return false;
     }
 
     public void setBoard(Board board) {
-        Arrays.fill(this.board, board);
+        for (int row = 0; row < board.SIZE; row++) {
+            System.arraycopy(board.getBoard()[row], 0, this.board[row], 0, SIZE);
+        }
     }
 }

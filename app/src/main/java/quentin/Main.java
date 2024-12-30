@@ -1,6 +1,7 @@
 package quentin;
 
 import java.util.Scanner;
+import quentin.cache.CachedGameStarter;
 
 public class Main {
 
@@ -66,13 +67,13 @@ public class Main {
     }
 
     private static void startLocalGame(Scanner scanner) {
-        LocalGameParser parser = new LocalGameParser(scanner);
-        parser.run();
+        CachedGameStarter starter = new CachedGameStarter();
+        starter.start();
         System.out.println("Returning to main menu...");
     }
 
     private static void startOnlineGame(Scanner scanner) {
-        OnlineGameParser parser = new OnlineGameParser(scanner);
-        parser.run();
+        //    OnlineGameParser parser = new OnlineGameParser(scanner);
+        //    parser.run();
     }
 }

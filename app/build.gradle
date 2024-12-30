@@ -41,14 +41,14 @@ javafx {
 }
 
 application {
+    mainModule = "quentin"
     mainClass = "quentin.cache.Main"
-    mainModule = "quentin.game"
 }
 
 jlink {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
     launcher {
-        name = 'quentin.game'
+        name = 'quentin'
     }
 }
 
