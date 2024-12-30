@@ -1,12 +1,16 @@
 package quentin.game;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 public class LocalGame implements Game {
 
     private static final long serialVersionUID = -8782140056307981297L;
     private static final Player white = new Player(BoardPoint.WHITE);
     private static final Player black = new Player(BoardPoint.BLACK);
     private Player currentPlayer;
-    private final Board board;
+    private transient Board board;
 
     public LocalGame() {
         currentPlayer = black;
@@ -53,5 +57,17 @@ public class LocalGame implements Game {
             }
         }
         return false;
+    }
+
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.defaultWriteObject();
+        oos.writeObject(board.toCompactString());
+    }
+
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        String compactString = (String) ois.readObject();
+        this.board = new Board();
+        this.board.fromCompactString(compactString);
     }
 }

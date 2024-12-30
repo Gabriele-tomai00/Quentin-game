@@ -1,22 +1,26 @@
 package quentin.cache;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import quentin.game.LocalGame;
 import quentin.game.SimpleGameStarter;
 
 public class CachedGameStarter extends SimpleGameStarter {
 
-    private final Cache<LocalGame> cache;
+    private final Cache<GameLog> cache;
     private boolean gameFinished = true;
+    private static final DateTimeFormatter TIMESTAMP_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
     public CachedGameStarter() {
         super();
         this.cache = new Cache<>();
     }
 
-    public CachedGameStarter(Cache<LocalGame> cache) {
+    public CachedGameStarter(Cache<GameLog> cache) {
         super();
-        game = cache.getLog();
+        game = cache.getLog().game();
         this.cache = cache;
     }
 
@@ -29,10 +33,10 @@ public class CachedGameStarter extends SimpleGameStarter {
             try {
                 switch (command) {
                     case "back" -> {
-                        game = cache.goBack();
+                        game = cache.goBack().game();
                     }
                     case "forward" -> {
-                        game = cache.goForward();
+                        game = cache.goForward().game();
                     }
                     case "exit" -> {
                         exitGame = true;
@@ -42,7 +46,10 @@ public class CachedGameStarter extends SimpleGameStarter {
                     default -> {
                         makeMove(command);
                         exitGame = hasWon();
-                        cache.saveLog(new LocalGame(game));
+                        cache.saveLog(
+                                new GameLog(
+                                        LocalDateTime.now().format(TIMESTAMP_FORMATTER),
+                                        new LocalGame(game)));
                     }
                 }
             } catch (RuntimeException e) {
@@ -71,7 +78,7 @@ public class CachedGameStarter extends SimpleGameStarter {
         return gameFinished;
     }
 
-    public Cache<LocalGame> getCache() {
+    public Cache<GameLog> getCache() {
         return cache;
     }
 }
