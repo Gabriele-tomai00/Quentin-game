@@ -1,11 +1,11 @@
 package quentin.game;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.Arrays;
 
 public class Board implements Serializable {
 
-    private static final long serialVersionUID = 8169137628862217460L;
+    @Serial private static final long serialVersionUID = 8169137628862217460L;
     private final int SIZE = 13;
     private final BoardPoint[][] board = new BoardPoint[SIZE][SIZE];
 
@@ -75,12 +75,12 @@ public class Board implements Serializable {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 if (j == 0) {
-                    if (i > 9) toReturn.append(i).append("   █");
-                    else toReturn.append(i).append("    █");
+                    if (i + 1 > 9) toReturn.append(i + 1).append("   █");
+                    else toReturn.append(i + 1).append("    █");
                 }
                 toReturn.append("│");
                 if (board[i][j].equals(BoardPoint.WHITE)) toReturn.append(" ██ ");
-                else if (board[i][j].equals(BoardPoint.BLACK)) toReturn.append(" ▭▭ ");
+                else if (board[i][j].equals(BoardPoint.BLACK)) toReturn.append(" XX ");
                 else if (board[i][j].equals(BoardPoint.EMPTY)) toReturn.append("    ");
 
                 if (j == SIZE - 1) toReturn.append("│█");
@@ -183,5 +183,18 @@ public class Board implements Serializable {
         for (int row = 0; row < board.SIZE; row++) {
             System.arraycopy(board.getBoard()[row], 0, this.board[row], 0, SIZE);
         }
+    }
+
+    @Serial
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.defaultWriteObject();
+        oos.writeObject(this.toCompactString());
+    }
+
+    @Serial
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        String compactString = (String) ois.readObject();
+        this.fromCompactString(compactString);
     }
 }

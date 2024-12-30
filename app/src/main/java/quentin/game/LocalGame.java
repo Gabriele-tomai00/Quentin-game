@@ -10,7 +10,7 @@ public class LocalGame implements Game {
     private static final Player white = new Player(BoardPoint.WHITE);
     private static final Player black = new Player(BoardPoint.BLACK);
     private Player currentPlayer;
-    private transient Board board;
+    private final Board board;
 
     public LocalGame() {
         currentPlayer = black;
@@ -57,17 +57,5 @@ public class LocalGame implements Game {
             }
         }
         return false;
-    }
-
-    private void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.defaultWriteObject();
-        oos.writeObject(board.toCompactString());
-    }
-
-    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        ois.defaultReadObject();
-        String compactString = (String) ois.readObject();
-        this.board = new Board();
-        this.board.fromCompactString(compactString);
     }
 }
