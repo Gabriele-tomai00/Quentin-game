@@ -1,26 +1,20 @@
 package quentin;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.LinkedList;
 import java.util.Scanner;
-import quentin.cache.BoardLog;
 import quentin.cache.Cache;
+import quentin.cache.GameLog;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
 import quentin.game.GameStarter;
 import quentin.game.LocalGame;
 import quentin.game.MoveParser;
-import quentin.game.Player;
 
 public class TerminalGame implements GameStarter {
 
     private final String CLEAR;
     private LocalGame game;
     private Scanner scanner;
-    private Cache<BoardLog> cache;
+    private Cache<GameLog> cache;
     private boolean gameIsRunning;
 
     public TerminalGame(Scanner scanner) {
@@ -30,44 +24,44 @@ public class TerminalGame implements GameStarter {
         gameIsRunning = false;
     }
 
-    public void run() {
-        initialize();
-        final String coordinatePattern = "(?i)^[A-M](?:[0-9]|1[0-2])$";
+    //    public void run() {
+    //        initialize();
+    //        final String coordinatePattern = "(?i)^[A-M](?:[0-9]|1[0-2])$";
+    //
+    //        while (true) {
+    //            printGamePrompt();
+    //            if (!scanner.hasNextLine()) {
+    //                continue;
+    //            }
+    //            String command = scanner.nextLine().trim().toLowerCase();
+    //
+    //            switch (command) {
+    //                case "slg", "startlocalgame" -> initialize();
+    //                case "" -> {}
+    //                case "help" -> showHelper();
+    //                case "back" -> undoMove();
+    //                // if (game != null) game.stop();
+    //                case "exit" -> {
+    //                    return;
+    //                }
+    //                default -> {
+    //                    if (command.matches(coordinatePattern)) {
+    //                        makeMove(command);
+    //                    } else {
+    //                        System.out.println("Unknown command: " + command);
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
 
-        while (true) {
-            printGamePrompt();
-            if (!scanner.hasNextLine()) {
-                continue;
-            }
-            String command = scanner.nextLine().trim().toLowerCase();
-
-            switch (command) {
-                case "slg", "startlocalgame" -> initialize();
-                case "" -> {}
-                case "help" -> showHelper();
-                case "back" -> undoMove();
-                // if (game != null) game.stop();
-                case "exit" -> {
-                    return;
-                }
-                default -> {
-                    if (command.matches(coordinatePattern)) {
-                        makeMove(command);
-                    } else {
-                        System.out.println("Unknown command: " + command);
-                    }
-                }
-            }
-        }
-    }
-
-    private void undoMove() {
-        BoardLog log = cache.goBack();
-        game.getBoard().fromCompactString(log.board());
-        game.setCurrentPlayer(
-                new Player(log.nextMove().equals("W") ? BoardPoint.WHITE : BoardPoint.BLACK));
-        System.out.println(game.getBoard());
-    }
+    //    private void undoMove() {
+    //        GameLog log = cache.goBack();
+    //        game.getBoard().fromCompactString(log.board());
+    //        game.setCurrentPlayer(
+    //                new Player(log.nextMove().equals("W") ? BoardPoint.WHITE : BoardPoint.BLACK));
+    //        System.out.println(game.getBoard());
+    //    }
 
     private void showHelper() {
         System.out.println("Available commands:");
@@ -94,43 +88,44 @@ public class TerminalGame implements GameStarter {
         }
     }
 
-    private void initialize() {
-        try (BufferedReader br = new BufferedReader(new FileReader(new File(CLEAR)))) {
-            String line;
-            LinkedList<BoardLog> logs = new LinkedList<>();
-            while ((line = br.readLine()) != null) {
-                String[] strings = line.split(" ");
-                logs.add(
-                        new BoardLog(
-                                strings[0], strings[1], strings[2], Integer.valueOf(strings[3])));
-            }
-            logs.stream().forEach(cache::saveLog);
-            if (cache.getMemorySize() > 0) {
-                System.out.println("Old match found, do you want to continue? Y or N");
-                String answer = scanner.nextLine().trim().toLowerCase();
-                if (answer.equals("n") || answer.equals("no")) {
-                    cache.clear();
-                } else {
-                    BoardLog log = cache.getLog();
-                    System.out.println(
-                            "Game loaded! Your last move was at: "
-                                    + log.timestamp()
-                                    + " number of moves: "
-                                    + log.moveCounter());
-                    game.getBoard().fromCompactString(log.board());
-                    game.setCurrentPlayer(
-                            log.nextMove().equals("W")
-                                    ? new Player(BoardPoint.WHITE)
-                                    : new Player(BoardPoint.BLACK));
-                }
-                System.out.println(game.getBoard());
-                System.out.println("It's your turn: " + game.getCurrentPlayer());
-                gameIsRunning = true;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    //    private void initialize() {
+    //        try (BufferedReader br = new BufferedReader(new FileReader(new File(CLEAR)))) {
+    //            String line;
+    //            LinkedList<BoardLog> logs = new LinkedList<>();
+    //            while ((line = br.readLine()) != null) {
+    //                String[] strings = line.split(" ");
+    //                logs.add(
+    //                        new BoardLog(
+    //                                strings[0], strings[1], strings[2],
+    // Integer.valueOf(strings[3])));
+    //            }
+    //            logs.stream().forEach(cache::saveLog);
+    //            if (cache.getMemorySize() > 0) {
+    //                System.out.println("Old match found, do you want to continue? Y or N");
+    //                String answer = scanner.nextLine().trim().toLowerCase();
+    //                if (answer.equals("n") || answer.equals("no")) {
+    //                    cache.clear();
+    //                } else {
+    //                    BoardLog log = cache.getLog();
+    //                    System.out.println(
+    //                            "Game loaded! Your last move was at: "
+    //                                    + log.timestamp()
+    //                                    + " number of moves: "
+    //                                    + log.moveCounter());
+    //                    game.getBoard().fromCompactString(log.board());
+    //                    game.setCurrentPlayer(
+    //                            log.nextMove().equals("W")
+    //                                    ? new Player(BoardPoint.WHITE)
+    //                                    : new Player(BoardPoint.BLACK));
+    //                }
+    //                System.out.println(game.getBoard());
+    //                System.out.println("It's your turn: " + game.getCurrentPlayer());
+    //                gameIsRunning = true;
+    //            }
+    //        } catch (IOException e) {
+    //            e.printStackTrace();
+    //        }
+    //    }
 
     @Override
     public void displayMessage(String format) {
