@@ -108,16 +108,17 @@
       </Label>
    </top>
    <left>
-      <GridPane alignment="CENTER" maxHeight="150.0">
+      <GridPane alignment="CENTER" maxHeight="150.0" maxWidth="100.0">
         <columnConstraints>
-          <ColumnConstraints />
+          <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints vgrow="SOMETIMES" />
           <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="reset" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#reset" text="Reset">
+            <Button fx:id="reset" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#reset" text="Reset" GridPane.hgrow="ALWAYS">
                <font>
                   <Font name="Menlo Regular" size="13.0" />
                </font>
@@ -125,11 +126,12 @@
                   <Insets />
                </GridPane.margin>
             </Button>
-            <Button fx:id="displayWinner" mnemonicParsing="false" onAction="#displayWinner" text="Winner" GridPane.rowIndex="1">
+            <Button fx:id="goBack" alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goBack" text="Back" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1">
                <font>
                   <Font name="Menlo Regular" size="13.0" />
                </font>
             </Button>
+            <Button fx:id="goForward" mnemonicParsing="false" onAction="#goForward" text="Forward" GridPane.rowIndex="2" />
          </children>
       </GridPane>
    </left>

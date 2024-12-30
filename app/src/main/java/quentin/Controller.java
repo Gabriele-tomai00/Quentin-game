@@ -10,6 +10,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import quentin.cache.Cache;
 import quentin.exceptions.MoveException;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
@@ -28,13 +29,17 @@ public class Controller implements GameStarter {
     @FXML private Button displayWinner;
     @FXML private Button reset;
     @FXML private Label startPane;
+    @FXML private Button goBack;
+    @FXML private Button goForward;
     private Background black = Background.fill(Color.BLACK);
     private Background white = Background.fill(Color.WHITE);
+    private Cache<LocalGame> cache;
 
     public Controller() {
         super();
         this.panes = new Pane[13][13];
         this.game = new LocalGame();
+        cache = new Cache<>();
     }
 
     @FXML
@@ -87,6 +92,26 @@ public class Controller implements GameStarter {
         }
     }
 
+    public void goBack(ActionEvent e) {
+        try {
+            game = cache.goBack();
+            displayMessage(game.getCurrentPlayer() + "'s turn!");
+        } catch (RuntimeException ex) {
+            displayMessage(ex.getMessage());
+        }
+        display();
+    }
+
+    public void goForward(ActionEvent e) {
+        try {
+            game = cache.goForward();
+            displayMessage(game.getCurrentPlayer() + "'s turn!");
+        } catch (RuntimeException ex) {
+            displayMessage(ex.getMessage());
+        }
+        display();
+    }
+
     protected void placeCell(MouseEvent e) {
         Pane source = (Pane) e.getSource();
         Integer columnIndex = GridPane.getColumnIndex(source);
@@ -103,6 +128,7 @@ public class Controller implements GameStarter {
             if (game.hasWon(game.getCurrentPlayer())) {
                 displayWinner();
             }
+            cache.saveLog(new LocalGame(game));
             displayMessage(game.getCurrentPlayer() + "'s turn!");
         } catch (MoveException e1) {
             displayMessage(e1.getMessage());

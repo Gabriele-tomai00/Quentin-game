@@ -63,15 +63,18 @@ public class TerminalGame implements GameStarter {
     //        System.out.println(game.getBoard());
     //    }
 
-  private void showHelper() {
-    System.out.println("Available commands:");
-    System.out.println("  startlocalgame or slg   Starts a local game (you can play with yourself in this"
-        + " machine)");
-    System.out.println("  exit                    Quits the game and exits the program");
-    System.out.println("  help                    Shows this help");
-    System.out.println("  <coordinates>           Makes a move. Examples: A1 b2 C5 (wrong examples: 5A," + " 24)");
-    System.out.println("  back                    go back one move");
-  }
+    private void showHelper() {
+        System.out.println("Available commands:");
+        System.out.println(
+                "  startlocalgame or slg   Starts a local game (you can play with yourself in this"
+                        + " machine)");
+        System.out.println("  exit                    Quits the game and exits the program");
+        System.out.println("  help                    Shows this help");
+        System.out.println(
+                "  <coordinates>           Makes a move. Examples: A1 b2 C5 (wrong examples: 5A,"
+                        + " 24)");
+        System.out.println("  back                    go back one move");
+    }
 
     private void printGamePrompt() {
         if (!gameIsRunning) {
@@ -85,10 +88,10 @@ public class TerminalGame implements GameStarter {
         }
     }
 
-    private void undoMove() {
-        game.goBackOneMove();
-        System.out.println(game.getBoard());
-    }
+    //    private void undoMove() {
+    //        game.goBackOneMove();
+    //        System.out.println(game.getBoard());
+    //    }
 
     //    private void initialize() {
     //        try (BufferedReader br = new BufferedReader(new FileReader(new File(CLEAR)))) {
@@ -129,16 +132,16 @@ public class TerminalGame implements GameStarter {
     //        }
     //    }
 
-    @Override
-    public void displayMessage(String format) {
-        System.out.printf("%s please place a stone:", game.getCurrentPlayer());
-    }
-  }
-
-  @Override
-  public void displayMessage(String format) {
-    System.out.printf("%s please place a stone:", game.getCurrentPlayer());
-  }
+    //    @Override
+    //    public void displayMessage(String format) {
+    //        System.out.printf("%s please place a stone:", game.getCurrentPlayer());
+    //    }
+    //  }
+    //
+    //  @Override
+    //  public void displayMessage(String format) {
+    //    System.out.printf("%s please place a stone:", game.getCurrentPlayer());
+    //  }
 
     private void makeMove(String input) {
         Cell cell = new MoveParser(input).parse();
@@ -190,6 +193,12 @@ public class TerminalGame implements GameStarter {
 
     @Override
     public void start() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void displayMessage(String format) {
         // TODO Auto-generated method stub
 
     }
