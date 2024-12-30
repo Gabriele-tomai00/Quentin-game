@@ -116,6 +116,7 @@
           <RowConstraints vgrow="SOMETIMES" />
           <RowConstraints vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <Button fx:id="reset" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#reset" text="Reset" GridPane.hgrow="ALWAYS">
@@ -132,6 +133,7 @@
                </font>
             </Button>
             <Button fx:id="goForward" mnemonicParsing="false" onAction="#goForward" text="Forward" GridPane.rowIndex="2" />
+            <Button fx:id="exitButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exitGame" text="Exit" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
          </children>
       </GridPane>
    </left>

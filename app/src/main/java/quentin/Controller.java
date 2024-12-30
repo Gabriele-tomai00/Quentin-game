@@ -1,8 +1,17 @@
 package quentin;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.Label;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.input.MouseEvent;
@@ -10,6 +19,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import quentin.cache.Cache;
 import quentin.exceptions.MoveException;
 import quentin.game.BoardPoint;
@@ -31,9 +41,13 @@ public class Controller implements GameStarter {
     @FXML private Label startPane;
     @FXML private Button goBack;
     @FXML private Button goForward;
+    @FXML private Button exitButton;
     private Background black = Background.fill(Color.BLACK);
     private Background white = Background.fill(Color.WHITE);
+    private Stage stage;
     private Cache<LocalGame> cache;
+    private static final String GAME_DIR = System.getProperty("user.home") + "/.quentinGame";
+    private static final String CACHE_FILE = GAME_DIR + "/last_match_cache.dat";
 
     public Controller() {
         super();
@@ -42,6 +56,7 @@ public class Controller implements GameStarter {
         cache = new Cache<>();
     }
 
+    @SuppressWarnings("unchecked")
     @FXML
     public void initialize() {
         for (int i = 0; i < 13; i++) {
@@ -53,6 +68,56 @@ public class Controller implements GameStarter {
                 board.add(panes[i][j], j, i);
             }
         }
+        if (new File(CACHE_FILE).exists()) {
+            try (ObjectInputStream input =
+                    new ObjectInputStream(new FileInputStream(new File(CACHE_FILE)))) {
+                cache = (Cache<LocalGame>) input.readObject();
+                if (cache != null) {
+                    if (cache.getLog() instanceof LocalGame game) {
+                        this.game = game;
+                        askResumeGame();
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void exitGame(ActionEvent e) {
+        File cacheDirectory = new File(GAME_DIR);
+        if (!cacheDirectory.exists() && !cacheDirectory.mkdir()) {
+            throw new RuntimeException("Failed to create cache directory" + GAME_DIR);
+        }
+        try (ObjectOutputStream oos =
+                new ObjectOutputStream(new FileOutputStream(new File(CACHE_FILE)))) {
+            oos.writeObject(cache);
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();
+    }
+
+    public void askResumeGame() {
+        ButtonBar bar = new ButtonBar();
+        Button yesButton = new Button("Yes");
+        yesButton.addEventHandler(ActionEvent.ACTION, this::loadGame);
+        Button noButton = new Button("No");
+        noButton.addEventFilter(ActionEvent.ACTION, this::newGame);
+        ButtonBar.setButtonData(yesButton, ButtonData.YES);
+        ButtonBar.setButtonData(noButton, ButtonData.NO);
+        bar.getButtons().addAll(yesButton, noButton);
+        stage = new Stage();
+        stage.setScene(new Scene(bar));
+        stage.show();
+    }
+
+    public void loadGame(ActionEvent e) {
+        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();
+        start();
     }
 
     public void start() {
@@ -154,5 +219,12 @@ public class Controller implements GameStarter {
     public void startDisplay() {
         // TODO Auto-generated method stub
 
+    }
+
+    private void newGame(ActionEvent e) {
+        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();
+        cache = new Cache<>();
+        game = new LocalGame();
+        start();
     }
 }
