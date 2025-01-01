@@ -20,8 +20,13 @@ public class CachedGameStarter extends SimpleGameStarter {
 
     public CachedGameStarter(Cache<GameLog> cache) {
         super();
-        game = cache.getLog().game();
-        this.cache = cache;
+        if (cache == null) {
+            this.cache = new Cache<GameLog>();
+            game = new LocalGame();
+        } else {
+            game = cache.getLog().game();
+            this.cache = cache;
+        }
     }
 
     @Override
@@ -33,16 +38,17 @@ public class CachedGameStarter extends SimpleGameStarter {
             try {
                 switch (command) {
                     case "back" -> {
-                        game = cache.goBack().game();
+                        game = new LocalGame(cache.goBack().game());
                     }
                     case "forward" -> {
-                        game = cache.goForward().game();
+                        game = new LocalGame(cache.goForward().game());
                     }
                     case "exit" -> {
                         exitGame = true;
                         gameFinished = false;
                     }
                     case "help" -> showHelper();
+                    case "clear" -> cache.clear();
                     default -> {
                         makeMove(command);
                         exitGame = hasWon();

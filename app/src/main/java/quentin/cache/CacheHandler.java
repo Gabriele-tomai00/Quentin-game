@@ -12,22 +12,17 @@ public class CacheHandler {
     private static final String CACHE_FILE = GAME_DIR + "/last_match_cache.dat";
 
     @SuppressWarnings("unchecked")
-    public static CachedGameStarter initialize() {
-        CachedGameStarter starter = null;
+    public static Cache<GameLog> initialize() {
+        Cache<GameLog> cache = null;
         if (new File(GAME_DIR).exists()) {
             try (ObjectInputStream input =
                     new ObjectInputStream(new FileInputStream(new File(CACHE_FILE)))) {
-                starter = new CachedGameStarter((Cache<GameLog>) input.readObject());
-                if (starter != null) {
-                    return starter;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
+                cache = (Cache<GameLog>) input.readObject();
+            } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
-        return new CachedGameStarter();
+        return cache;
     }
 
     public static void saveCache(Cache<GameLog> cache) {

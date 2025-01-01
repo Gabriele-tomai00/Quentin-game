@@ -54,6 +54,7 @@ public class Cache<E> implements Serializable {
     }
 
     public void clear() {
+        currentLog = 0;
         memory.clear();
     }
 
@@ -71,6 +72,9 @@ public class Cache<E> implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
         if (obj == null) {
             return false;
         }

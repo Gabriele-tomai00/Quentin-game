@@ -14,6 +14,7 @@ public class SimpleGameStarter implements GameStarter {
     @Override
     public void start() {
         startDisplay();
+        display();
         try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
                 if (!game.canPlayerPlay()) {
@@ -93,7 +94,5 @@ public class SimpleGameStarter implements GameStarter {
         System.out.println(
                 " by Luis Bolaños Mures                                                         "
                         + " \n\n\n");
-
-        System.out.println(game.getBoard());
     }
 }

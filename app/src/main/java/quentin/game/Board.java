@@ -1,6 +1,10 @@
 package quentin.game;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Arrays;
 
 public class Board implements Serializable {
@@ -170,8 +174,11 @@ public class Board implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (obj == this) {
             return true;
+        }
+        if (obj == null) {
+            return false;
         }
         if (obj instanceof Board board) {
             return Arrays.deepEquals(this.board, board.board);

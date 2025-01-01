@@ -1,9 +1,5 @@
 package quentin.game;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 public class LocalGame implements Game {
 
     private static final long serialVersionUID = -8782140056307981297L;
@@ -47,6 +43,9 @@ public class LocalGame implements Game {
 
     @Override
     public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
         if (obj == null) {
             return false;
         }

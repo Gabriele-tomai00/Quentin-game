@@ -42,7 +42,7 @@ javafx {
 
 application {
     mainModule = "quentin"
-    mainClass = "quentin.GuiMain"
+    mainClass = "quentin.cache.Main"
 }
 
 jlink {

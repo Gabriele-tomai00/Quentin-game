@@ -26,7 +26,7 @@ public class CacheHandlerTest {
         cache.saveLog(
                 new GameLog(LocalDateTime.now().format(TIMESTAMP_FORMATTER), new LocalGame(game)));
         CacheHandler.saveCache(cache);
-        Cache<GameLog> cache2 = CacheHandler.initialize().getCache();
+        Cache<GameLog> cache2 = CacheHandler.initialize();
         assertEquals(cache2, cache);
     }
 

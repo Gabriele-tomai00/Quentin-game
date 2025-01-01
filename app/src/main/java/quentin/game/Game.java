@@ -71,14 +71,12 @@ public interface Game extends Serializable {
             int whites =
                     (int)
                             frontier.stream()
-                                    .parallel()
                                     .map(getBoard()::getPoint)
                                     .filter(a -> a == BoardPoint.WHITE)
                                     .count();
             int blacks =
                     (int)
                             frontier.stream()
-                                    .parallel()
                                     .map(getBoard()::getPoint)
                                     .filter(a -> a == BoardPoint.BLACK)
                                     .count();
@@ -120,7 +118,6 @@ public interface Game extends Serializable {
             territory.add(cell);
             visiting.addAll(
                     neighbors.stream()
-                            .parallel()
                             .filter(
                                     a ->
                                             getBoard().getPoint(a) == BoardPoint.EMPTY
@@ -205,7 +202,7 @@ public interface Game extends Serializable {
                         return true;
                     }
                 } catch (MoveException e) {
-                    //                  do nothing
+                    // do nothing
                 }
             }
         }

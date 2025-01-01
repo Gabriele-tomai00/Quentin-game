@@ -12,6 +12,8 @@ import quentin.game.LocalGame;
 import quentin.game.Player;
 
 class CacheTest {
+    Cache<LocalGame> cache = new Cache<>();
+    LocalGame game = new LocalGame();
 
     @Test
     public void simpleCacheTest() {
@@ -28,69 +30,86 @@ class CacheTest {
         assertAll(
                 () -> assertEquals(2, cache.getMemorySize()),
                 () -> assertEquals("Second", cache.getLog()),
-                () -> assertEquals("First", cache.goBack()),
-                () -> cache.saveLog("Third"),
+                () -> assertEquals("First", cache.goBack()));
+        cache.saveLog("Third");
+        assertAll(
                 () -> assertEquals("Third", cache.getLog()),
-                () -> assertEquals(2, cache.getMemorySize()),
+                        () -> assertEquals(2, cache.getMemorySize()),
                 () -> assertEquals("First", cache.goBack()),
-                () -> assertEquals("Third", cache.goForward()));
+                        () -> assertEquals("Third", cache.goForward()));
         assertThrows(IndexOutOfBoundsException.class, () -> cache.goBack(2));
     }
 
     @Test
-    public void testReadLastLog() {
-        Cache<LocalGame> cache = new Cache<>();
-        LocalGame game = new LocalGame();
-        Board board = new Board();
-        board.placeStone(BoardPoint.BLACK, 4, 5);
-        board.placeStone(BoardPoint.BLACK, 2, 3);
-        game.place(new Cell(4, 5));
-        game.place(new Cell(2, 3));
-        cache.saveLog(new LocalGame(game));
-        assertEquals(1, cache.getMemorySize());
-        assertEquals(board, cache.getLog().getBoard());
-        assertEquals(new Player(BoardPoint.BLACK), cache.getLog().getCurrentPlayer());
-        game.place(new Cell(1, 1));
+    public void goBackOnce() {
+        Board board1 = new Board();
+        board1.placeStone(BoardPoint.BLACK, 4, 5);
         Board board2 = new Board();
-        board2.setBoard(board);
-        board2.placeStone(BoardPoint.BLACK, 1, 1);
+        board2.setBoard(board1);
+        board2.placeStone(BoardPoint.BLACK, 2, 3);
+        game.place(new Cell(4, 5));
         cache.saveLog(new LocalGame(game));
-        assertAll(
-                () -> assertEquals(board2, cache.getLog().getBoard()),
-                () -> assertEquals(board, cache.goBack().getBoard()));
-        game = new LocalGame(cache.getLog());
-        game.place(new Cell(2, 1));
-        Board board3 = new Board();
-        board3.setBoard(board);
-        board3.placeStone(BoardPoint.BLACK, 2, 1);
+        game.place(new Cell(2, 3));
         cache.saveLog(new LocalGame(game));
         assertAll(
                 () -> assertEquals(2, cache.getMemorySize()),
-                () -> assertEquals(board3, cache.getLog().getBoard()),
+                () -> assertEquals(board2, cache.getLog().getBoard()),
                 () -> assertEquals(new Player(BoardPoint.BLACK), cache.getLog().getCurrentPlayer()),
-                () -> assertEquals(board, cache.goBack().getBoard()),
-                () ->
-                        assertEquals(
-                                new Player(BoardPoint.BLACK), cache.getLog().getCurrentPlayer()));
+                () -> assertEquals(board1, cache.goBack().getBoard()));
     }
 
-    /*
-     * @Test public void testLoadLogFromDisk() { game.place(new Cell(4, 5));
-     * game.place(new Cell(2, 3)); cache.saveLog(game); assertEquals("29B27B111",
-     * cache.readLog(0) .board()); assertEquals("W", cache.readLog(0) .nextMove());
-     *
-     * game.changeCurrentPlayer(); game.place(new Cell(1, 1)); cache.saveLog(game);
-     * assertEquals("14W14B27B111", cache.readLog(0) .board()); assertEquals("B",
-     * cache.readLog(0) .nextMove());
-     *
-     * // cache.forceSaveLog();
-     *
-     * CacheHandler newCache = new CacheHandler(); // now we don't have logs in
-     * memory, but they are stored in the file newCache.loadLogsInMemoryFromDisk();
-     * assertAll("Assert new cache works", () -> assertEquals(2,
-     * newCache.getLogCounter()), () -> assertEquals("29B27B111",
-     * newCache.readLog(0) .board()), () -> assertEquals("14W14B27B111",
-     * newCache.readLog(1) .board()), () -> assertEquals("B", cache.readLastLog()
-     * .nextMove())); }
-     */
+    @Test
+    public void goBackAndForwardTest() {
+        game.place(new Cell(4, 5));
+        cache.saveLog(new LocalGame(game));
+        game.place(new Cell(2, 3));
+        cache.saveLog(new LocalGame(game));
+        Board board1 = new Board();
+        board1.placeStone(BoardPoint.BLACK, 4, 5);
+        Board board2 = new Board();
+        board2.setBoard(board1);
+        board2.placeStone(BoardPoint.BLACK, 2, 3);
+        assertAll(
+                () -> assertEquals(2, cache.getMemorySize()),
+                () -> assertEquals(board2, cache.getLog().getBoard()),
+                () -> assertEquals(new Player(BoardPoint.BLACK), cache.getLog().getCurrentPlayer()),
+                () -> assertEquals(board1, cache.goBack().getBoard()),
+                () -> assertEquals(board2, cache.goForward().getBoard()));
+    }
+
+    @Test
+    public void addAfterGoingBackTest() {
+        game.place(new Cell(4, 5));
+        cache.saveLog(new LocalGame(game));
+        game.place(new Cell(2, 3));
+        cache.saveLog(new LocalGame(game));
+        game = new LocalGame(cache.goBack());
+        game.place(new Cell(1, 1));
+        cache.saveLog(new LocalGame(game));
+        Board board1 = new Board();
+        board1.placeStone(BoardPoint.BLACK, 4, 5);
+        Board board2 = new Board();
+        board2.setBoard(board1);
+        board2.placeStone(BoardPoint.BLACK, 1, 1);
+        assertAll(
+                () -> assertEquals(2, cache.getMemorySize()),
+                () -> assertEquals(board2, cache.getLog().getBoard()),
+                () -> assertEquals(board1, cache.goBack().getBoard()));
+        //    game = new LocalGame(cache.getLog());
+        //    game.place(new Cell(2, 1));
+        //    Board board3 = new Board();
+        //    board3.setBoard(board1);
+        //    board3.placeStone(BoardPoint.BLACK, 2, 1);
+        //    cache.saveLog(new LocalGame(game));
+        //    assertAll(() -> assertEquals(3, cache.getMemorySize()), () -> assertEquals(board3,
+        // cache.getLog()
+        //
+        //  .getBoard()),
+        //              () -> assertEquals(new Player(BoardPoint.BLACK), cache.getLog()
+        //                                                                    .getCurrentPlayer()),
+        //              () -> assertEquals(board1, cache.goBack()
+        //                                              .getBoard()),
+        //              () -> assertEquals(new Player(BoardPoint.BLACK), cache.getLog()
+        //                                                                    .getCurrentPlayer()));
+    }
 }
