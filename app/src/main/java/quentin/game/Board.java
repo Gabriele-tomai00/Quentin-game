@@ -10,8 +10,8 @@ import java.util.Arrays;
 public class Board implements Serializable {
 
     @Serial private static final long serialVersionUID = 8169137628862217460L;
-    private final int SIZE = 13;
-    private final BoardPoint[][] board = new BoardPoint[SIZE][SIZE];
+    private static final int SIZE = 13;
+    private BoardPoint[][] board = new BoardPoint[SIZE][SIZE];
 
     public Board() {
         for (BoardPoint[] row : board) {
@@ -187,21 +187,20 @@ public class Board implements Serializable {
     }
 
     public void setBoard(Board board) {
-        for (int row = 0; row < board.SIZE; row++) {
+        for (int row = 0; row < SIZE; row++) {
             System.arraycopy(board.getBoard()[row], 0, this.board[row], 0, SIZE);
         }
     }
 
     @Serial
     private void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.defaultWriteObject();
         oos.writeObject(this.toCompactString());
     }
 
     @Serial
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        ois.defaultReadObject();
         String compactString = (String) ois.readObject();
+        board = new BoardPoint[SIZE][SIZE];
         this.fromCompactString(compactString);
     }
 }

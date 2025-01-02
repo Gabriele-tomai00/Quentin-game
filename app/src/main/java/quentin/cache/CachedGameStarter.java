@@ -20,12 +20,12 @@ public class CachedGameStarter extends SimpleGameStarter {
 
     public CachedGameStarter(Cache<GameLog> cache) {
         super();
-        if (cache == null) {
-            this.cache = new Cache<GameLog>();
-            game = new LocalGame();
-        } else {
+        if (cache != null && cache.getMemorySize() > 0) {
             game = cache.getLog().game();
             this.cache = cache;
+        } else {
+            this.cache = new Cache<GameLog>();
+            game = new LocalGame();
         }
     }
 

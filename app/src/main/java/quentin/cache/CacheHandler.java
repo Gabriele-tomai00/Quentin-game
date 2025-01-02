@@ -13,7 +13,7 @@ public class CacheHandler {
 
     @SuppressWarnings("unchecked")
     public static Cache<GameLog> initialize() {
-        Cache<GameLog> cache = null;
+        Cache<GameLog> cache = new Cache<GameLog>();
         if (new File(GAME_DIR).exists()) {
             try (ObjectInputStream input =
                     new ObjectInputStream(new FileInputStream(new File(CACHE_FILE)))) {
