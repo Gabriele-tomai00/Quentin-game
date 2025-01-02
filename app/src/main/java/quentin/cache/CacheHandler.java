@@ -26,6 +26,8 @@ public class CacheHandler {
     }
 
     public static void saveCache(Cache<GameLog> cache) {
+        if (cache.getMemorySize() == 1
+                && Objects.equals(cache.getLog().game().getBoard(), new Board())) return;
         File cacheDirectory = new File(GAME_DIR);
         if (!cacheDirectory.exists() && !cacheDirectory.mkdirs()) {
             throw new RuntimeException("Failed to create cache directory: " + GAME_DIR);

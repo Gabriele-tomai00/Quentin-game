@@ -16,6 +16,8 @@ public class CachedGameStarter extends SimpleGameStarter {
     public CachedGameStarter() {
         super();
         this.cache = new Cache<>();
+        this.cache.saveLog(
+                new GameLog(LocalDateTime.now().format(TIMESTAMP_FORMATTER), new LocalGame(game)));
     }
 
     public CachedGameStarter(Cache<GameLog> cache) {
@@ -25,6 +27,10 @@ public class CachedGameStarter extends SimpleGameStarter {
             this.cache = cache;
         } else {
             this.cache = new Cache<GameLog>();
+            this.cache.saveLog(
+                    new GameLog(
+                            LocalDateTime.now().format(TIMESTAMP_FORMATTER), new LocalGame(game)));
+
             game = new LocalGame();
         }
     }

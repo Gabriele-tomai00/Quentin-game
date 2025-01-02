@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
         CachedGameStarter gameStarter = new CachedGameStarter(CacheHandler.initialize());
         try (Scanner scanner = new Scanner(System.in)) {
-            if (gameStarter.getCache().getMemorySize() > 0) {
+            if (gameStarter.getCache().getMemorySize() > 1) {
                 System.out.printf(
                         "Old match found with date %s%n%n Do you want to continue? Y or N",
                         gameStarter.getCache().getLog().timeStamp());
