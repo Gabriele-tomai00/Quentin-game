@@ -1,11 +1,8 @@
 package quentin.cache;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
+import java.util.Objects;
+import quentin.game.Board;
 
 public class CacheHandler {
     private static final String GAME_DIR = System.getProperty("user.home") + "/.quentinGame";
@@ -13,14 +10,18 @@ public class CacheHandler {
 
     @SuppressWarnings("unchecked")
     public static Cache<GameLog> initialize() {
-        Cache<GameLog> cache = new Cache<GameLog>();
-        if (new File(GAME_DIR).exists()) {
-            try (ObjectInputStream input =
-                    new ObjectInputStream(new FileInputStream(new File(CACHE_FILE)))) {
+        Cache<GameLog> cache = new Cache<>();
+        File file = new File(CACHE_FILE);
+
+        if (file.exists()) {
+            try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(file))) {
                 cache = (Cache<GameLog>) input.readObject();
+                System.out.println("Cache loaded successfully from " + CACHE_FILE);
             } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+                // e.getMessage());
             }
+        } else {
+            System.out.println("Cache file does not exist. Using a new cache.");
         }
         return cache;
     }
