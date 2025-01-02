@@ -26,7 +26,7 @@ public class CachedGameStarter extends SimpleGameStarter {
             game = cache.getLog().game();
             this.cache = cache;
         } else {
-            this.cache = new Cache<GameLog>();
+            this.cache = new Cache<>();
             this.cache.saveLog(
                     new GameLog(
                             LocalDateTime.now().format(TIMESTAMP_FORMATTER), new LocalGame(game)));
@@ -39,22 +39,17 @@ public class CachedGameStarter extends SimpleGameStarter {
     public boolean processInput(Scanner scanner) {
         boolean exitGame = false;
         while (true) {
-            displayMessage(game.getCurrentPlayer() + " >");
+            displayMessage(game.getCurrentPlayer() + " > ");
             String command = scanner.next();
             try {
                 switch (command) {
-                    case "back" -> {
-                        game = new LocalGame(cache.goBack().game());
-                    }
-                    case "forward" -> {
-                        game = new LocalGame(cache.goForward().game());
-                    }
+                    case "back" -> game = new LocalGame(cache.goBack().game());
+                    case "forward" -> game = new LocalGame(cache.goForward().game());
                     case "exit" -> {
                         exitGame = true;
                         gameFinished = false;
                     }
                     case "help" -> showHelper();
-                    case "clear" -> cache.clear();
                     default -> {
                         makeMove(command);
                         exitGame = hasWon();
@@ -84,6 +79,7 @@ public class CachedGameStarter extends SimpleGameStarter {
                 "  <coordinates>           Makes a move. Examples: A1 b2 C5 (wrong examples: 5A,"
                         + " 24)");
         System.out.println("  back                    go back one move");
+        System.out.println("  forward                    go forward one move");
     }
 
     public boolean isGameFinished() {

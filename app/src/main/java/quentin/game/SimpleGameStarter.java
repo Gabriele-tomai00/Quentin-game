@@ -21,19 +21,17 @@ public class SimpleGameStarter implements GameStarter {
                     game.changeCurrentPlayer();
                     continue;
                 }
-                display();
                 if (processInput(scanner)) {
                     break;
                 }
+                display();
             }
         }
-        display();
     }
 
     public boolean processInput(Scanner scanner) {
-        boolean exitGame = false;
         while (true) {
-            displayMessage(String.format("%s >", game.getCurrentPlayer()));
+            displayMessage(String.format("%s > ", game.getCurrentPlayer()));
             try {
                 makeMove(scanner.next());
                 break;
@@ -41,8 +39,7 @@ public class SimpleGameStarter implements GameStarter {
                 displayMessage(e.getMessage());
             }
         }
-        exitGame = hasWon();
-        return exitGame;
+        return hasWon();
     }
 
     public boolean hasWon() {

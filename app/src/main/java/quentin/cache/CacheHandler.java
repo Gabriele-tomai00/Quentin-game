@@ -36,7 +36,7 @@ public class CacheHandler {
                 new ObjectOutputStream(new FileOutputStream(new File(CACHE_FILE)))) {
             output.writeObject(cache);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Failed to save cache: " + CACHE_FILE);
         }
     }
 

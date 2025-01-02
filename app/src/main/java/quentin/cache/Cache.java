@@ -1,11 +1,12 @@
 package quentin.cache;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedList;
 
 public class Cache<E> implements Serializable {
 
-    private static final long serialVersionUID = 7440346358324416350L;
+    @Serial private static final long serialVersionUID = 7440346358324416350L;
     private final LinkedList<E> memory;
     private int currentLog;
 
