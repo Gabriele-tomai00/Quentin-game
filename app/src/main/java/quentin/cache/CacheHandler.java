@@ -37,4 +37,13 @@ public class CacheHandler {
             e.printStackTrace();
         }
     }
+
+    public static void clearCache() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(CACHE_FILE))) {
+            writer.write("");
+            writer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to clear the cache file");
+        }
+    }
 }

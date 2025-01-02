@@ -14,6 +14,7 @@ public class Main {
                 String answer = scanner.nextLine().trim().toLowerCase();
                 if (answer.equals("n") || answer.equals("no")) {
                     gameStarter = new CachedGameStarter();
+                    CacheHandler.clearCache();
                 }
             }
             gameStarter.start();
