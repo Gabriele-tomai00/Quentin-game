@@ -1,10 +1,10 @@
-package quentin;
+package quentin.network;
 
 import java.io.IOException;
 import java.util.Scanner;
+import quentin.game.Cell;
 import quentin.game.LocalGame;
-import quentin.network.Client;
-import quentin.network.Server;
+import quentin.game.MoveParser;
 
 public class OnlineGameParser {
     private LocalGame game;
@@ -22,58 +22,57 @@ public class OnlineGameParser {
         this.scanner = scanner;
     }
 
-    //    public void run() {
-    //        System.out.println("Enter commands (type 'exit' to quit):");
-    //        System.out.println(
-    //                "Type 'startserver' if you want to host a match. Type 'startclient' if you
-    // want to"
-    //                        + " join a match");
-    //
-    //        final String coordinatePattern = "(?i)^[A-M](?:[0-9]|1[0-2])$";
-    //
-    //        while (true) {
-    //            printGamePrompt();
-    //            if (!scanner.hasNextLine()) {
-    //                continue;
-    //            }
-    //            String command = scanner.nextLine().trim().toLowerCase();
-    //
-    //            switch (command) {
-    //                case "":
-    //                    break;
-    //                case "help":
-    //                    showHelper();
-    //                    break;
-    //                case "exit":
-    //                    scanner.close();
-    //                    // if (game != null) game.stop();
-    //                    return;
-    //                // for online game
-    //                case "ss", "startserver", "starts":
-    //                    startServer();
-    //                    break;
-    //                case "stopserver", "stops":
-    //                    stopServer();
-    //                    break;
-    //                case "sc", "startclient", "startc":
-    //                    startClient();
-    //                    break;
-    //                case "stopclient", "stopc":
-    //                    stopClient();
-    //                    break;
-    //                case "clientauth", "clienta":
-    //                    clientAuth();
-    //                    break;
-    //                default:
-    //                    if (command.matches(coordinatePattern)) {
-    //                        makeMove(command);
-    //                    } else {
-    //                        System.out.println("Unknown command: " + command);
-    //                    }
-    //                    break;
-    //            }
-    //        }
-    //    }
+    public void run() {
+        System.out.println("Enter commands (type 'exit' to quit):");
+        System.out.println(
+                "Type 'startserver' if you want to host a match. Type 'startclient' if you     want"
+                        + " to join a match");
+
+        final String coordinatePattern = "(?i)^[A-M](?:[0-9]|1[0-2])$";
+
+        while (true) {
+            printGamePrompt();
+            if (!scanner.hasNextLine()) {
+                continue;
+            }
+            String command = scanner.nextLine().trim().toLowerCase();
+
+            switch (command) {
+                case "":
+                    break;
+                case "help":
+                    showHelper();
+                    break;
+                case "exit":
+                    scanner.close();
+                    // if (game != null) game.stop();
+                    return;
+                // for online game
+                case "ss", "startserver", "starts":
+                    startServer();
+                    break;
+                case "stopserver", "stops":
+                    stopServer();
+                    break;
+                case "sc", "startclient", "startc":
+                    startClient();
+                    break;
+                case "stopclient", "stopc":
+                    stopClient();
+                    break;
+                case "clientauth", "clienta":
+                    clientAuth();
+                    break;
+                default:
+                    if (command.matches(coordinatePattern)) {
+                        makeMove(command);
+                    } else {
+                        System.out.println("Unknown command: " + command);
+                    }
+                    break;
+            }
+        }
+    }
 
     private void showHelper() {
         System.out.println("Available commands:");
@@ -168,56 +167,52 @@ public class OnlineGameParser {
         threadWaitMove.start();
     }
 
-    //    private void makeMove(String input) {
-    //        System.out.println("makeMove command...");
-    //        if (!game.isInProgress()) {
-    //            System.out.println("There is not a game in progress");
-    //            return;
-    //        }
-    //        if (!isOnline) {
-    //            System.out.println("There is no online game");
-    //            return;
-    //        }
-    //        if (isWaiting) {
-    //            System.out.print("Wait you turn ");
-    //            waitMove();
-    //        } else {
-    //            // your turn
-    //            System.out.println("Your turn");
-    //            char letter = input.charAt(0);
-    //            int number = Integer.parseInt(input.substring(1));
-    //            Cell cell = new Cell(number, game.letterToIndex(letter));
-    //            try {
-    //                game.place(cell);
-    //            } catch (Exception e) {
-    //                System.err.println("Invalid Coordinates");
-    //                return;
-    //            }
-    //            game.coverTerritories(cell);
-    //            if (game.hasWon(game.getCurrentPlayer())) {
-    //                System.out.println(game.getCurrentPlayer() + " has won!");
-    //                return;
-    //            }
-    //            sendBoard();
-    //            System.out.print(game.getBoard());
-    //            if (!game.canPlayerPlay()) {
-    //                System.out.print("The next player " + game.getCurrentPlayer() + " can't
-    // play");
-    //                System.out.println("It' your turn again");
-    //            } else waitMove();
-    //        }
+    private void makeMove(String input) {
+        System.out.println("makeMove command...");
+        //            if (!game.isInProgress()) {
+        //                System.out.println("There is not a game in progress");
+        //                return;
+        //            }
+        if (!isOnline) {
+            System.out.println("There is no online game");
+            return;
+        }
+        if (isWaiting) {
+            System.out.print("Wait you turn ");
+            waitMove();
+        } else {
+            // your turn
+            System.out.println("Your turn");
+            Cell cell = new MoveParser(input).parse();
+            try {
+                game.place(cell);
+            } catch (Exception e) {
+                System.err.println("Invalid Coordinates");
+                return;
+            }
+            game.coverTerritories(cell);
+            if (game.hasWon(game.getCurrentPlayer())) {
+                System.out.println(game.getCurrentPlayer() + " has won!");
+                return;
+            }
+            sendBoard();
+            System.out.print(game.getBoard());
+            if (!game.canPlayerPlay()) {
+                System.out.print("The next player " + game.getCurrentPlayer() + " can't     play");
+                System.out.println("It' your turn again");
+            } else waitMove();
+        }
 
-    // if (!isOnline) {
-    // game.changeCurrentPlayer();
-    // if (!game.canPlayerPlay()) {
-    // System.out.print("The next player " + game.getCurrentPlayer() + " can't
-    // play");
-    // game.changeCurrentPlayer();
-    // System.out.println(", so the next player is " + game.getCurrentPlayer());
-    // return;
-    // }
-    // }
-    //    }
+        if (!isOnline) {
+            game.changeCurrentPlayer();
+            if (!game.canPlayerPlay()) {
+                System.out.print("The next player " + game.getCurrentPlayer() + " can't     play");
+                game.changeCurrentPlayer();
+                System.out.println(", so the next player is " + game.getCurrentPlayer());
+                return;
+            }
+        }
+    }
 
     private void startServer() {
         isServer = true;

@@ -2,6 +2,7 @@ package quentin;
 
 import java.util.Scanner;
 import quentin.cache.CachedGameStarter;
+import quentin.network.OnlineGameParser;
 
 public class Main {
 
@@ -73,7 +74,7 @@ public class Main {
     }
 
     private static void startOnlineGame(Scanner scanner) {
-        //    OnlineGameParser parser = new OnlineGameParser(scanner);
-        //    parser.run();
+        OnlineGameParser parser = new OnlineGameParser(scanner);
+        parser.run();
     }
 }

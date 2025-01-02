@@ -7,4 +7,9 @@ module quentin {
 
     opens quentin to
             javafx.fxml;
+
+    exports quentin.network;
+
+    opens quentin.network to
+            javafx.fxml;
 }
