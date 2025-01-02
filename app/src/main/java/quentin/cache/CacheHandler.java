@@ -32,8 +32,8 @@ public class CacheHandler {
         if (!cacheDirectory.exists() && !cacheDirectory.mkdirs()) {
             throw new RuntimeException("Failed to create cache directory: " + GAME_DIR);
         }
-        try (ObjectOutputStream output =
-                new ObjectOutputStream(new FileOutputStream(new File(CACHE_FILE)))) {
+        clearCache();
+        try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(CACHE_FILE))) {
             output.writeObject(cache);
         } catch (IOException e) {
             System.out.println("Failed to save cache: " + CACHE_FILE);
