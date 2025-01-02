@@ -2,7 +2,7 @@ package quentin.cache;
 
 import java.util.Scanner;
 
-public class Main {
+public class MainCache {
 
     public static void main(String[] args) {
         CachedGameStarter gameStarter = new CachedGameStarter(CacheHandler.initialize());
