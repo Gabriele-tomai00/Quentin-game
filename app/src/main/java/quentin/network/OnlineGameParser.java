@@ -2,11 +2,18 @@ package quentin.network;
 
 import java.io.IOException;
 import java.util.Scanner;
-import quentin.game.Cell;
-import quentin.game.LocalGame;
-import quentin.game.MoveParser;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import quentin.game.*;
 
-public class OnlineGameParser {
+public class OnlineGameParser extends SimpleGameStarter {
+    public enum State {
+        connected,
+        maybeConnected,
+        notConnected
+    }
+
     private LocalGame game;
     Scanner scanner;
     Client client = new Client();
@@ -17,18 +24,34 @@ public class OnlineGameParser {
     Boolean isClient = false;
     Thread waitAuth;
     String lastMessageReceived;
+    String CLEAR = "\033[H\033[2J";
+    private final CountDownLatch latch = new CountDownLatch(1);
 
     public OnlineGameParser(Scanner scanner) {
         this.scanner = scanner;
     }
 
+    @Override
+    public void startDisplay() {
+        //
+    }
+
+    @Override
+    public void displayWinner() {
+        System.out.println(
+                CLEAR + String.format("%s has won", game.getCurrentPlayer()).toUpperCase());
+    }
+
+    @Override
+    public void display() {
+        System.out.println(CLEAR + game.getBoard());
+    }
+
     public void run() {
         System.out.println("Enter commands (type 'exit' to quit):");
         System.out.println(
-                "Type 'startserver' if you want to host a match. Type 'startclient' if you     want"
+                "Type 'startserver' if you want to host a match. Type 'startclient' if you want"
                         + " to join a match");
-
-        final String coordinatePattern = "(?i)^[A-M](?:[0-9]|1[0-2])$";
 
         while (true) {
             printGamePrompt();
@@ -64,11 +87,10 @@ public class OnlineGameParser {
                     clientAuth();
                     break;
                 default:
-                    if (command.matches(coordinatePattern)) {
-                        makeMove(command);
-                    } else {
-                        System.out.println("Unknown command: " + command);
-                    }
+                    makeMove(command);
+                    //                    } else {
+                    //                        System.out.println("Unknown command: " + command);
+                    //                    }
                     break;
             }
         }
@@ -97,17 +119,19 @@ public class OnlineGameParser {
         System.out.print(" > ");
     }
 
-    private void initialize() {
+    @Override
+    public void start() {
         game = new LocalGame();
         if (!isOnline) return;
-        System.out.println("New game started!");
-        System.out.println(game.getBoard());
+        displayMessage("New game started!");
+        display();
+        // System.out.println(game.getBoard());
         if (isServer) {
-            System.out.println("I'm server");
+            displayMessage("I'm server");
             isWaiting = false;
-            System.out.print("It's your turn to play ");
+            System.out.print("It's your turn to play > ");
         } else if (isClient) {
-            System.out.println("I'm client");
+            displayMessage("I'm client");
             game.changeCurrentPlayer();
             waitMove();
         }
@@ -118,12 +142,12 @@ public class OnlineGameParser {
                 new Thread(
                         () -> {
                             isWaiting = true;
-                            System.out.println("Waiting for messages...");
+                            displayMessage("Waiting for messages...");
                             if (isClient) {
                                 while (true) {
                                     String message = client.getMessageReceived();
                                     if (isMessageValid(message)) {
-                                        System.out.println("Message valid.");
+                                        displayMessage("Message valid.");
                                         break; // Exit when board is valid
                                     }
                                     try {
@@ -139,7 +163,7 @@ public class OnlineGameParser {
                                 while (true) {
                                     String message = server.getMessageReceived();
                                     if (isMessageValid(message)) {
-                                        System.out.println("Message valid.");
+                                        displayMessage("Message valid.");
                                         break;
                                     }
                                     try {
@@ -152,12 +176,15 @@ public class OnlineGameParser {
                                     }
                                 }
                             }
-                            System.out.println(game.getBoard());
+                            display();
                             if (!game.canPlayerPlay()) {
-                                System.out.println(
-                                        "You/The "
-                                                + game.getCurrentPlayer()
-                                                + " player can't play");
+                                displayMessage(
+                                        CLEAR
+                                                + String.format(
+                                                                "You/The %s player can't play",
+                                                                game.getCurrentPlayer())
+                                                        .toUpperCase());
+
                                 waitMove();
                             } else {
                                 isWaiting = false;
@@ -167,14 +194,14 @@ public class OnlineGameParser {
         threadWaitMove.start();
     }
 
-    private void makeMove(String input) {
-        System.out.println("makeMove command...");
+    @Override
+    public void makeMove(String input) {
         //            if (!game.isInProgress()) {
-        //                System.out.println("There is not a game in progress");
+        //                displayMessage("There is not a game in progress");
         //                return;
         //            }
         if (!isOnline) {
-            System.out.println("There is no online game");
+            displayMessage("There is no online game");
             return;
         }
         if (isWaiting) {
@@ -182,9 +209,9 @@ public class OnlineGameParser {
             waitMove();
         } else {
             // your turn
-            System.out.println("Your turn");
-            Cell cell = new MoveParser(input).parse();
+            Cell cell;
             try {
+                cell = new MoveParser(input).parse();
                 game.place(cell);
             } catch (Exception e) {
                 System.err.println("Invalid Coordinates");
@@ -192,36 +219,52 @@ public class OnlineGameParser {
             }
             game.coverTerritories(cell);
             if (game.hasWon(game.getCurrentPlayer())) {
-                System.out.println(game.getCurrentPlayer() + " has won!");
+                displayWinner();
                 return;
             }
             sendBoard();
             System.out.print(game.getBoard());
             if (!game.canPlayerPlay()) {
-                System.out.print("The next player " + game.getCurrentPlayer() + " can't     play");
-                System.out.println("It' your turn again");
+                displayMessage(
+                        CLEAR
+                                + String.format(
+                                                "You/The %s player can't play",
+                                                game.getCurrentPlayer())
+                                        .toUpperCase());
+                displayMessage("It' your turn again");
             } else waitMove();
         }
 
         if (!isOnline) {
             game.changeCurrentPlayer();
             if (!game.canPlayerPlay()) {
-                System.out.print("The next player " + game.getCurrentPlayer() + " can't     play");
+                displayMessage(
+                        CLEAR
+                                + String.format(
+                                                "You/The %s player can't play",
+                                                game.getCurrentPlayer())
+                                        .toUpperCase());
                 game.changeCurrentPlayer();
-                System.out.println(", so the next player is " + game.getCurrentPlayer());
+                displayMessage(", so the next player is " + game.getCurrentPlayer());
                 return;
             }
         }
     }
 
     private void startServer() {
+        isOnline = true;
         isServer = true;
-        Thread waitAuthOfClient =
+        Thread startS =
                 new Thread(
                         () -> {
                             System.out.println("Starting server...");
                             server.start();
+                        });
+        startS.start();
 
+        Thread waitAuthOfClient =
+                new Thread(
+                        () -> {
                             while (!server.isClientAuth()) {
                                 try {
                                     Thread.sleep(100);
@@ -237,74 +280,123 @@ public class OnlineGameParser {
                                 }
                             }
                             isOnline = true;
-                            initialize();
+                            start();
                         });
         waitAuthOfClient.start();
+        try {
+            waitAuthOfClient.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        start();
     }
 
     private void stopServer() {
-        System.out.println("Stopping server...");
+        displayMessage("Stopping server...");
         server.stop();
         isServer = false;
         isOnline = false;
-    }
-
-    private void startClient() {
-        isClient = true;
-        new Thread(
-                        () -> {
-                            System.out.println("Starting client...");
-                            try {
-                                client.startDiscovery();
-                            } catch (IOException e) {
-                                System.err.println("Error initializing the client connection");
-                            }
-                        })
-                .start();
-
-        waitAuth =
-                new Thread(
-                        () -> {
-                            while (!client.getAuthenticated()) {
-                                try {
-                                    Thread.sleep(100);
-                                } catch (InterruptedException e) {
-                                    Thread.currentThread().interrupt();
-                                    System.err.println(
-                                            "Thread interrupted while waiting for client"
-                                                    + " authentication");
-                                    return;
-                                }
-                            }
-                        });
-        waitAuth.start();
-        isOnline = true;
-        System.out.println("type 'clientauth' to authenticate the client");
     }
 
     private void stopClient() {
         if (isOnline) {
             client.stopDiscovery();
             isOnline = false;
-        } else System.out.println("You can't stop a client in offline mode");
+        } else displayMessage("You can't stop a client in offline mode");
+    }
+
+    private void startClient() {
+        isClient = true;
+        new Thread(
+                        () -> {
+                            displayMessage("Starting client...");
+                            try {
+                                client.startDiscovery();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        })
+                .start();
+
+        isOnline = true;
     }
 
     private void clientAuth() {
-        if (!isOnline) {
-            return;
+        System.out.print("clientAuth command");
+
+        AtomicBoolean authenticated = new AtomicBoolean(false);
+        AtomicInteger tentativi = new AtomicInteger(5);
+        String password;
+        boolean threadStarted = false;
+
+        Thread threadWaitAuth =
+                new Thread(
+                        () -> {
+                            long startTime = System.currentTimeMillis();
+                            while (true) {
+                                try {
+                                    Thread.sleep(1000); // 1 sec
+                                } catch (InterruptedException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                                if (System.currentTimeMillis() - startTime > 10000) {
+                                    System.err.println(
+                                            "Timeout raggiunto. Autenticazione non completata.");
+                                    break;
+                                }
+
+                                if (client.getAuthenticationMessage()
+                                        .equals("Password accepted from TCP server")) {
+                                    System.out.println("Autenticazione completata! ");
+                                    authenticated.set(true);
+                                    break;
+                                } else if (client.getAuthenticationMessage()
+                                                .startsWith("Invalid password")
+                                        || client.getAuthenticationMessage()
+                                                .equals("server closed")) {
+                                    System.out.println("Autenticazione fallita! ");
+                                    authenticated.set(false);
+                                    break;
+                                }
+                            }
+                        });
+
+        while (true) {
+            if (tentativi.get() <= 0 || authenticated.get()) break;
+
+            System.out.println("tentativi: " + tentativi);
+            System.out.print("password > ");
+            password = scanner.nextLine().trim();
+            if (threadWaitAuth.isAlive()) {
+                System.out.println("Waiting server response ");
+                continue;
+            }
+            if (password.equals("exit")) {
+                return;
+            }
+            if ((password.length() != 5 || !password.matches("\\d{5}"))) {
+                System.out.println("Invalid password, retry ");
+                tentativi.decrementAndGet();
+                continue;
+            }
+            client.sendAuthentication(password);
+            System.out.println("Wait answer...");
+            if (!threadStarted) {
+                threadWaitAuth.start();
+                threadStarted = true; // Imposta a true per evitare riavvii
+            }
+            System.out.println("Authenticated? " + authenticated.get());
+            if (authenticated.get()) {
+                break;
+            }
+            try {
+                Thread.sleep(1000); // 1 sec
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
-        // Scanner scanner = new Scanner(System.in);
-        // String password;
-        // System.out.print("Enter a 5-digit numeric password: ");
-        // password = scanner.nextLine().trim();
-        String password = "12345";
-        client.trySendAuthentication(password);
-        try {
-            waitAuth.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        initialize();
+        if (authenticated.get()) start();
     }
 
     private void sendBoard() {
@@ -312,7 +404,7 @@ public class OnlineGameParser {
         if (isServer) server.sendMessage(game.getBoard().toCompactString());
         else client.sendMessage(game.getBoard().toCompactString());
 
-        System.out.println("Board sent to " + (isServer ? "client" : "server"));
+        displayMessage("Board sent to " + (isServer ? "client" : "server"));
     }
 
     private Boolean isMessageValid(String compactBoard) {
