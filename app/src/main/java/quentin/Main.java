@@ -27,7 +27,7 @@ public class Main {
         System.out.println("Enter commands (type 'exit' to quit):");
 
         while (true) {
-            System.out.print("> ");
+            System.out.print("main > ");
             if (!scanner.hasNextLine()) {
                 System.out.println("No input available. Please try again.");
                 continue;
@@ -60,7 +60,7 @@ public class Main {
     private static void showHelper() {
         System.out.println("Available commands:");
         System.out.println(
-                "  startlocalgame or slg   Start a match in local mode (only one computer needed");
+                "  startlocalgame or slg   Start a match in local mode (only one computer needed)");
         System.out.println(
                 "  onlinegame or og        Start a match in LAN mode (two computer needed)");
         System.out.println("  exit                    Quits the game and exits the program");
