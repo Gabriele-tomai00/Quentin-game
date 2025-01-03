@@ -1,7 +1,10 @@
 package quentin.network;
 
 import java.util.Scanner;
-import quentin.game.*;
+import quentin.game.Cell;
+import quentin.game.LocalGame;
+import quentin.game.MoveParser;
+import quentin.game.SimpleGameStarter;
 
 public class OnlineGameParser extends SimpleGameStarter {
     private LocalGame game;
@@ -77,9 +80,9 @@ public class OnlineGameParser extends SimpleGameStarter {
                         break;
                     default:
                         makeMove(command);
-                        //                    } else {
-                        //                        System.out.println("Unknown command: " + command);
-                        //                    }
+                        // } else {
+                        // System.out.println("Unknown command: " + command);
+                        // }
                         break;
                 }
             } catch (RuntimeException e) {
