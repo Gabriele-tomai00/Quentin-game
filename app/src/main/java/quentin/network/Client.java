@@ -1,12 +1,10 @@
 package quentin.network;
 
-import java.io.IOException;
-
 public class Client {
     private UDPClient udpClient;
     private TCPClient tcpClient;
 
-    public void startDiscovery() throws IOException {
+    public void startDiscovery() {
         udpClient = new UDPClient();
         udpClient.setOnDiscoveredCallback(this::linkWithTCPServer);
         udpClient.startDiscovery(); // non-blocking
@@ -37,12 +35,12 @@ public class Client {
         tcpClient.sendMessage(message);
     }
 
-    public String getMessageReceived() {
+    public String getBoardReceived() {
         if (tcpClient == null) return null;
-        return tcpClient.getMessageReceived();
+        return tcpClient.getBoardReceived();
     }
 
-    public State getStateAuthentiation() {
+    public State getStateAuthentication() {
         return tcpClient.getState();
     }
 

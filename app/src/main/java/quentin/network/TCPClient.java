@@ -13,7 +13,7 @@ public class TCPClient implements TCPclientServerInterface {
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
-    private String messageReceived; // board
+    private String boardReceived; // board
     private final int port;
     private final String address;
     private final String serverUsername;
@@ -54,24 +54,21 @@ public class TCPClient implements TCPclientServerInterface {
                                 try {
                                     String serverMessage;
                                     while ((serverMessage = in.readLine()) != null) {
-                                        System.out.println(
-                                                "Received from server: " + serverMessage);
-                                        messageReceived = serverMessage;
+                                        //
+                                        // System.out.println("Received from server: " +
+                                        // serverMessage);
 
                                         if (state != State.authenticated) {
                                             if (serverMessage.equals(
                                                     "Password accepted from TCP server")) {
                                                 state = State.authenticated;
-                                                System.out.println("Stato: " + state);
 
                                             } else if (serverMessage.equals("server closed")) {
                                                 state = State.failedAuthentication;
                                                 stop();
                                             } else if (serverMessage.startsWith("Invalid password"))
                                                 state = State.failedAuthentication;
-                                        }
-
-                                        messageReceived = serverMessage;
+                                        } else boardReceived = serverMessage;
                                     }
                                     System.out.println("server connection interrupted");
                                     stop();
@@ -99,8 +96,8 @@ public class TCPClient implements TCPclientServerInterface {
         return serverUsername;
     }
 
-    public String getMessageReceived() {
-        return messageReceived;
+    public String getBoardReceived() {
+        return boardReceived;
     }
 
     public State getState() {
