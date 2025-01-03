@@ -28,25 +28,25 @@ public class Client {
         }
     }
 
-    public void trySendAuthentication(String code) {
-        if (code.matches("\\d{5}")) {
-            tcpClient.sendMessage(code);
-            System.out.println("Password sent to server: " + code);
-        } else
-            System.out.println(
-                    "Invalid password. Please enter exactly 5 digits. Type again \"clienta\"");
+    public void sendAuthentication(String code) {
+        tcpClient.sendMessage(code);
+        System.out.println("Password sent to server: " + code);
     }
 
     public void sendMessage(String message) {
         tcpClient.sendMessage(message);
     }
 
-    public Boolean getAuthenticated() {
-        return tcpClient != null ? tcpClient.getAuthenticated() : false;
-    }
-
     public String getMessageReceived() {
         if (tcpClient == null) return null;
         return tcpClient.getMessageReceived();
+    }
+
+    public State getStateAuthentiation() {
+        return tcpClient.getState();
+    }
+
+    public Boolean isAuthenticated() {
+        return tcpClient.getState() == State.authenticated;
     }
 }

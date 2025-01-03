@@ -31,20 +31,13 @@ public class TCPServer implements TCPclientServerInterface {
             clientSocket = serverSocket.accept(); // Blocking call: waits for a client to connect
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            System.out.println("Client connected: " + clientSocket.getInetAddress());
+            System.out.println("Client authenticated: " + clientSocket.getInetAddress());
             System.out.println("CODE: " + PASSWORD);
             String message;
             for (int attempt = 0; attempt < 3; attempt++) {
                 if ((message = in.readLine()) != null) {
                     System.out.println("Received first message: " + message);
 
-                    if (message.equals("12345")) {
-                        System.out.println("Password of TCP client accepted");
-                        isClientAuth = true;
-                        out.println("Password accepted from TCP server");
-                        listenForMessages();
-                        return;
-                    }
                     if (!message.equals(PASSWORD)) {
                         System.out.println(
                                 "Invalid password, retry (attempt " + (attempt + 1) + "/3)");

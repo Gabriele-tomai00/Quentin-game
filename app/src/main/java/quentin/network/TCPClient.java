@@ -3,16 +3,22 @@ package quentin.network;
 import java.io.*;
 import java.net.*;
 
+enum State {
+    notYetAuthenticated,
+    authenticated,
+    failedAuthentication,
+}
+
 public class TCPClient implements TCPclientServerInterface {
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
-    private String messageReceived;
-    private Boolean authenticated = false;
+    private String messageReceived; // board
     private final int port;
     private final String address;
     private final String serverUsername;
     private Boolean clientConnected = false;
+    private State state = State.notYetAuthenticated;
 
     public TCPClient(ServerInfo info) {
         address = info.IpAddress();
@@ -25,7 +31,8 @@ public class TCPClient implements TCPclientServerInterface {
             socket = new Socket(address, port);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            System.out.println("TCP Client correctly connected, now you must send the password");
+            System.out.println(
+                    "TCP Client correctly authenticated, now you must send the password");
             clientConnected = true;
         } catch (IOException e) {
             System.err.println("Error initializing the client connection: " + e.getMessage());
@@ -50,14 +57,20 @@ public class TCPClient implements TCPclientServerInterface {
                                         System.out.println(
                                                 "Received from server: " + serverMessage);
                                         messageReceived = serverMessage;
-                                        if (!authenticated) {
+
+                                        if (state != State.authenticated) {
                                             if (serverMessage.equals(
                                                     "Password accepted from TCP server")) {
-                                                authenticated = true;
+                                                state = State.authenticated;
+                                                System.out.println("Stato: " + state);
+
                                             } else if (serverMessage.equals("server closed")) {
+                                                state = State.failedAuthentication;
                                                 stop();
-                                            }
+                                            } else if (serverMessage.startsWith("Invalid password"))
+                                                state = State.failedAuthentication;
                                         }
+
                                         messageReceived = serverMessage;
                                     }
                                     System.out.println("server connection interrupted");
@@ -67,7 +80,7 @@ public class TCPClient implements TCPclientServerInterface {
                                 }
                             })
                     .start();
-        } else System.out.println("Can't receive from server because It's not connected");
+        } else System.out.println("Can't receive from server because It's not authenticated");
     }
 
     public void stop() {
@@ -86,11 +99,11 @@ public class TCPClient implements TCPclientServerInterface {
         return serverUsername;
     }
 
-    public Boolean getAuthenticated() {
-        return authenticated;
-    }
-
     public String getMessageReceived() {
         return messageReceived;
+    }
+
+    public State getState() {
+        return state;
     }
 }

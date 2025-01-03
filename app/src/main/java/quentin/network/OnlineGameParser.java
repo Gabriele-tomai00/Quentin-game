@@ -2,18 +2,9 @@ package quentin.network;
 
 import java.io.IOException;
 import java.util.Scanner;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import quentin.game.*;
 
 public class OnlineGameParser extends SimpleGameStarter {
-    public enum State {
-        connected,
-        maybeConnected,
-        notConnected
-    }
-
     private LocalGame game;
     Scanner scanner;
     Client client = new Client();
@@ -22,10 +13,8 @@ public class OnlineGameParser extends SimpleGameStarter {
     Boolean isWaiting = false;
     Boolean isServer = false;
     Boolean isClient = false;
-    Thread waitAuth;
     String lastMessageReceived;
     String CLEAR = "\033[H\033[2J";
-    private final CountDownLatch latch = new CountDownLatch(1);
 
     public OnlineGameParser(Scanner scanner) {
         this.scanner = scanner;
@@ -68,9 +57,7 @@ public class OnlineGameParser extends SimpleGameStarter {
                     break;
                 case "exit":
                     scanner.close();
-                    // if (game != null) game.stop();
                     return;
-                // for online game
                 case "ss", "startserver", "starts":
                     startServer();
                     break;
@@ -122,7 +109,9 @@ public class OnlineGameParser extends SimpleGameStarter {
     @Override
     public void start() {
         game = new LocalGame();
-        if (!isOnline) return;
+        if (!isOnline
+                || (isServer && !server.isClientAuth())
+                || isClient && !client.isAuthenticated()) return;
         displayMessage("New game started!");
         display();
         // System.out.println(game.getBoard());
@@ -196,10 +185,11 @@ public class OnlineGameParser extends SimpleGameStarter {
 
     @Override
     public void makeMove(String input) {
-        //            if (!game.isInProgress()) {
-        //                displayMessage("There is not a game in progress");
-        //                return;
-        //            }
+        if ((isServer && !server.isClientAuth()) || isClient && !client.isAuthenticated()) {
+            displayMessage("Client is not yet authenticated");
+            return;
+        }
+
         if (!isOnline) {
             displayMessage("There is no online game");
             return;
@@ -218,12 +208,12 @@ public class OnlineGameParser extends SimpleGameStarter {
                 return;
             }
             game.coverTerritories(cell);
-            if (game.hasWon(game.getCurrentPlayer())) {
-                displayWinner();
-                return;
-            }
+
+            if (hasWon()) return;
+
             sendBoard();
             System.out.print(game.getBoard());
+
             if (!game.canPlayerPlay()) {
                 displayMessage(
                         CLEAR
@@ -246,21 +236,33 @@ public class OnlineGameParser extends SimpleGameStarter {
                                         .toUpperCase());
                 game.changeCurrentPlayer();
                 displayMessage(", so the next player is " + game.getCurrentPlayer());
-                return;
             }
         }
+    }
+
+    public boolean hasWon() {
+        if (game.hasWon(game.getCurrentPlayer())) {
+            displayWinner();
+            return true;
+        }
+        game.changeCurrentPlayer();
+        if (game.hasWon(game.getCurrentPlayer())) {
+            displayWinner();
+            return true;
+        }
+        game.changeCurrentPlayer();
+        return false;
     }
 
     private void startServer() {
         isOnline = true;
         isServer = true;
-        Thread startS =
-                new Thread(
+        new Thread(
                         () -> {
                             System.out.println("Starting server...");
                             server.start();
-                        });
-        startS.start();
+                        })
+                .start();
 
         Thread waitAuthOfClient =
                 new Thread(
@@ -319,84 +321,54 @@ public class OnlineGameParser extends SimpleGameStarter {
                 .start();
 
         isOnline = true;
+        displayMessage("Type 'clienta' to insert the password");
     }
 
     private void clientAuth() {
-        System.out.print("clientAuth command");
-
-        AtomicBoolean authenticated = new AtomicBoolean(false);
-        AtomicInteger tentativi = new AtomicInteger(5);
+        int attempts = 3;
         String password;
-        boolean threadStarted = false;
-
-        Thread threadWaitAuth =
-                new Thread(
-                        () -> {
-                            long startTime = System.currentTimeMillis();
-                            while (true) {
-                                try {
-                                    Thread.sleep(1000); // 1 sec
-                                } catch (InterruptedException e) {
-                                    throw new RuntimeException(e);
-                                }
-
-                                if (System.currentTimeMillis() - startTime > 10000) {
-                                    System.err.println(
-                                            "Timeout raggiunto. Autenticazione non completata.");
-                                    break;
-                                }
-
-                                if (client.getAuthenticationMessage()
-                                        .equals("Password accepted from TCP server")) {
-                                    System.out.println("Autenticazione completata! ");
-                                    authenticated.set(true);
-                                    break;
-                                } else if (client.getAuthenticationMessage()
-                                                .startsWith("Invalid password")
-                                        || client.getAuthenticationMessage()
-                                                .equals("server closed")) {
-                                    System.out.println("Autenticazione fallita! ");
-                                    authenticated.set(false);
-                                    break;
-                                }
-                            }
-                        });
-
         while (true) {
-            if (tentativi.get() <= 0 || authenticated.get()) break;
+            if (attempts == 0) return;
 
-            System.out.println("tentativi: " + tentativi);
+            System.out.println("attempts: " + attempts);
             System.out.print("password > ");
             password = scanner.nextLine().trim();
-            if (threadWaitAuth.isAlive()) {
-                System.out.println("Waiting server response ");
-                continue;
-            }
-            if (password.equals("exit")) {
-                return;
-            }
             if ((password.length() != 5 || !password.matches("\\d{5}"))) {
                 System.out.println("Invalid password, retry ");
-                tentativi.decrementAndGet();
+                attempts--;
                 continue;
             }
             client.sendAuthentication(password);
-            System.out.println("Wait answer...");
-            if (!threadStarted) {
-                threadWaitAuth.start();
-                threadStarted = true; // Imposta a true per evitare riavvii
-            }
-            System.out.println("Authenticated? " + authenticated.get());
-            if (authenticated.get()) {
-                break;
-            }
+            if (waitServerAuthenticationResponse()) break;
+            else attempts--;
+        }
+        start();
+    }
+
+    private boolean waitServerAuthenticationResponse() {
+        System.out.println("Wait answer...");
+        long startTime = System.currentTimeMillis();
+        while (true) {
             try {
-                Thread.sleep(1000); // 1 sec
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+
+            if (System.currentTimeMillis() - startTime > 3000) {
+                System.err.println("Timeout reached. Authentication not completed.");
+                return false;
+            }
+
+            if (client.getStateAuthentiation() == State.authenticated) {
+                System.out.println("Authentication completed! ");
+                return true;
+            }
+            if (client.getStateAuthentiation() == State.failedAuthentication) {
+                System.out.println("Authentication failed! ");
+                return false;
+            }
         }
-        if (authenticated.get()) start();
     }
 
     private void sendBoard() {
@@ -424,5 +396,10 @@ public class OnlineGameParser extends SimpleGameStarter {
                 System.err.println("Invalid board: " + compactBoard);
             return false;
         }
+    }
+
+    @Override
+    public void displayMessage(String format) {
+        System.out.println(format);
     }
 }
