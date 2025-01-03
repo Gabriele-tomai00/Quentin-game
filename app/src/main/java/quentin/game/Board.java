@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
+import quentin.exceptions.IllegalBoardException;
 
 public class Board implements Serializable {
 
@@ -141,14 +142,16 @@ public class Board implements Serializable {
                 int count = Integer.parseInt(compactString.substring(start, i));
                 for (int j = 0; j < count; j++) {
                     if (index >= SIZE * SIZE) {
-                        throw new IllegalArgumentException("Compact string exceeds board size.");
+                        throw new IllegalBoardException(
+                                "Compact string exceeds board size", compactString);
                     }
                     this.board[index / SIZE][index % SIZE] = BoardPoint.EMPTY;
                     index++;
                 }
             } else {
                 if (index >= SIZE * SIZE) {
-                    throw new IllegalArgumentException("Compact string exceeds board size.");
+                    throw new IllegalBoardException(
+                            "Compact string exceeds board size", compactString);
                 }
                 this.board[index / SIZE][index % SIZE] = BoardPoint.fromString(String.valueOf(ch));
                 i++;
@@ -156,7 +159,8 @@ public class Board implements Serializable {
             }
         }
         if (index != SIZE * SIZE) {
-            throw new IllegalArgumentException("Compact string does not match the board size.");
+            throw new IllegalBoardException(
+                    "Compact string does not match the board size.", compactString);
         }
     }
 
