@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label fx:id="label" alignment="CENTER" contentDisplay="TOP" text="Fond a save file with date: Want to resume?">
+         <font>
+            <Font name="Menlo Bold" size="14.0" />
+         </font>
+      </Label>
+      <ButtonBar fx:id="bar" />
+   </children>
+</VBox>

@@ -1,15 +1,10 @@
 module quentin {
-    requires javafx.controls;
-    requires javafx.fxml;
-    requires transitive javafx.graphics;
+  requires javafx.controls;
+  requires javafx.fxml;
+  requires transitive javafx.graphics;
 
-    exports quentin;
+  exports quentin to javafx.graphics;
+  exports quentin.game;
 
-    opens quentin to
-            javafx.fxml;
-
-    exports quentin.network;
-
-    opens quentin.network to
-            javafx.fxml;
+  opens quentin to javafx.fxml;
 }
