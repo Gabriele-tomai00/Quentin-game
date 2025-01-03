@@ -6,6 +6,7 @@ module quentin {
     exports quentin to
             javafx.graphics;
     exports quentin.game;
+    exports quentin.cache;
 
     opens quentin to
             javafx.fxml;

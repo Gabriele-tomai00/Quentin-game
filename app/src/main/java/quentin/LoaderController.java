@@ -16,7 +16,7 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import quentin.cache.Cache;
-import quentin.game.LocalGame;
+import quentin.cache.GameLog;
 
 public class LoaderController implements Initializable {
 
@@ -24,9 +24,9 @@ public class LoaderController implements Initializable {
     @FXML private Label label;
     private Controller controller;
     private Parent root;
-    private Cache<LocalGame> cache;
+    private Cache<GameLog> cache;
 
-    public LoaderController(Cache<LocalGame> cache) {
+    public LoaderController(Cache<GameLog> cache) {
         this.cache = cache;
     }
 
@@ -41,7 +41,7 @@ public class LoaderController implements Initializable {
         bar.getButtons().addAll(yesButton, noButton);
         label.setText(
                 String.format(
-                        "Found saved game: %s%nWant to resume game?", cache.getLog().toString()));
+                        "Found saved game: %s%nWant to resume game?", cache.getLog().timeStamp()));
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("Main.fxml"));
             loader.setController(new Controller(cache));
@@ -63,9 +63,5 @@ public class LoaderController implements Initializable {
         controller.reset();
         Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
         stage.setScene(new Scene(root));
-    }
-
-    public void setCache(Cache<LocalGame> cache) {
-        this.cache = cache;
     }
 }

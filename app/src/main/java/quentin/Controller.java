@@ -1,8 +1,11 @@
 package quentin;
 
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,6 +18,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import quentin.cache.Cache;
+import quentin.cache.GameLog;
 import quentin.exceptions.MoveException;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
@@ -35,7 +39,9 @@ public class Controller implements Initializable, GameStarter {
     @FXML private Button exitButton;
     private final Background black = Background.fill(Color.BLACK);
     private final Background white = Background.fill(Color.WHITE);
-    private final Cache<LocalGame> cache;
+    private final Cache<GameLog> cache;
+    private static final DateTimeFormatter TIMESTAMP_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
     public Controller() {
         super();
@@ -44,11 +50,11 @@ public class Controller implements Initializable, GameStarter {
         cache = new Cache<>();
     }
 
-    public Controller(Cache<LocalGame> cache) {
+    public Controller(Cache<GameLog> cache) {
         super();
         panes = new Pane[13][13];
         if (cache.getMemorySize() > 0) {
-            game = cache.getLog();
+            game = cache.getLog().game();
         } else {
             game = new LocalGame();
         }
@@ -133,10 +139,40 @@ public class Controller implements Initializable, GameStarter {
             if (game.hasWon(game.getCurrentPlayer())) {
                 displayWinner();
             }
-            cache.saveLog(new LocalGame(game));
+            cache.saveLog(
+                    new GameLog(
+                            LocalDateTime.now().format(TIMESTAMP_FORMATTER), new LocalGame(game)));
             displayMessage(game.getCurrentPlayer() + "'s turn!");
         } catch (MoveException e1) {
-            displayMessage(e1.getMessage());
+            errorMessage(e1.getMessage());
+            //      displayMessage(e1.getMessage());
+        }
+    }
+
+    public static void errorMessage() {
+        Task<Void> sleeper =
+                new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                        }
+                        return null;
+                    }
+                };
+        new Thread(sleeper).start();
+    }
+
+    public void errorMessage(String exception) {
+        try {
+            messageField.toFront();
+            messageField.setText(exception);
+            Thread.sleep(100);
+            base.toFront();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 
@@ -157,7 +193,7 @@ public class Controller implements Initializable, GameStarter {
 
     public void goBack(ActionEvent e) {
         try {
-            game = new LocalGame(cache.goBack());
+            game = new LocalGame(cache.goBack().game());
             displayMessage(game.getCurrentPlayer() + "'s turn!");
         } catch (RuntimeException ex) {
             displayMessage(ex.getMessage());
@@ -167,7 +203,7 @@ public class Controller implements Initializable, GameStarter {
 
     public void goForward(ActionEvent e) {
         try {
-            game = new LocalGame(cache.goForward());
+            game = new LocalGame(cache.goForward().game());
             displayMessage(game.getCurrentPlayer() + "'s turn!");
         } catch (RuntimeException ex) {
             displayMessage(ex.getMessage());
@@ -179,7 +215,7 @@ public class Controller implements Initializable, GameStarter {
         Platform.exit();
     }
 
-    public Cache<LocalGame> getCache() {
+    public Cache<GameLog> getCache() {
         return cache;
     }
 }
