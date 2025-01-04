@@ -1,4 +1,4 @@
-package quentin;
+package quentin.gui;
 
 import java.net.URL;
 import java.time.LocalDateTime;

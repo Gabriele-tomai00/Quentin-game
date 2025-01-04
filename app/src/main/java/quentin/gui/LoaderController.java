@@ -1,4 +1,4 @@
-package quentin;
+package quentin.gui;
 
 import java.io.IOException;
 import java.net.URL;

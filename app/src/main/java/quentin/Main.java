@@ -2,6 +2,7 @@ package quentin;
 
 import java.util.Scanner;
 import quentin.cache.CachedGameStarter;
+import quentin.gui.GuiMain;
 import quentin.network.OnlineGameParser;
 
 public class Main {
@@ -35,26 +36,33 @@ public class Main {
             String command = scanner.nextLine().trim().toLowerCase();
 
             switch (command) {
-                case "slg", "startlocalgame":
+                case "slg", "startlocalgame" -> {
                     startLocalGame(scanner);
-                    break;
-                case "og", "onlinegame":
+                }
+                case "og", "onlinegame" -> {
                     startOnlineGame(scanner);
-                    break;
-                case "":
-                    break;
-                case "help":
+                }
+                case "sg", "startgui" -> {
+                    startGui(args);
+                }
+                case "" -> {}
+                case "help" -> {
                     showHelper();
-                    break;
-                case "exit":
+                }
+                case "exit" -> {
                     scanner.close();
                     return;
-                default:
+                }
+                default -> {
                     System.out.println("Unknown command: " + command);
-
-                    break;
+                }
             }
         }
+    }
+
+    private static void startGui(String... args) {
+        GuiMain.main(args);
+        System.out.println("Returning to main menu...");
     }
 
     private static void showHelper() {
