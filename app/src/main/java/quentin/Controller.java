@@ -4,9 +4,10 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -17,6 +18,8 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.util.Duration;
 import quentin.cache.Cache;
 import quentin.cache.GameLog;
 import quentin.exceptions.MoveException;
@@ -145,35 +148,32 @@ public class Controller implements Initializable, GameStarter {
             displayMessage(game.getCurrentPlayer() + "'s turn!");
         } catch (MoveException e1) {
             errorMessage(e1.getMessage());
-            //      displayMessage(e1.getMessage());
+            // displayMessage(e1.getMessage());
         }
-    }
-
-    public static void errorMessage() {
-        Task<Void> sleeper =
-                new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {
-                        }
-                        return null;
-                    }
-                };
-        new Thread(sleeper).start();
     }
 
     public void errorMessage(String exception) {
-        try {
-            messageField.toFront();
-            messageField.setText(exception);
-            Thread.sleep(100);
-            base.toFront();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        messageField.setText(exception);
+        messageField.setTextFill(Color.RED);
+        messageField.toFront();
+        messageField.setFont(Font.font("Menlo bold", 20));
+        messageField.setBackground(white);
+        messageField.setOpacity(.8);
+        PauseTransition transition = new PauseTransition(Duration.millis(1000));
+        transition.setOnFinished(
+                new EventHandler<ActionEvent>() {
+
+                    @Override
+                    public void handle(ActionEvent event) {
+                        messageField.setTextFill(Color.WHITE);
+                        messageField.toBack();
+                        messageField.setFont(Font.font("Menlo bold", 36));
+                        base.setOpacity(1);
+                        messageField.setBackground(null);
+                        messageField.setOpacity(1);
+                    }
+                });
+        transition.play();
     }
 
     public void reset() {
