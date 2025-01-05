@@ -28,10 +28,8 @@ public class GameTest {
         assertTrue(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(0, 0)));
         game.place(new Cell(0, 0));
         assertTrue(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(12, 12)));
-        // Now it is not valid
         assertFalse(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(1, 1)));
         game.place(new Cell(0, 1));
-        // Now it is
         assertTrue(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(1, 1)));
         game.changeCurrentPlayer();
         game.place(new Cell(1, 1));

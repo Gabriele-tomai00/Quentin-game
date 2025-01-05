@@ -6,7 +6,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 
-public class getCorrectAddress {
+public class GetCorrectAddress {
 
     public static String getLocalIpAddress() {
         NetworkInterface networkInterface = null;

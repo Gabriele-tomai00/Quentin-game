@@ -119,28 +119,30 @@ public class OnlineGameParser extends SimpleGameStarter {
 
     private void showHelper() {
         System.out.println("Available commands:");
-        System.out.println("  exit                    Quits the game and exits the program");
-        System.out.println("  help                    Shows this help");
-        System.out.println(
-                "  <coordinates>           Makes a move. Examples: A1 b2 C5 (wrong examples: 5A,"
-                        + " 24)");
-        System.out.println("ONLINE MODE");
-        System.out.println("  back                    Go back one move");
-        System.out.println(
-                "  setusername             Set a username to be recognized by other players when"
-                        + " playing online");
-        System.out.println(
-                "  setport                 Set a different TCP port, in case it is already used"
-                        + " (IMPORTANT: the other player must know the new port)");
-        System.out.println("  getusername or getu     Get you current username");
-        System.out.println(
-                "  getport or getp         Get the current TCP port (your opposing player may need"
-                        + " it)");
-        System.out.println("  startserver or ss       Starts a server to play with other players");
-        System.out.println("  stopserver or stops     Stops the server");
-        System.out.println("  startclient or sc       Starts a client to play with other players");
-        System.out.println("  stopclient or stopc     Stops the client");
-        System.out.println("  clienta                 Authenticates the client");
+        String[][] commands = {
+            {"exit", "Quits the game and exits the program"},
+            {"help", "Shows this help"},
+            {"<coordinates>", "Makes a move. Examples: A1 b2 C5 (wrong examples: 5A, 24)"},
+            {"setusername", "Set a username to be recognized by other players when playing online"},
+            {
+                "setport",
+                "Set a different TCP port, in case it is already used (IMPORTANT: the other player"
+                        + " must know the new port)"
+            },
+            {"getusername or getu", "Prints you current username"},
+            {
+                "getport or getp",
+                "Prints the currently used TCP port (your opposing player may need it)"
+            },
+            {"startserver or ss", "Starts a server to play with other players"},
+            {"stopserver or stops", "Stops the server"},
+            {"startclient or sc", "Starts a client to play with other players"},
+            {"stopclient or stopc", "Stops the client"},
+            {"clienta", "Authenticates the client"}
+        };
+        for (String[] strings : commands) {
+            System.out.printf("  %-25s: %-40s", strings[0], strings[1]);
+        }
     }
 
     private void printGamePrompt() {
@@ -156,7 +158,6 @@ public class OnlineGameParser extends SimpleGameStarter {
                 || isClient && !client.isAuthenticated()) return;
         displayMessage("New game started!");
         display();
-        // System.out.println(game.getBoard());
         if (isServer) {
             displayMessage("I'm server");
             isWaiting = false;

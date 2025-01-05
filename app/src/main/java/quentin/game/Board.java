@@ -20,44 +20,6 @@ public class Board implements Serializable {
         }
     }
 
-    // second constructor for testing
-    public Board(String[][] initialBoard) {
-        if (initialBoard.length != SIZE || initialBoard[0].length != SIZE) {
-            throw new IllegalArgumentException(
-                    "Matrix size must be: "
-                            + SIZE
-                            + "x"
-                            + SIZE
-                            + ". Your matrix is "
-                            + initialBoard.length
-                            + "x"
-                            + initialBoard[0].length);
-        }
-
-        // this.board = new BoardPoint[SIZE][SIZE];
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                String cell = initialBoard[i][j];
-                if (!cell.equals(".") && !cell.equals("B") && !cell.equals("W")) {
-                    throw new IllegalArgumentException(
-                            "Not valid value in matrix: ("
-                                    + cell
-                                    + " in "
-                                    + j
-                                    + ","
-                                    + i
-                                    + " position). The only allowed values are '.', 'B' and 'W'");
-                }
-                this.board[i][j] = BoardPoint.fromString(cell);
-            }
-        }
-    }
-
-    public Board(String compactString) {
-        this();
-        this.fromCompactString(compactString);
-    }
-
     public BoardPoint[][] getBoard() {
         return Arrays.copyOf(board, SIZE);
     }
@@ -129,36 +91,35 @@ public class Board implements Serializable {
     }
 
     public void fromCompactString(String compactString) {
-        int index = 0; // Indice globale per iterare sulla matrice
-        int length = compactString.length();
-
-        for (int i = 0; i < length; ) { // Nota: incremento `i` manualmente
+        int flattenedIndex = 0;
+        for (int i = 0; i < compactString.length(); ) {
             char ch = compactString.charAt(i);
             if (Character.isDigit(ch)) {
                 int start = i;
-                while (i < length && Character.isDigit(compactString.charAt(i))) {
+                while (i < compactString.length() && Character.isDigit(compactString.charAt(i))) {
                     i++;
                 }
                 int count = Integer.parseInt(compactString.substring(start, i));
                 for (int j = 0; j < count; j++) {
-                    if (index >= SIZE * SIZE) {
+                    if (flattenedIndex >= SIZE * SIZE) {
                         throw new IllegalBoardException(
                                 "Compact string exceeds board size", compactString);
                     }
-                    this.board[index / SIZE][index % SIZE] = BoardPoint.EMPTY;
-                    index++;
+                    this.board[flattenedIndex / SIZE][flattenedIndex % SIZE] = BoardPoint.EMPTY;
+                    flattenedIndex++;
                 }
             } else {
-                if (index >= SIZE * SIZE) {
+                if (flattenedIndex >= SIZE * SIZE) {
                     throw new IllegalBoardException(
                             "Compact string exceeds board size", compactString);
                 }
-                this.board[index / SIZE][index % SIZE] = BoardPoint.fromString(String.valueOf(ch));
+                this.board[flattenedIndex / SIZE][flattenedIndex % SIZE] =
+                        BoardPoint.fromString(String.valueOf(ch));
                 i++;
-                index++;
+                flattenedIndex++;
             }
         }
-        if (index != SIZE * SIZE) {
+        if (flattenedIndex != SIZE * SIZE) {
             throw new IllegalBoardException(
                     "Compact string does not match the board size.", compactString);
         }
@@ -169,10 +130,8 @@ public class Board implements Serializable {
     }
 
     public void clear() {
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                board[i][j] = BoardPoint.EMPTY;
-            }
+        for (BoardPoint[] row : board) {
+            Arrays.fill(row, BoardPoint.EMPTY);
         }
     }
 

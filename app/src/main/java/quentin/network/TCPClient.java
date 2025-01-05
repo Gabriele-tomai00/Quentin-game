@@ -1,7 +1,10 @@
 package quentin.network;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 enum State {
     notYetAuthenticated,
@@ -51,15 +54,10 @@ public class TCPClient implements TCPclientServerInterface {
                                 try {
                                     String serverMessage;
                                     while ((serverMessage = in.readLine()) != null) {
-                                        //
-                                        // System.out.println("Received from server: " +
-                                        // serverMessage);
-
                                         if (state != State.authenticated) {
                                             if (serverMessage.equals(
                                                     "Password accepted from TCP server")) {
                                                 state = State.authenticated;
-
                                             } else if (serverMessage.equals("server closed")) {
                                                 state = State.failedAuthentication;
                                                 stop();
@@ -70,7 +68,6 @@ public class TCPClient implements TCPclientServerInterface {
                                     System.out.println("server connection interrupted");
                                     stop();
                                 } catch (IOException e) {
-                                    // here when I call close() after a client connection
                                 }
                             })
                     .start();

@@ -1,6 +1,9 @@
 package quentin;
 
-import static org.junit.jupiter.api.Assertions.*; // JUnit 5
+// JUnit 5
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test; // Test of JUnit 5
@@ -34,7 +37,6 @@ public class ServerTest {
         server.generateRandomCode();
         String code1 = server.getCodeForClientAuth();
 
-        // Simulate a delay to ensure the seed changes
         Thread.sleep(10);
 
         server.generateRandomCode();

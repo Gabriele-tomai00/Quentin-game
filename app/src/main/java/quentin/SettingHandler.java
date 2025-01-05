@@ -1,6 +1,9 @@
 package quentin;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Properties;
 
 public class SettingHandler {
@@ -16,11 +19,9 @@ public class SettingHandler {
         if (!cacheDirectory.exists() && !cacheDirectory.mkdirs()) {
             throw new RuntimeException("Failed to create cache directory: " + GAME_DIR);
         }
-
         loadSettings();
     }
 
-    // Load settings from the file
     private void loadSettings() {
         File settingFile = new File(SETTING_FILE);
         if (settingFile.exists()) {
@@ -30,7 +31,6 @@ public class SettingHandler {
                 System.err.println("Error loading settings: " + e.getMessage());
             }
         } else {
-            // Set default values if file doesn't exist
             settings.setProperty("username", "default");
             settings.setProperty("TCP_port", "6789");
             settings.setProperty("games_won", "0");
@@ -39,7 +39,6 @@ public class SettingHandler {
         }
     }
 
-    // Save settings to the file
     public void saveSettings() {
         try (FileOutputStream fos = new FileOutputStream(SETTING_FILE)) {
             settings.store(fos, "Quentin Game Settings");
@@ -102,7 +101,6 @@ public class SettingHandler {
         saveSettings();
     }
 
-    // Ensure username is not "default"
     public void validateUsername() {
         if ("default".equalsIgnoreCase(getUsername())) {
             throw new IllegalStateException(

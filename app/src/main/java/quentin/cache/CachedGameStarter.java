@@ -43,13 +43,19 @@ public class CachedGameStarter extends SimpleGameStarter {
             String command = scanner.nextLine().trim().toLowerCase();
             try {
                 switch (command) {
-                    case "back" -> game = new LocalGame(cache.goBack().game());
-                    case "forward" -> game = new LocalGame(cache.goForward().game());
+                    case "back" -> {
+                        game = new LocalGame(cache.goBack().game());
+                    }
+                    case "forward" -> {
+                        game = new LocalGame(cache.goForward().game());
+                    }
                     case "exit" -> {
                         exitGame = true;
                         gameFinished = false;
                     }
-                    case "help" -> showHelper();
+                    case "help" -> {
+                        showHelper();
+                    }
                     default -> {
                         makeMove(command);
                         exitGame = hasWon();
@@ -70,16 +76,16 @@ public class CachedGameStarter extends SimpleGameStarter {
 
     private void showHelper() {
         System.out.println("Available commands:");
-        System.out.println(
-                "  startlocalgame or slg   Starts a local game (you can play with yourself in this"
-                        + " machine)");
-        System.out.println("  exit                    Quits the game and exits the program");
-        System.out.println("  help                    Shows this help");
-        System.out.println(
-                "  <coordinates>           Makes a move. Examples: A1 b2 C5 (wrong examples: 5A,"
-                        + " 24)");
-        System.out.println("  back                    go back one move");
-        System.out.println("  forward                    go forward one move");
+        String[][] commands = {
+            {"exit", "Quits the game and exits the program"},
+            {"help", "Shows this help"},
+            {"<coordinates>", "Makes a move. Examples: A1 b2 C5 (wrong examples: 5A, 24)"},
+            {"back", "go back one move"},
+            {"forward", "go forward one move"}
+        };
+        for (String[] strings : commands) {
+            System.out.printf("  %-25s: %-40s%n", strings[0], strings[1]);
+        }
     }
 
     public boolean isGameFinished() {

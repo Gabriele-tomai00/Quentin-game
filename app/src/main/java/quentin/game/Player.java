@@ -5,10 +5,7 @@ import java.io.Serializable;
 public record Player(BoardPoint color) implements Serializable {
 
     public Player(BoardPoint color) {
-        if (color == BoardPoint.EMPTY)
-            throw new IllegalArgumentException(
-                    "Error during player initialization, empty color not allowed");
-        else this.color = color;
+        this.color = color;
     }
 
     @Override
@@ -21,7 +18,7 @@ public record Player(BoardPoint color) implements Serializable {
 
     @Override
     public final boolean equals(Object arg0) {
-        if (this == arg0) {
+        if (arg0 == this) {
             return true;
         }
         if (arg0 == null) {

@@ -53,7 +53,6 @@ public class UDPparser {
         scanner.close();
     }
 
-    // Placeholder methods for each command
     private void startServer() {
         new Thread(
                         () -> {

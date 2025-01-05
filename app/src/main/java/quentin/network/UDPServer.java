@@ -1,6 +1,9 @@
 package quentin.network;
 
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 
 public class UDPServer {
     private static final int UDP_SERVER_PORT = 9876;
@@ -13,7 +16,7 @@ public class UDPServer {
     public UDPServer(String user, int tcpPortToComunicate) {
         username = user;
         tcpPort = tcpPortToComunicate;
-        address = getCorrectAddress.getLocalIpAddress();
+        address = GetCorrectAddress.getLocalIpAddress();
     }
 
     public void startServer() {
@@ -29,13 +32,10 @@ public class UDPServer {
                                                 + UDP_SERVER_PORT);
                                 byte[] receiveBuffer = new byte[1024];
                                 discovery = true;
-                                serverSocket.setSoTimeout(
-                                        1000); // Set timeout of 1 second for when I call stop
-                                // server
+                                serverSocket.setSoTimeout(1000);
 
                                 while (discovery) {
                                     try {
-                                        // Blocking call: waits for an incoming packet from a client
                                         DatagramPacket receivePacket =
                                                 new DatagramPacket(
                                                         receiveBuffer, receiveBuffer.length);
@@ -49,14 +49,11 @@ public class UDPServer {
                                                         + clientAddress
                                                         + ":"
                                                         + clientPort);
-
-                                        // Prepare the response message
                                         ServerInfo serverInfo =
                                                 new ServerInfo(address, tcpPort, username);
 
                                         byte[] sendBuffer = serverInfo.toBytes();
 
-                                        // Send the response to the client
                                         DatagramPacket sendPacket =
                                                 new DatagramPacket(
                                                         sendBuffer,
@@ -71,7 +68,6 @@ public class UDPServer {
                                                         + " clientAddress: "
                                                         + clientAddress);
                                     } catch (SocketTimeoutException e) {
-                                        // Timeout occurred: Check if we need to stop
                                         if (!discovery) {
                                             System.out.println(
                                                     "Timeout occurred, stopping server.");
@@ -92,7 +88,7 @@ public class UDPServer {
     public void stopServer() {
         discovery = false;
         try {
-            discoveryThread.join(); // Wait for the thread to terminate
+            discoveryThread.join();
             if (!discoveryThread.isAlive()) {
                 System.out.println("UDP server successfully stopped");
             }

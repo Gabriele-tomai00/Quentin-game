@@ -1,7 +1,12 @@
 package quentin.network;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
 
 public class TCPServer implements TCPclientServerInterface {
     private ServerSocket serverSocket;
@@ -59,15 +64,12 @@ public class TCPServer implements TCPclientServerInterface {
             out.println("too many authentication attempts with TCP server, exiting");
             stop();
         } catch (SocketException e) {
-            // when close() is called, the function goes here
         } catch (IOException e) {
             System.err.println("IOException: problems with client connection");
         }
     }
 
-    // Receives messages from the client (runs in a separate thread)
     public void listenForMessages() {
-        // here when I call close() after a client connection
         waitMessageThread =
                 new Thread(
                         () -> {
@@ -85,7 +87,6 @@ public class TCPServer implements TCPclientServerInterface {
                                 System.out.println("client connection interrupted");
                                 stop();
                             } catch (IOException e) {
-                                // when I call stop()
                                 System.out.println("IOException in listenForMessages");
                             }
                         });

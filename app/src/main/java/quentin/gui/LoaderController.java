@@ -55,13 +55,20 @@ public class LoaderController implements Initializable {
     public void loadGame(ActionEvent e) {
         controller.start();
         Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root));
-        stage.show();
+        setScene(stage);
     }
 
     private void newGame(ActionEvent e) {
         controller.reset();
         Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root));
+        setScene(stage);
+    }
+
+    public void setScene(Stage primaryStage) {
+        primaryStage.setScene(new Scene(root));
+        primaryStage.setTitle("Quentin");
+        primaryStage.setMinWidth(556);
+        primaryStage.setMinHeight(516);
+        primaryStage.show();
     }
 }

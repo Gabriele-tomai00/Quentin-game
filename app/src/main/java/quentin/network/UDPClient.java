@@ -1,6 +1,10 @@
 package quentin.network;
 
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 public class UDPClient {
     private static final int UDP_SERVER_PORT = 9876;
@@ -11,7 +15,7 @@ public class UDPClient {
     private final String clientAddress;
 
     public UDPClient() {
-        clientAddress = getCorrectAddress.getLocalIpAddress();
+        clientAddress = GetCorrectAddress.getLocalIpAddress();
     }
 
     public ServerInfo getTcpServerInfo() {
@@ -33,13 +37,10 @@ public class UDPClient {
                                                     + clientAddress);
                                     byte[] sendBuffer = "Requesting server information".getBytes();
                                     byte[] receiveBuffer = new byte[1024];
-
-                                    clientSocket.setBroadcast(
-                                            true); // Abilita la modalità broadcast
+                                    clientSocket.setBroadcast(true);
 
                                     while (discovery) {
                                         try {
-                                            // Invia una richiesta broadcast
                                             InetAddress broadcastAddress =
                                                     InetAddress.getByName("255.255.255.255");
                                             DatagramPacket sendPacket =

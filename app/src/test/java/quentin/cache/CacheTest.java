@@ -95,21 +95,5 @@ class CacheTest {
                 () -> assertEquals(2, cache.getMemorySize()),
                 () -> assertEquals(board2, cache.getLog().getBoard()),
                 () -> assertEquals(board1, cache.goBack().getBoard()));
-        //    game = new LocalGame(cache.getLog());
-        //    game.place(new Cell(2, 1));
-        //    Board board3 = new Board();
-        //    board3.setBoard(board1);
-        //    board3.placeStone(BoardPoint.BLACK, 2, 1);
-        //    cache.saveLog(new LocalGame(game));
-        //    assertAll(() -> assertEquals(3, cache.getMemorySize()), () -> assertEquals(board3,
-        // cache.getLog()
-        //
-        //  .getBoard()),
-        //              () -> assertEquals(new Player(BoardPoint.BLACK), cache.getLog()
-        //                                                                    .getCurrentPlayer()),
-        //              () -> assertEquals(board1, cache.goBack()
-        //                                              .getBoard()),
-        //              () -> assertEquals(new Player(BoardPoint.BLACK), cache.getLog()
-        //                                                                    .getCurrentPlayer()));
     }
 }
