@@ -101,7 +101,7 @@ public class OnlineGameParser extends SimpleGameStarter {
     }
 
     private void printGamePrompt() {
-        System.out.print("p > ");
+        System.out.print("QuentinGame - online mode > ");
     }
 
     @Override

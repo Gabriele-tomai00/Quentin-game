@@ -2,13 +2,13 @@ package quentin.game;
 
 public interface GameStarter {
 
-    public void start();
+    void start();
 
-    public void startDisplay();
+    void startDisplay();
 
-    public void displayMessage(String format);
+    void displayMessage(String format);
 
-    public void displayWinner();
+    void displayWinner();
 
-    public void display();
+    void display();
 }

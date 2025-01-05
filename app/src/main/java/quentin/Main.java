@@ -21,14 +21,17 @@ public class Main {
         System.out.println(
                 "  \\___\\_\\\\____/ \\___|_| |_|\\__|_|_| |_|  \\_____|\\__,_|_| |_| |_|\\___|");
         System.out.println(
-                " by Luis Bolaños Mures                                                         "
-                        + " \n\n");
+                """
+                 by Luis Bolaños Mures                                                         \
+                \s
+
+                """);
 
         System.out.println("Welcome to Quentin!");
         System.out.println("Enter commands (type 'exit' to quit):");
 
         while (true) {
-            System.out.print("main > ");
+            System.out.print("QuentinGame > ");
             if (!scanner.hasNextLine()) {
                 System.out.println("No input available. Please try again.");
                 continue;
@@ -46,16 +49,12 @@ public class Main {
                     startGui(args);
                 }
                 case "" -> {}
-                case "help" -> {
-                    showHelper();
-                }
+                case "help" -> showHelper();
                 case "exit" -> {
                     System.out.println("Exiting the game...");
                     return;
                 }
-                default -> {
-                    System.out.println("Unknown command: " + command);
-                }
+                default -> System.out.println("Unknown command: " + command);
             }
         }
     }
@@ -66,6 +65,9 @@ public class Main {
                 "  startlocalgame or slg   Start a match in local mode (only one computer needed)");
         System.out.println(
                 "  onlinegame or og        Start a match in LAN mode (two computer needed)");
+        System.out.println(
+                "  startgui or sg          Start a match in a graphical interface (only one"
+                        + " computer needed)");
         System.out.println("  exit                    Quits the game and exits the program");
         System.out.println("  help                    Shows this help");
     }
