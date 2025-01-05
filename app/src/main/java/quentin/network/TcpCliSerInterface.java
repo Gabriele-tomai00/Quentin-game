@@ -2,7 +2,7 @@ package quentin.network;
 
 import java.io.IOException;
 
-public interface TCPclientServerInterface {
+public interface TcpCliSerInterface {
 
     void start();
 

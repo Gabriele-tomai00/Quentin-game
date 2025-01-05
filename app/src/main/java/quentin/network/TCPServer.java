@@ -8,7 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class TCPServer implements TCPclientServerInterface {
+public class TCPServer implements TcpCliSerInterface {
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private PrintWriter out;
@@ -80,6 +80,9 @@ public class TCPServer implements TCPclientServerInterface {
                                         System.out.println(
                                                 "Received from client: " + serverMessage);
                                         messageReceived = serverMessage;
+                                        if (messageReceived.equals("Client stopped")) {
+                                            stop();
+                                        }
                                     } else
                                         System.out.println(
                                                 "Can't receive from client because It's not auth");

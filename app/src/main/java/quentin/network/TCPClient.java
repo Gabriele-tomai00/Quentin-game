@@ -6,26 +6,18 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-enum State {
-    notYetAuthenticated,
-    authenticated,
-    failedAuthentication,
-}
-
-public class TCPClient implements TCPclientServerInterface {
+public class TCPClient implements TcpCliSerInterface {
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
     private String boardReceived; // board
     private final int port;
     private final String address;
-    private final String serverUsername;
     private Boolean clientConnected = false;
-    private State state = State.notYetAuthenticated;
+    private ClientAuthState AuthState = ClientAuthState.notYetAuthenticated;
 
     public TCPClient(ServerInfo info) {
         address = info.IpAddress();
-        serverUsername = info.username();
         port = info.Port();
     }
 
@@ -54,20 +46,22 @@ public class TCPClient implements TCPclientServerInterface {
                                 try {
                                     String serverMessage;
                                     while ((serverMessage = in.readLine()) != null) {
-                                        if (state != State.authenticated) {
+                                        if (AuthState != ClientAuthState.authenticated) {
                                             if (serverMessage.equals(
                                                     "Password accepted from TCP server")) {
-                                                state = State.authenticated;
+                                                AuthState = ClientAuthState.authenticated;
+
                                             } else if (serverMessage.equals("server closed")) {
-                                                state = State.failedAuthentication;
+                                                AuthState = ClientAuthState.failedAuthentication;
                                                 stop();
                                             } else if (serverMessage.startsWith("Invalid password"))
-                                                state = State.failedAuthentication;
+                                                AuthState = ClientAuthState.failedAuthentication;
                                         } else boardReceived = serverMessage;
                                     }
                                     System.out.println("server connection interrupted");
                                     stop();
                                 } catch (IOException e) {
+                                    // here when I call close() after a client connection
                                 }
                             })
                     .start();
@@ -75,7 +69,7 @@ public class TCPClient implements TCPclientServerInterface {
     }
 
     public void stop() {
-        out.println("client closed");
+        out.println("quit");
         try {
             if (in != null) in.close();
             if (out != null) out.close();
@@ -86,15 +80,11 @@ public class TCPClient implements TCPclientServerInterface {
         }
     }
 
-    public String getServerUsername() {
-        return serverUsername;
-    }
-
     public String getBoardReceived() {
         return boardReceived;
     }
 
-    public State getState() {
-        return state;
+    public ClientAuthState getState() {
+        return AuthState;
     }
 }

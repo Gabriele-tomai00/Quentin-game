@@ -158,6 +158,7 @@ public class OnlineGameParser extends SimpleGameStarter {
                 || isClient && !client.isAuthenticated()) return;
         displayMessage("New game started!");
         display();
+        // System.out.println(game.getBoard());
         if (isServer) {
             displayMessage("I'm server");
             isWaiting = false;
@@ -177,13 +178,20 @@ public class OnlineGameParser extends SimpleGameStarter {
                             if (isClient) {
                                 while (true) {
                                     String boardReceived = client.getBoardReceived();
-                                    if (isBoardValid(boardReceived)) break;
+                                    if (boardReceived != null && boardReceived.equals("quit")) {
+                                        client.stop();
+                                        return;
+                                    } else if (isBoardValid(boardReceived)) break;
                                     sleepSafely(500);
                                 }
-                            } else if (isServer) {
+                            }
+                            if (isServer) {
                                 while (true) {
-                                    String message = server.getMessageReceived();
-                                    if (isBoardValid(message)) break;
+                                    String boardReceived = server.getMessageReceived();
+                                    if (boardReceived != null && boardReceived.equals("quit")) {
+                                        server.stop();
+                                        return;
+                                    } else if (isBoardValid(boardReceived)) break;
                                     sleepSafely(500);
                                 }
                             }
@@ -311,7 +319,7 @@ public class OnlineGameParser extends SimpleGameStarter {
 
     private void stopClient() {
         if (isOnline) {
-            client.stopDiscovery();
+            client.stop();
             isOnline = false;
         }
     }
@@ -363,10 +371,10 @@ public class OnlineGameParser extends SimpleGameStarter {
                 return false;
             }
 
-            if (client.getStateAuthentication() == State.authenticated) {
+            if (client.getStateAuthentication() == ClientAuthState.authenticated) {
                 return true;
             }
-            if (client.getStateAuthentication() == State.failedAuthentication) {
+            if (client.getStateAuthentication() == ClientAuthState.failedAuthentication) {
                 System.out.println("Authentication failed! ");
                 return false;
             }

@@ -14,6 +14,11 @@ public class Client {
         udpClient.stopDiscovery();
     }
 
+    public void stop() {
+        udpClient.stopDiscovery();
+        tcpClient.stop();
+    }
+
     public void linkWithTCPServer() {
         System.out.println("Linking with TCP server...");
         ServerInfo tcpServerInfo = udpClient.getTcpServerInfo();
@@ -40,11 +45,11 @@ public class Client {
         return tcpClient.getBoardReceived();
     }
 
-    public State getStateAuthentication() {
+    public ClientAuthState getStateAuthentication() {
         return tcpClient.getState();
     }
 
     public Boolean isAuthenticated() {
-        return tcpClient.getState() == State.authenticated;
+        return tcpClient.getState() == ClientAuthState.authenticated;
     }
 }
