@@ -74,7 +74,7 @@ public class CachedGameStarter extends SimpleGameStarter {
         return exitGame;
     }
 
-    private void showHelper() {
+    public void showHelper() {
         System.out.println("Available commands:");
         String[][] commands = {
             {"exit", "Quits the game and exits the program"},

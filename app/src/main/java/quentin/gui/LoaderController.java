@@ -58,7 +58,7 @@ public class LoaderController implements Initializable {
         setScene(stage);
     }
 
-    private void newGame(ActionEvent e) {
+    public void newGame(ActionEvent e) {
         controller.reset();
         Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
         setScene(stage);

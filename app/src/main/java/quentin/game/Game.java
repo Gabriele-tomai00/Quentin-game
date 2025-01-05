@@ -127,7 +127,7 @@ public interface Game extends Serializable {
         return territory;
     }
 
-    default Set<Cell> getNeighbors(Cell pos) {
+    public default Set<Cell> getNeighbors(Cell pos) {
         int row = pos.row();
         int col = pos.col();
         Set<Cell> neighbors = new HashSet<Cell>();
@@ -209,9 +209,9 @@ public interface Game extends Serializable {
         return false;
     }
 
-    public Board getBoard();
-
     public default int boardSize() {
         return getBoard().size();
     }
+
+    public Board getBoard();
 }

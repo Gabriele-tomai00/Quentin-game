@@ -22,7 +22,7 @@ public class SettingHandler {
         loadSettings();
     }
 
-    private void loadSettings() {
+    public void loadSettings() {
         File settingFile = new File(SETTING_FILE);
         if (settingFile.exists()) {
             try (FileInputStream fis = new FileInputStream(settingFile)) {

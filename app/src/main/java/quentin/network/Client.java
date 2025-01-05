@@ -50,6 +50,6 @@ public class Client {
     }
 
     public Boolean isAuthenticated() {
-        return tcpClient.getState() == ClientAuthState.authenticated;
+        return tcpClient.getState() == ClientAuthState.AUTHENTICATED;
     }
 }

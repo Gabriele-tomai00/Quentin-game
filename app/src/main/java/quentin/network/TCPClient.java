@@ -14,7 +14,7 @@ public class TCPClient implements TcpCliSerInterface {
     private final int port;
     private final String address;
     private Boolean clientConnected = false;
-    private ClientAuthState AuthState = ClientAuthState.notYetAuthenticated;
+    private ClientAuthState AuthState = ClientAuthState.NOT_YET_AUTHENTICATED;
 
     public TCPClient(ServerInfo info) {
         address = info.IpAddress();
@@ -46,16 +46,16 @@ public class TCPClient implements TcpCliSerInterface {
                                 try {
                                     String serverMessage;
                                     while ((serverMessage = in.readLine()) != null) {
-                                        if (AuthState != ClientAuthState.authenticated) {
+                                        if (AuthState != ClientAuthState.AUTHENTICATED) {
                                             if (serverMessage.equals(
                                                     "Password accepted from TCP server")) {
-                                                AuthState = ClientAuthState.authenticated;
+                                                AuthState = ClientAuthState.AUTHENTICATED;
 
                                             } else if (serverMessage.equals("server closed")) {
-                                                AuthState = ClientAuthState.failedAuthentication;
+                                                AuthState = ClientAuthState.FAILED_AUTHENTICATION;
                                                 stop();
                                             } else if (serverMessage.startsWith("Invalid password"))
-                                                AuthState = ClientAuthState.failedAuthentication;
+                                                AuthState = ClientAuthState.FAILED_AUTHENTICATION;
                                         } else boardReceived = serverMessage;
                                     }
                                     System.out.println("server connection interrupted");

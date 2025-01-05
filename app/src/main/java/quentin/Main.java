@@ -60,7 +60,7 @@ public class Main {
         }
     }
 
-    private static void showHelper() {
+    public static void showHelper() {
         String[][] commands = {
             {"startlocalgame or slg", "Start a match in local mode (only one computer needed)"},
             {"onlinegame or og", "Start a match in LAN mode (two computer needed)"},
@@ -75,19 +75,19 @@ public class Main {
         }
     }
 
-    private static void startLocalGame(Scanner scanner) {
+    public static void startLocalGame(Scanner scanner) {
         CachedGameStarter starter = new CachedGameStarter();
         starter.start(scanner);
         System.out.println("Returning to main menu...");
     }
 
-    private static void startOnlineGame(Scanner scanner) {
+    public static void startOnlineGame(Scanner scanner) {
         OnlineGameParser parser = new OnlineGameParser();
         parser.run(scanner);
         System.out.println("Returning to main menu...");
     }
 
-    private static void startGui(String... args) {
+    public static void startGui(String... args) {
         GuiMain.main(args);
         System.out.println("Returning to main menu...");
     }

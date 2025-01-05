@@ -53,7 +53,7 @@ public class UDPparser {
         scanner.close();
     }
 
-    private void startServer() {
+    public void startServer() {
         new Thread(
                         () -> {
                             System.out.println("Starting server...");
@@ -62,12 +62,12 @@ public class UDPparser {
                 .start();
     }
 
-    private void stopServer() throws InterruptedException {
+    public void stopServer() throws InterruptedException {
         System.out.println("Stopping server...");
         udpServer.stopServer();
     }
 
-    private void startClient() {
+    public void startClient() {
         new Thread(
                         () -> {
                             System.out.println("Starting client...");
@@ -76,7 +76,7 @@ public class UDPparser {
                 .start();
     }
 
-    private void stopClient() throws InterruptedException {
+    public void stopClient() throws InterruptedException {
         udpClient.stopDiscovery();
     }
 }

@@ -1,7 +1,7 @@
 package quentin.network;
 
 public enum ClientAuthState {
-    notYetAuthenticated,
-    authenticated,
-    failedAuthentication,
+    NOT_YET_AUTHENTICATED,
+    AUTHENTICATED,
+    FAILED_AUTHENTICATION
 }

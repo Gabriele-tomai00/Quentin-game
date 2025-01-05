@@ -100,7 +100,7 @@ public class OnlineGameParser extends SimpleGameStarter {
         }
     }
 
-    private void setTCPport(Scanner scanner) {
+    public void setTCPport(Scanner scanner) {
         if (!isOnline) {
             System.out.println(
                     "Enter new TCP port (IMPORTANT: the other player must know the new port): ");
@@ -109,7 +109,7 @@ public class OnlineGameParser extends SimpleGameStarter {
         } else System.out.println("You are already online, you can't change parameters");
     }
 
-    private void setUsername(Scanner scanner) {
+    public void setUsername(Scanner scanner) {
         if (!isOnline) {
             System.out.println("Enter username: ");
             String username = scanner.nextLine();
@@ -117,7 +117,7 @@ public class OnlineGameParser extends SimpleGameStarter {
         } else System.out.println("You are already online, you can't change parameters");
     }
 
-    private void showHelper() {
+    public void showHelper() {
         System.out.println("Available commands:");
         String[][] commands = {
             {"exit", "Quits the game and exits the program"},
@@ -145,7 +145,7 @@ public class OnlineGameParser extends SimpleGameStarter {
         }
     }
 
-    private void printGamePrompt() {
+    public void printGamePrompt() {
         if (!isWaiting) System.out.print("QuentinGame - online mode > ");
         else System.out.println("wait your turn or quit");
     }
@@ -169,7 +169,7 @@ public class OnlineGameParser extends SimpleGameStarter {
         }
     }
 
-    private void waitMove() {
+    public void waitMove() {
         Thread threadWaitMove =
                 new Thread(
                         () -> {
@@ -278,7 +278,7 @@ public class OnlineGameParser extends SimpleGameStarter {
         return false;
     }
 
-    private void startServer() {
+    public void startServer() {
         server = new Server();
         isOnline = true;
         isServer = true;
@@ -310,21 +310,21 @@ public class OnlineGameParser extends SimpleGameStarter {
         start();
     }
 
-    private void stopServer() {
+    public void stopServer() {
         displayMessage("Stopping server...");
         server.stop();
         isServer = false;
         isOnline = false;
     }
 
-    private void stopClient() {
+    public void stopClient() {
         if (isOnline) {
             client.stop();
             isOnline = false;
         }
     }
 
-    private void startClient() {
+    public void startClient() {
         client = new Client();
         isClient = true;
         new Thread(
@@ -339,7 +339,7 @@ public class OnlineGameParser extends SimpleGameStarter {
         displayMessage("\nType 'clienta' to insert the password\n");
     }
 
-    private void clientAuth(Scanner scanner) throws InterruptedException {
+    public void clientAuth(Scanner scanner) throws InterruptedException {
         int attempts = 3;
         String password;
         while (true) {
@@ -360,7 +360,7 @@ public class OnlineGameParser extends SimpleGameStarter {
         start();
     }
 
-    private boolean waitServerAuthenticationResponse() throws InterruptedException {
+    public boolean waitServerAuthenticationResponse() throws InterruptedException {
         System.out.println("Wait answer...");
         long startTime = System.currentTimeMillis();
         while (true) {
@@ -371,17 +371,17 @@ public class OnlineGameParser extends SimpleGameStarter {
                 return false;
             }
 
-            if (client.getStateAuthentication() == ClientAuthState.authenticated) {
+            if (client.getStateAuthentication() == ClientAuthState.AUTHENTICATED) {
                 return true;
             }
-            if (client.getStateAuthentication() == ClientAuthState.failedAuthentication) {
+            if (client.getStateAuthentication() == ClientAuthState.FAILED_AUTHENTICATION) {
                 System.out.println("Authentication failed! ");
                 return false;
             }
         }
     }
 
-    private void sendBoard() {
+    public void sendBoard() {
         if (!isOnline) return;
         if (isServer) server.sendMessage(game.getBoard().toCompactString());
         else client.sendMessage(game.getBoard().toCompactString());
@@ -389,14 +389,14 @@ public class OnlineGameParser extends SimpleGameStarter {
         displayMessage("Board sent to " + (isServer ? "client" : "server"));
     }
 
-    private Boolean isBoardValid(String compactBoard) {
+    public Boolean isBoardValid(String compactBoard) {
         if (compactBoard == null || compactBoard.equals(lastBoardReceived)) return false;
         game.getBoard().fromCompactString(compactBoard);
         lastBoardReceived = compactBoard;
         return true;
     }
 
-    private void sleepSafely(long millis) {
+    public void sleepSafely(long millis) {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
