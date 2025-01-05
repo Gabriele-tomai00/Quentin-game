@@ -1,6 +1,7 @@
 package quentin.network;
 
 import java.util.Scanner;
+import quentin.SettingHandler;
 import quentin.game.Cell;
 import quentin.game.LocalGame;
 import quentin.game.MoveParser;
@@ -8,13 +9,14 @@ import quentin.game.SimpleGameStarter;
 
 public class OnlineGameParser extends SimpleGameStarter {
     private LocalGame game;
-    Client client = new Client();
-    Server server = new Server();
+    Client client;
+    Server server;
     Boolean isOnline = false;
     Boolean isWaiting = false;
     Boolean isServer = false;
     Boolean isClient = false;
     String lastBoardReceived;
+    SettingHandler settingHandler = new SettingHandler();
     String CLEAR = "\033[H\033[2J";
 
     @Override
@@ -52,6 +54,20 @@ public class OnlineGameParser extends SimpleGameStarter {
                         if (isServer) stopServer();
                         else stopClient();
                         return;
+                    case "getusername", "getu":
+                        System.out.println(
+                                "You current username is: " + settingHandler.getUsername());
+                        break;
+                    case "getport", "getp":
+                        System.out.println("You current username is: " + settingHandler.getPort());
+                        break;
+                    case "setusername", "setu":
+                        setUsername(scanner);
+                        break;
+                    case "setport", "setp":
+                        setTCPport(scanner);
+                        break;
+
                     case "ss", "startserver", "starts":
                         startServer();
                         break;
@@ -84,6 +100,23 @@ public class OnlineGameParser extends SimpleGameStarter {
         }
     }
 
+    private void setTCPport(Scanner scanner) {
+        if (!isOnline) {
+            System.out.println(
+                    "Enter new TCP port (IMPORTANT: the other player must know the new port): ");
+            int port = Integer.parseInt(scanner.nextLine());
+            settingHandler.setPort(port);
+        } else System.out.println("You are already online, you can't change parameters");
+    }
+
+    private void setUsername(Scanner scanner) {
+        if (!isOnline) {
+            System.out.println("Enter username: ");
+            String username = scanner.nextLine();
+            settingHandler.setUsername(username);
+        } else System.out.println("You are already online, you can't change parameters");
+    }
+
     private void showHelper() {
         System.out.println("Available commands:");
         System.out.println("  exit                    Quits the game and exits the program");
@@ -92,7 +125,17 @@ public class OnlineGameParser extends SimpleGameStarter {
                 "  <coordinates>           Makes a move. Examples: A1 b2 C5 (wrong examples: 5A,"
                         + " 24)");
         System.out.println("ONLINE MODE");
-        System.out.println("  back                    go back one move");
+        System.out.println("  back                    Go back one move");
+        System.out.println(
+                "  setusername             Set a username to be recognized by other players when"
+                        + " playing online");
+        System.out.println(
+                "  setport                 Set a different TCP port, in case it is already used"
+                        + " (IMPORTANT: the other player must know the new port)");
+        System.out.println("  getusername or getu     Get you current username");
+        System.out.println(
+                "  getport or getp         Get the current TCP port (your opposing player may need"
+                        + " it)");
         System.out.println("  startserver or ss       Starts a server to play with other players");
         System.out.println("  stopserver or stops     Stops the server");
         System.out.println("  startclient or sc       Starts a client to play with other players");
@@ -101,7 +144,8 @@ public class OnlineGameParser extends SimpleGameStarter {
     }
 
     private void printGamePrompt() {
-        System.out.print("QuentinGame - online mode > ");
+        if (!isWaiting) System.out.print("QuentinGame - online mode > ");
+        else System.out.println("wait your turn or quit");
     }
 
     @Override
@@ -172,7 +216,6 @@ public class OnlineGameParser extends SimpleGameStarter {
             return;
         }
         if (isWaiting) {
-            System.out.print("Wait you turn ");
             waitMove();
         } else {
             // your turn
@@ -227,6 +270,7 @@ public class OnlineGameParser extends SimpleGameStarter {
     }
 
     private void startServer() {
+        server = new Server();
         isOnline = true;
         isServer = true;
         new Thread(
@@ -272,6 +316,7 @@ public class OnlineGameParser extends SimpleGameStarter {
     }
 
     private void startClient() {
+        client = new Client();
         isClient = true;
         new Thread(
                         () -> {
@@ -281,7 +326,8 @@ public class OnlineGameParser extends SimpleGameStarter {
                 .start();
 
         isOnline = true;
-        displayMessage("Type 'clienta' to insert the password");
+        sleepSafely(1000);
+        displayMessage("\nType 'clienta' to insert the password\n");
     }
 
     private void clientAuth(Scanner scanner) throws InterruptedException {
@@ -317,7 +363,6 @@ public class OnlineGameParser extends SimpleGameStarter {
             }
 
             if (client.getStateAuthentication() == State.authenticated) {
-                System.out.println("Authentication completed! ");
                 return true;
             }
             if (client.getStateAuthentication() == State.failedAuthentication) {
@@ -340,11 +385,6 @@ public class OnlineGameParser extends SimpleGameStarter {
         game.getBoard().fromCompactString(compactBoard);
         lastBoardReceived = compactBoard;
         return true;
-    }
-
-    @Override
-    public void displayMessage(String format) {
-        System.out.println(format);
     }
 
     private void sleepSafely(long millis) {

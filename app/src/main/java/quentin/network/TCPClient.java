@@ -41,10 +41,7 @@ public class TCPClient implements TCPclientServerInterface {
     }
 
     public void sendMessage(String message) {
-        if (clientConnected) {
-            System.out.println("message sent");
-            out.println(message);
-        } else System.out.println("message NOT sent");
+        if (clientConnected) out.println(message);
     }
 
     public void listenForMessages() {
