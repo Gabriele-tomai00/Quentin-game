@@ -4,9 +4,8 @@ Quentin is a drawless connection game for two players: Black and White. It's pla
 Luis Bolaños Mures designed Quentin in April, 2012.
 
 ## Instructions
-To learn the game's rules, please read the [instructions](game_instructions.md).
+To learn the game's rules, please read the [instructions](Quentin.pdf).
 
-## How to run the program
 ## How to run the program
 This project uses Gradle: the build system for managing compilation and execution
 1. Run: ```gradle wrapper```
