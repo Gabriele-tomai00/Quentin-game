@@ -40,7 +40,7 @@ public class CachedGameStarter extends SimpleGameStarter {
         boolean exitGame = false;
         while (true) {
             displayMessage(game.getCurrentPlayer() + " > ");
-            String command = scanner.next();
+            String command = scanner.nextLine().trim().toLowerCase();
             try {
                 switch (command) {
                     case "back" -> game = new LocalGame(cache.goBack().game());

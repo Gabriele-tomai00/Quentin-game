@@ -50,7 +50,7 @@ public class Main {
                     showHelper();
                 }
                 case "exit" -> {
-                    scanner.close();
+                    System.out.println("Exiting the game...");
                     return;
                 }
                 default -> {
@@ -58,11 +58,6 @@ public class Main {
                 }
             }
         }
-    }
-
-    private static void startGui(String... args) {
-        GuiMain.main(args);
-        System.out.println("Returning to main menu...");
     }
 
     private static void showHelper() {
@@ -77,12 +72,18 @@ public class Main {
 
     private static void startLocalGame(Scanner scanner) {
         CachedGameStarter starter = new CachedGameStarter();
-        starter.start();
+        starter.start(scanner);
         System.out.println("Returning to main menu...");
     }
 
     private static void startOnlineGame(Scanner scanner) {
-        OnlineGameParser parser = new OnlineGameParser(scanner);
-        parser.run();
+        OnlineGameParser parser = new OnlineGameParser();
+        parser.run(scanner);
+        System.out.println("Returning to main menu...");
+    }
+
+    private static void startGui(String... args) {
+        GuiMain.main(args);
+        System.out.println("Returning to main menu...");
     }
 }

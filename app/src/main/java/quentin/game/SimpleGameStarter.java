@@ -29,6 +29,21 @@ public class SimpleGameStarter implements GameStarter {
         }
     }
 
+    public void start(Scanner scanner) {
+        startDisplay();
+        display();
+        while (true) {
+            if (!game.canPlayerPlay()) {
+                game.changeCurrentPlayer();
+                continue;
+            }
+            if (processInput(scanner)) {
+                break;
+            }
+            display();
+        }
+    }
+
     public boolean processInput(Scanner scanner) {
         while (true) {
             displayMessage(String.format("%s > ", game.getCurrentPlayer()));
@@ -89,7 +104,11 @@ public class SimpleGameStarter implements GameStarter {
         System.out.println(
                 "  \\___\\_\\\\____/ \\___|_| |_|\\__|_|_| |_|  \\_____|\\__,_|_| |_| |_|\\___|");
         System.out.println(
-                " by Luis Bolaños Mures                                                         "
-                        + " \n\n\n");
+                """
+                 by Luis Bolaños Mures                                                         \
+                \s
+
+
+                """);
     }
 }

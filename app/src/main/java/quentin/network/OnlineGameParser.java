@@ -8,7 +8,6 @@ import quentin.game.SimpleGameStarter;
 
 public class OnlineGameParser extends SimpleGameStarter {
     private LocalGame game;
-    Scanner scanner;
     Client client = new Client();
     Server server = new Server();
     Boolean isOnline = false;
@@ -17,15 +16,6 @@ public class OnlineGameParser extends SimpleGameStarter {
     Boolean isClient = false;
     String lastBoardReceived;
     String CLEAR = "\033[H\033[2J";
-
-    public OnlineGameParser(Scanner scanner) {
-        this.scanner = scanner;
-    }
-
-    @Override
-    public void startDisplay() {
-        //
-    }
 
     @Override
     public void displayWinner() {
@@ -38,7 +28,7 @@ public class OnlineGameParser extends SimpleGameStarter {
         System.out.println(CLEAR + game.getBoard());
     }
 
-    public void run() {
+    public void run(Scanner scanner) {
         System.out.println("Enter commands (type 'exit' to quit):");
         System.out.println(
                 "Type 'startserver' if you want to host a match. Type 'startclient' if you want"
@@ -59,7 +49,6 @@ public class OnlineGameParser extends SimpleGameStarter {
                         showHelper();
                         break;
                     case "exit":
-                        // scanner.close(); no because I use it in Main
                         if (isServer) stopServer();
                         else stopClient();
                         return;
@@ -76,7 +65,7 @@ public class OnlineGameParser extends SimpleGameStarter {
                         stopClient();
                         break;
                     case "clientauth", "clienta":
-                        clientAuth();
+                        clientAuth(scanner);
                         break;
                     default:
                         makeMove(command);
@@ -295,7 +284,7 @@ public class OnlineGameParser extends SimpleGameStarter {
         displayMessage("Type 'clienta' to insert the password");
     }
 
-    private void clientAuth() throws InterruptedException {
+    private void clientAuth(Scanner scanner) throws InterruptedException {
         int attempts = 3;
         String password;
         while (true) {
