@@ -45,6 +45,7 @@ public class Controller implements Initializable, GameStarter {
     private final Cache<GameLog> cache;
     private static final DateTimeFormatter TIMESTAMP_FORMATTER =
             DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+    private Pane lastPlacedCell = null;
 
     public Controller() {
         super();
@@ -134,6 +135,10 @@ public class Controller implements Initializable, GameStarter {
         try {
             game.place(cell);
             game.coverTerritories(cell);
+
+            if (lastPlacedCell != null) lastPlacedCell.setStyle("-fx-border-color: grey");
+            source.setStyle("-fx-border-color: red; -fx-border-width: 3px;");
+            lastPlacedCell = source;
             display();
             if (game.hasWon(game.getCurrentPlayer())) {
                 displayWinner();
@@ -148,7 +153,6 @@ public class Controller implements Initializable, GameStarter {
             displayMessage(game.getCurrentPlayer() + "'s turn!");
         } catch (MoveException e1) {
             errorMessage(e1.getMessage());
-            // displayMessage(e1.getMessage());
         }
     }
 
