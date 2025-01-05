@@ -6,7 +6,6 @@
 
 # Ignore generated files
 *.class
-*.jar
 *.war
 *.nar
 *.ear
@@ -42,7 +41,5 @@ build/
 .metadata/
 
 # Gradle wrapper
-!gradlew
-!gradlew.bat
 .gradle/
 /bin/
