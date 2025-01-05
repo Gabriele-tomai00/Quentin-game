@@ -1,10 +1,11 @@
 package quentin.exceptions;
 
+import java.io.Serial;
 import quentin.game.Cell;
 
 public class IllegalMoveException extends MoveException {
 
-    private static final long serialVersionUID = 2693504242559053588L;
+    @Serial private static final long serialVersionUID = 2693504242559053588L;
 
     public IllegalMoveException(Cell cell) {
         super(cell);

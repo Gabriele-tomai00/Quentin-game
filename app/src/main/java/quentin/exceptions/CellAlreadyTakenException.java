@@ -1,10 +1,11 @@
 package quentin.exceptions;
 
+import java.io.Serial;
 import quentin.game.Cell;
 
 public class CellAlreadyTakenException extends MoveException {
 
-    private static final long serialVersionUID = 3817524499307938631L;
+    @Serial private static final long serialVersionUID = 3817524499307938631L;
 
     public CellAlreadyTakenException(Cell cell) {
         super(cell);
