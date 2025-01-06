@@ -1,6 +1,7 @@
 package quentin.network;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 import quentin.SettingHandler;
 import quentin.exceptions.InvalidCellValuesException;
@@ -152,7 +153,7 @@ public class OnlineGameParser extends SimpleGameStarter {
 
     private void printGamePrompt() {
         if (!isWaiting) displayMessage("QuentinGame - online mode > ");
-        else displayMessage("wait your turn or quit\n");
+        else displayMessage("wait your turn or quit \n");
     }
 
     @Override
@@ -161,13 +162,11 @@ public class OnlineGameParser extends SimpleGameStarter {
         if (!isOnline
                 || (isServer && !server.isClientAuth())
                 || isClient && !client.isAuthenticated()) return;
-        displayMessage("New game started!");
+        displayMessage("New game started!\n");
         display();
         if (isServer) {
-            displayMessage("I'm server");
             isWaiting = false;
         } else if (isClient) {
-            displayMessage("I'm client");
             game.changeCurrentPlayer();
             waitMove();
         }
@@ -178,7 +177,7 @@ public class OnlineGameParser extends SimpleGameStarter {
                 new Thread(
                         () -> {
                             isWaiting = true;
-                            displayMessage("Waiting for messages...");
+                            displayMessage("Waiting for messages...\n");
                             if (isClient) {
                                 while (true) {
                                     String boardReceived = client.getBoardReceived();
@@ -211,7 +210,7 @@ public class OnlineGameParser extends SimpleGameStarter {
                                 waitMove();
                             } else {
                                 isWaiting = false;
-                                displayMessage("It's your turn to play ");
+                                displayMessage("It's your turn to play: ");
                             }
                         });
         threadWaitMove.start();
@@ -231,16 +230,26 @@ public class OnlineGameParser extends SimpleGameStarter {
         if (isWaiting) {
             waitMove();
         } else {
-            // your turn
-            Cell cell;
-            cell = new MoveParser(input).parse();
+            if (isClient && input.equals("pie") && game.isFirstMove()) {
+                game.setFirstMove(false);
+                displayMessage("Now you are black! Wait messages\n");
+                game.changeCurrentPlayer();
+                sendBoard();
+                waitMove();
+                return;
+            }
+            if (isServer && input.equals("pie")) {
+                displayMessage("Invalid move in this round\n");
+                return;
+            }
+            Cell cell = new MoveParser(input).parse();
             game.place(cell);
             game.coverTerritories(cell);
 
             if (hasWon()) return;
 
             sendBoard();
-            System.out.print(game.getBoard());
+            display();
 
             if (!game.canPlayerPlay()) {
                 displayMessage(
@@ -303,7 +312,6 @@ public class OnlineGameParser extends SimpleGameStarter {
                                 }
                             }
                             isOnline = true;
-                            start();
                         });
         waitAuthOfClient.start();
         try {
@@ -389,14 +397,18 @@ public class OnlineGameParser extends SimpleGameStarter {
         if (!isOnline) return;
         if (isServer) server.sendMessage(game.getBoard().toCompactString());
         else client.sendMessage(game.getBoard().toCompactString());
-
-        displayMessage("Board sent to " + (isServer ? "client\n" : "server\n"));
+        displayMessage("Board sent to " + (isServer ? "client" : "server") + "\n");
     }
 
     private Boolean isBoardValid(String compactBoard) {
-        if (compactBoard == null || compactBoard.equals(lastBoardReceived)) return false;
-        // game.getBoard().fromCompactString(compactBoard);
-        game.updateBoard(new Board(compactBoard));
+        if (compactBoard == null || compactBoard.equals(lastBoardReceived)) {
+            return false;
+        }
+
+        if (Objects.equals(game.getBoard().toCompactString(), compactBoard)) { // pie rule
+            displayMessage("Your opponent player used the pie rule, now you are White!\n");
+            game.changeCurrentPlayer();
+        } else game.updateBoard(new Board(compactBoard));
         lastBoardReceived = compactBoard;
         return true;
     }

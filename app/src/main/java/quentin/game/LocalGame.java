@@ -13,6 +13,15 @@ public class LocalGame implements Game {
     private Board board;
     private final List<Cell> lastMoves =
             new ArrayList<>(); // moves can be two if the opponent player can't play
+    private boolean isFirstMove = true;
+
+    public boolean isFirstMove() { // white always plays for second
+        return isFirstMove;
+    }
+
+    public void setFirstMove(boolean firstM) { // white always plays for second
+        isFirstMove = firstM;
+    }
 
     public LocalGame() {
         currentPlayer = black;
@@ -23,6 +32,7 @@ public class LocalGame implements Game {
         this.board = new Board();
         board.setBoard(game.getBoard());
         this.currentPlayer = new Player(game.getCurrentPlayer().color());
+        this.isFirstMove = game.isFirstMove();
     }
 
     public void changeCurrentPlayer() {
@@ -64,10 +74,6 @@ public class LocalGame implements Game {
         return lastMoves;
     }
 
-    public void setCurrentPlayer(Player currentPlayer) {
-        this.currentPlayer = currentPlayer;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {
@@ -77,10 +83,8 @@ public class LocalGame implements Game {
             return false;
         }
         if (obj instanceof Game game) {
-            if (this.getBoard().equals(game.getBoard())
-                    && this.getCurrentPlayer().equals(game.getCurrentPlayer())) {
-                return true;
-            }
+            return this.getBoard().equals(game.getBoard())
+                    && this.getCurrentPlayer().equals(game.getCurrentPlayer());
         }
         return false;
     }
