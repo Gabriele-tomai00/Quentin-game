@@ -1,12 +1,34 @@
 package quentin.game;
 
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
+
 public class LocalGame implements Game {
 
-    private static final long serialVersionUID = -8782140056307981297L;
+    @Serial private static final long serialVersionUID = -8782140056307981297L;
     private static final Player white = new Player(BoardPoint.WHITE);
     private static final Player black = new Player(BoardPoint.BLACK);
     private Player currentPlayer;
-    private final Board board;
+    private Board board;
+    private final List<Cell> lastMoves =
+            new ArrayList<>(); // moves can be two if the opponent player can't play
+
+    public List<Cell> getLastMoves() {
+        return lastMoves;
+    }
+
+    public void updateLastMoves(Board newBoard) {
+        lastMoves.clear();
+        BoardPoint[][] points = newBoard.getBoard();
+        for (int row = 0; row < board.size(); row++) {
+            for (int col = 0; col < board.size(); col++) {
+                if (points[row][col] != board.getBoard()[row][col]) {
+                    lastMoves.add(new Cell(col, row)); // swap because of the parser
+                }
+            }
+        }
+    }
 
     public LocalGame() {
         currentPlayer = black;
@@ -35,6 +57,11 @@ public class LocalGame implements Game {
     @Override
     public Board getBoard() {
         return board;
+    }
+
+    public void updateBoard(Board newBoard) {
+        updateLastMoves(newBoard);
+        board = newBoard;
     }
 
     public void setCurrentPlayer(Player currentPlayer) {

@@ -77,8 +77,6 @@ public class TCPServer implements TcpCliSerInterface {
                                 String serverMessage;
                                 while ((serverMessage = in.readLine()) != null) {
                                     if (isClientAuth) {
-                                        System.out.println(
-                                                "Received from client: " + serverMessage);
                                         messageReceived = serverMessage;
                                         if (messageReceived.equals("Client stopped")) {
                                             stop();
