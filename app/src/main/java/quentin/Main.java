@@ -43,16 +43,19 @@ public class Main {
                     case "sg", "startgui" -> {
                         startGui(args);
                     }
-                    case "" -> {}
+                    case "" -> {
+                        continue;
+                    }
                     case "help" -> {
                         showHelper();
+                        continue;
                     }
                     case "exit" -> {
                         System.out.println("Exiting the game...");
-                        return;
                     }
                     default -> {
                         System.out.println("Unknown command: " + command);
+                        continue;
                     }
                 }
                 break;

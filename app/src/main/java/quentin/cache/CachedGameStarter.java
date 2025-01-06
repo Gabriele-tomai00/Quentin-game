@@ -39,7 +39,7 @@ public class CachedGameStarter extends SimpleGameStarter {
     public boolean processInput(Scanner scanner) {
         boolean exitGame = false;
         while (true) {
-            displayMessage(game.getCurrentPlayer() + "QuentinGame - local mode > ");
+            displayMessage("QuentinGame - local mode\n" + game.getCurrentPlayer() + " >");
             String command = scanner.nextLine().trim().toLowerCase();
             try {
                 switch (command) {
