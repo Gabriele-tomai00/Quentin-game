@@ -1,11 +1,10 @@
 package quentin.network;
 
+import java.util.List;
 import java.util.Scanner;
 import quentin.SettingHandler;
-import quentin.game.Cell;
-import quentin.game.LocalGame;
-import quentin.game.MoveParser;
-import quentin.game.SimpleGameStarter;
+import quentin.exceptions.InvalidCellValuesException;
+import quentin.game.*;
 
 public class OnlineGameParser extends SimpleGameStarter {
     private LocalGame game;
@@ -21,20 +20,26 @@ public class OnlineGameParser extends SimpleGameStarter {
 
     @Override
     public void displayWinner() {
-        System.out.println(
-                CLEAR + String.format("%s has won", game.getCurrentPlayer()).toUpperCase());
+        displayMessage(
+                CLEAR + String.format("%s has won", game.getCurrentPlayer()).toUpperCase() + "\n");
     }
 
     @Override
     public void display() {
         System.out.println(CLEAR + game.getBoard());
+        List<Cell> lastMoves = game.getLastMoves();
+        if (lastMoves != null && !lastMoves.isEmpty()) {
+            if (lastMoves.size() == 1)
+                displayMessage("The last stone pleased is " + lastMoves.get(0) + "\n");
+            else displayMessage("The last stones pleased are " + lastMoves + "\n");
+        }
     }
 
     public void run(Scanner scanner) {
-        System.out.println("Enter commands (type 'exit' to quit):");
-        System.out.println(
+        displayMessage("Enter commands (type 'exit' to quit):\n");
+        displayMessage(
                 "Type 'startserver' if you want to host a match. Type 'startclient' if you want"
-                        + " to join a match");
+                        + " to join a match\n");
 
         while (true) {
             try {
@@ -55,11 +60,12 @@ public class OnlineGameParser extends SimpleGameStarter {
                         else stopClient();
                         return;
                     case "getusername", "getu":
-                        System.out.println(
-                                "You current username is: " + settingHandler.getUsername());
+                        displayMessage(
+                                "You current username is: " + settingHandler.getUsername() + "\n");
                         break;
                     case "getport", "getp":
-                        System.out.println("You current username is: " + settingHandler.getPort());
+                        displayMessage(
+                                "You current username is: " + settingHandler.getPort() + "\n");
                         break;
                     case "setusername", "setu":
                         setUsername(scanner);
@@ -85,11 +91,10 @@ public class OnlineGameParser extends SimpleGameStarter {
                         break;
                     default:
                         makeMove(command);
-                        // } else {
-                        // System.out.println("Unknown command: " + command);
-                        // }
                         break;
                 }
+            } catch (InvalidCellValuesException e) {
+                displayMessage(e.getMessage() + "\n");
             } catch (RuntimeException e) {
                 displayMessage(e.getMessage());
                 return;
@@ -100,25 +105,25 @@ public class OnlineGameParser extends SimpleGameStarter {
         }
     }
 
-    public void setTCPport(Scanner scanner) {
+    private void setTCPport(Scanner scanner) {
         if (!isOnline) {
-            System.out.println(
+            displayMessage(
                     "Enter new TCP port (IMPORTANT: the other player must know the new port): ");
             int port = Integer.parseInt(scanner.nextLine());
             settingHandler.setPort(port);
-        } else System.out.println("You are already online, you can't change parameters");
+        } else displayMessage("You are already online, you can't change parameters\n");
     }
 
-    public void setUsername(Scanner scanner) {
+    private void setUsername(Scanner scanner) {
         if (!isOnline) {
-            System.out.println("Enter username: ");
+            displayMessage("Enter username: ");
             String username = scanner.nextLine();
             settingHandler.setUsername(username);
-        } else System.out.println("You are already online, you can't change parameters");
+        } else displayMessage("You are already online, you can't change parameters\n");
     }
 
-    public void showHelper() {
-        System.out.println("Available commands:");
+    private void showHelper() {
+        displayMessage("Available commands:\n");
         String[][] commands = {
             {"exit", "Quits the game and exits the program"},
             {"help", "Shows this help"},
@@ -145,9 +150,9 @@ public class OnlineGameParser extends SimpleGameStarter {
         }
     }
 
-    public void printGamePrompt() {
-        if (!isWaiting) System.out.print("QuentinGame - online mode > ");
-        else System.out.println("wait your turn or quit");
+    private void printGamePrompt() {
+        if (!isWaiting) displayMessage("QuentinGame - online mode > ");
+        else displayMessage("wait your turn or quit\n");
     }
 
     @Override
@@ -158,7 +163,6 @@ public class OnlineGameParser extends SimpleGameStarter {
                 || isClient && !client.isAuthenticated()) return;
         displayMessage("New game started!");
         display();
-        // System.out.println(game.getBoard());
         if (isServer) {
             displayMessage("I'm server");
             isWaiting = false;
@@ -169,7 +173,7 @@ public class OnlineGameParser extends SimpleGameStarter {
         }
     }
 
-    public void waitMove() {
+    private void waitMove() {
         Thread threadWaitMove =
                 new Thread(
                         () -> {
@@ -207,7 +211,7 @@ public class OnlineGameParser extends SimpleGameStarter {
                                 waitMove();
                             } else {
                                 isWaiting = false;
-                                System.out.print("It's your turn to play ");
+                                displayMessage("It's your turn to play ");
                             }
                         });
         threadWaitMove.start();
@@ -278,13 +282,13 @@ public class OnlineGameParser extends SimpleGameStarter {
         return false;
     }
 
-    public void startServer() {
+    private void startServer() {
         server = new Server();
         isOnline = true;
         isServer = true;
         new Thread(
                         () -> {
-                            System.out.println("Starting server...");
+                            displayMessage("Starting server...\n");
                             server.start();
                         })
                 .start();
@@ -310,21 +314,21 @@ public class OnlineGameParser extends SimpleGameStarter {
         start();
     }
 
-    public void stopServer() {
+    private void stopServer() {
         displayMessage("Stopping server...");
         server.stop();
         isServer = false;
         isOnline = false;
     }
 
-    public void stopClient() {
+    private void stopClient() {
         if (isOnline) {
             client.stop();
             isOnline = false;
         }
     }
 
-    public void startClient() {
+    private void startClient() {
         client = new Client();
         isClient = true;
         new Thread(
@@ -339,17 +343,17 @@ public class OnlineGameParser extends SimpleGameStarter {
         displayMessage("\nType 'clienta' to insert the password\n");
     }
 
-    public void clientAuth(Scanner scanner) throws InterruptedException {
+    private void clientAuth(Scanner scanner) throws InterruptedException {
         int attempts = 3;
         String password;
         while (true) {
             if (attempts == 0) return;
 
-            System.out.println("attempts: " + attempts);
-            System.out.print("password > ");
+            displayMessage("attempts: " + attempts + "\n");
+            displayMessage("password > ");
             password = scanner.nextLine().trim();
             if ((password.length() != 5 || !password.matches("\\d{5}"))) {
-                System.out.println("Invalid password, retry ");
+                displayMessage("Invalid password, retry\n");
                 attempts--;
                 continue;
             }
@@ -360,8 +364,8 @@ public class OnlineGameParser extends SimpleGameStarter {
         start();
     }
 
-    public boolean waitServerAuthenticationResponse() throws InterruptedException {
-        System.out.println("Wait answer...");
+    private boolean waitServerAuthenticationResponse() throws InterruptedException {
+        displayMessage("Wait answer...\n");
         long startTime = System.currentTimeMillis();
         while (true) {
             Thread.sleep(500);
@@ -375,28 +379,29 @@ public class OnlineGameParser extends SimpleGameStarter {
                 return true;
             }
             if (client.getStateAuthentication() == ClientAuthState.FAILED_AUTHENTICATION) {
-                System.out.println("Authentication failed! ");
+                displayMessage("Authentication failed! \n");
                 return false;
             }
         }
     }
 
-    public void sendBoard() {
+    private void sendBoard() {
         if (!isOnline) return;
         if (isServer) server.sendMessage(game.getBoard().toCompactString());
         else client.sendMessage(game.getBoard().toCompactString());
 
-        displayMessage("Board sent to " + (isServer ? "client" : "server"));
+        displayMessage("Board sent to " + (isServer ? "client\n" : "server\n"));
     }
 
-    public Boolean isBoardValid(String compactBoard) {
+    private Boolean isBoardValid(String compactBoard) {
         if (compactBoard == null || compactBoard.equals(lastBoardReceived)) return false;
-        game.getBoard().fromCompactString(compactBoard);
+        // game.getBoard().fromCompactString(compactBoard);
+        game.updateBoard(new Board(compactBoard));
         lastBoardReceived = compactBoard;
         return true;
     }
 
-    public void sleepSafely(long millis) {
+    private void sleepSafely(long millis) {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {

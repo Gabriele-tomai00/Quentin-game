@@ -20,6 +20,10 @@ public class Board implements Serializable {
         }
     }
 
+    public Board(String compactBoard) {
+        fromCompactString(compactBoard);
+    }
+
     public BoardPoint[][] getBoard() {
         return Arrays.copyOf(board, SIZE);
     }
@@ -127,12 +131,6 @@ public class Board implements Serializable {
 
     public int size() {
         return SIZE;
-    }
-
-    public void clear() {
-        for (BoardPoint[] row : board) {
-            Arrays.fill(row, BoardPoint.EMPTY);
-        }
     }
 
     @Override
