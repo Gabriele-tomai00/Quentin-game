@@ -15,7 +15,7 @@ public class UDPClient {
     private final String clientAddress;
 
     public UDPClient() {
-        clientAddress = GetCorrectAddress.getLocalIpAddress();
+        clientAddress = CorrectAddressGetter.getLocalIpAddress();
     }
 
     public ServerInfo getTcpServerInfo() {

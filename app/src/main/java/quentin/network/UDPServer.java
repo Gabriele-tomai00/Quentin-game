@@ -16,7 +16,7 @@ public class UDPServer {
     public UDPServer(String user, int tcpPortToComunicate) {
         username = user;
         tcpPort = tcpPortToComunicate;
-        address = GetCorrectAddress.getLocalIpAddress();
+        address = CorrectAddressGetter.getLocalIpAddress();
     }
 
     public void startServer() {

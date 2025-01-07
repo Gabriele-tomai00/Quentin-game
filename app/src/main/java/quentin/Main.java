@@ -3,7 +3,7 @@ package quentin;
 import java.util.Scanner;
 import quentin.cache.CachedGameStarter;
 import quentin.gui.GuiMain;
-import quentin.network.OnlineGameParser;
+import quentin.network.OnlineGameStarter;
 
 public class Main {
 
@@ -85,7 +85,7 @@ public class Main {
     }
 
     public static void startOnlineGame(Scanner scanner) {
-        OnlineGameParser parser = new OnlineGameParser();
+        OnlineGameStarter parser = new OnlineGameStarter();
         parser.run(scanner);
         System.out.println("Returning to main menu...");
     }

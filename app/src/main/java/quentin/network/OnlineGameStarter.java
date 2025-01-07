@@ -5,9 +5,13 @@ import java.util.Objects;
 import java.util.Scanner;
 import quentin.SettingHandler;
 import quentin.exceptions.InvalidCellValuesException;
-import quentin.game.*;
+import quentin.game.Board;
+import quentin.game.Cell;
+import quentin.game.LocalGame;
+import quentin.game.MoveParser;
+import quentin.game.SimpleGameStarter;
 
-public class OnlineGameParser extends SimpleGameStarter {
+public class OnlineGameStarter extends SimpleGameStarter {
     private LocalGame game;
     Client client;
     Server server;
@@ -41,7 +45,6 @@ public class OnlineGameParser extends SimpleGameStarter {
         displayMessage(
                 "Type 'startserver' if you want to host a match. Type 'startclient' if you want"
                         + " to join a match\n");
-
         while (true) {
             try {
                 printGamePrompt();
@@ -49,50 +52,48 @@ public class OnlineGameParser extends SimpleGameStarter {
                     continue;
                 }
                 String command = scanner.nextLine().trim().toLowerCase();
-
                 switch (command) {
-                    case "":
-                        break;
-                    case "help":
+                    case "" -> {}
+                    case "help" -> {
                         showHelper();
-                        break;
-                    case "exit":
+                    }
+                    case "exit" -> {
                         if (isServer) stopServer();
                         else stopClient();
                         return;
-                    case "getusername", "getu":
+                    }
+                    case "getusername", "getu" -> {
                         displayMessage(
                                 "You current username is: " + settingHandler.getUsername() + "\n");
-                        break;
-                    case "getport", "getp":
+                    }
+                    case "getport", "getp" -> {
                         displayMessage(
                                 "You current username is: " + settingHandler.getPort() + "\n");
-                        break;
-                    case "setusername", "setu":
+                    }
+                    case "setusername", "setu" -> {
                         setUsername(scanner);
-                        break;
-                    case "setport", "setp":
+                    }
+                    case "setport", "setp" -> {
                         setTCPport(scanner);
-                        break;
-
-                    case "ss", "startserver", "starts":
+                    }
+                    case "ss", "startserver", "starts" -> {
                         startServer();
-                        break;
-                    case "stopserver", "stops":
+                    }
+                    case "stopserver", "stops" -> {
                         stopServer();
-                        break;
-                    case "sc", "startclient", "startc":
+                    }
+                    case "sc", "startclient", "startc" -> {
                         startClient();
-                        break;
-                    case "stopclient", "stopc":
+                    }
+                    case "stopclient", "stopc" -> {
                         stopClient();
-                        break;
-                    case "clientauth", "clienta":
+                    }
+                    case "clientauth", "clienta" -> {
                         clientAuth(scanner);
-                        break;
-                    default:
+                    }
+                    default -> {
                         makeMove(command);
-                        break;
+                    }
                 }
             } catch (InvalidCellValuesException e) {
                 displayMessage(e.getMessage() + "\n");
