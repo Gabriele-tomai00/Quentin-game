@@ -82,17 +82,14 @@ public class Main {
     public static void startLocalGame(Scanner scanner) {
         CachedGameStarter starter = new CachedGameStarter();
         starter.start();
-        System.out.println("Returning to main menu...");
     }
 
     public static void startOnlineGame(Scanner scanner) {
         OnlineGameStarter parser = new OnlineGameStarter();
         parser.run(scanner);
-        System.out.println("Returning to main menu...");
     }
 
     public static void startGui(String... args) {
         GuiMain.main(args);
-        System.out.println("Returning to main menu...");
     }
 }
