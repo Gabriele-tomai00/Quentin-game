@@ -14,6 +14,6 @@ public class IllegalMoveException extends MoveException {
     @Override
     public String getMessage() {
         return String.format(
-                "Cell %s, is not connected to other cells of the same color!", getCell());
+                "Cell %s, is not connected to other cells of the same color!%n", getCell());
     }
 }

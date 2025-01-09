@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Scanner;
 import quentin.SettingHandler;
 import quentin.exceptions.InvalidCellValuesException;
+import quentin.exceptions.MoveException;
 import quentin.game.Board;
 import quentin.game.Cell;
 import quentin.game.LocalGame;
@@ -95,7 +96,7 @@ public class OnlineGameStarter extends SimpleGameStarter {
                         makeMove(command);
                     }
                 }
-            } catch (InvalidCellValuesException e) {
+            } catch (MoveException | InvalidCellValuesException e) {
                 displayMessage(e.getMessage() + "\n");
             } catch (RuntimeException e) {
                 displayMessage(e.getMessage());
@@ -148,7 +149,7 @@ public class OnlineGameStarter extends SimpleGameStarter {
             {"clienta", "Authenticates the client"}
         };
         for (String[] strings : commands) {
-            System.out.printf("  %-25s: %-40s", strings[0], strings[1]);
+            System.out.printf("  %-25s: %-40s%n", strings[0], strings[1]);
         }
     }
 

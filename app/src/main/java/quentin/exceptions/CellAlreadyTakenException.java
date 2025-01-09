@@ -1,6 +1,7 @@
 package quentin.exceptions;
 
 import java.io.Serial;
+
 import quentin.game.Cell;
 
 public class CellAlreadyTakenException extends MoveException {
@@ -13,6 +14,6 @@ public class CellAlreadyTakenException extends MoveException {
 
     @Override
     public String getMessage() {
-        return String.format("Cell %s is not empty!", getCell());
+        return String.format("Cell %s is not empty!%n", getCell());
     }
 }
