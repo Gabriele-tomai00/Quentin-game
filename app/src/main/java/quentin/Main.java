@@ -13,15 +13,15 @@ public class Main {
 
             System.out.println(
                     """
-  ____  _    _            _   _          _____
- / __ \\| |  | |          | | (_)        / ____|
-| |  | | |  | | ___ _ __ | |_ _ _ __   | |  __  __ _ _ __ ___   ___
-| |  | | |  | |/ _ \\ '_ \\| __| | '_ \\  | | |_ |/ _` | '_ ` _ \\ / _ \\
-| |__| | |__| |  __/ | | | |_| | | | | | |__| | (_| | | | | | |  __/
- \\___\\_\\\\____/ \\___|_| |_|\\__|_|_| |_|  \\_____|\\__,_|_| |_| |_|\\___|
-by Luis Bolaños Mures
+                      ____  _    _            _   _          _____
+                     / __ \\| |  | |          | | (_)        / ____|
+                    | |  | | |  | | ___ _ __ | |_ _ _ __   | |  __  __ _ _ __ ___   ___
+                    | |  | | |  | |/ _ \\ '_ \\| __| | '_ \\  | | |_ |/ _` | '_ ` _ \\ / _ \\
+                    | |__| | |__| |  __/ | | | |_| | | | | | |__| | (_| | | | | | |  __/
+                     \\___\\_\\\\____/ \\___|_| |_|\\__|_|_| |_|  \\_____|\\__,_|_| |_| |_|\\___|
+                    by Luis Bolaños Mures
 
-""");
+                    """);
 
             System.out.println("Welcome to Quentin!");
             System.out.println("Enter commands (type 'exit' to quit):");
@@ -81,7 +81,7 @@ by Luis Bolaños Mures
 
     public static void startLocalGame(Scanner scanner) {
         CachedGameStarter starter = new CachedGameStarter();
-        starter.start(scanner);
+        starter.start();
         System.out.println("Returning to main menu...");
     }
 

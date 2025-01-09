@@ -52,7 +52,10 @@ public class CachedGameStarter extends SimpleGameStarter {
                     }
                     default -> {
                         makeMove(command);
-                        exitGame = hasWon();
+                        if (hasWon()) {
+                            display();
+                            exitGame = true;
+                        }
                         cache.saveLog(new GameLog(LocalDateTime.now(), new LocalGame(game)));
                     }
                 }

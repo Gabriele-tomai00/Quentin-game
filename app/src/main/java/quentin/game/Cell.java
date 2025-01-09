@@ -46,6 +46,6 @@ public class Cell {
 
     @Override
     public final String toString() {
-        return String.format("(%c, %d)", row + 'a', col + 1);
+        return String.format("(%c, %d)", col + 'a', row + 1);
     }
 }

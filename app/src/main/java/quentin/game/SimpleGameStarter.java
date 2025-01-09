@@ -5,7 +5,6 @@ import java.util.Scanner;
 public class SimpleGameStarter implements GameStarter {
 
     protected LocalGame game;
-    private final String CLEAR = "\033[H\033[2J";
 
     public SimpleGameStarter() {
         game = new LocalGame();
@@ -25,20 +24,6 @@ public class SimpleGameStarter implements GameStarter {
                 }
                 display();
             }
-        }
-    }
-
-    public void start(Scanner scanner) {
-        display();
-        while (true) {
-            if (!game.canPlayerPlay()) {
-                game.changeCurrentPlayer();
-                continue;
-            }
-            if (processInput(scanner)) {
-                break;
-            }
-            display();
         }
     }
 
@@ -75,18 +60,7 @@ public class SimpleGameStarter implements GameStarter {
     }
 
     @Override
-    public void displayMessage(String format) {
-        System.out.print(format);
-    }
-
-    @Override
-    public void displayWinner() {
-        System.out.println(
-                CLEAR + String.format("%s has won", game.getCurrentPlayer()).toUpperCase());
-    }
-
-    @Override
-    public void display() {
-        System.out.println(CLEAR + game.getBoard());
+    public Game getGame() {
+        return game;
     }
 }

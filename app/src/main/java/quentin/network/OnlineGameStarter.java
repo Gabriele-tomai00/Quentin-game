@@ -1,19 +1,19 @@
 package quentin.network;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.Scanner;
 import quentin.SettingHandler;
 import quentin.exceptions.InvalidCellValuesException;
 import quentin.exceptions.MoveException;
 import quentin.game.Board;
+import quentin.game.BoardPoint;
 import quentin.game.Cell;
-import quentin.game.LocalGame;
+import quentin.game.Game;
+import quentin.game.GameStarter;
 import quentin.game.MoveParser;
-import quentin.game.SimpleGameStarter;
+import quentin.game.Player;
 
-public class OnlineGameStarter extends SimpleGameStarter {
-    private LocalGame game;
+public class OnlineGameStarter implements GameStarter {
+    private OnlineGame game;
     Client client;
     Server server;
     Boolean isOnline = false;
@@ -22,30 +22,12 @@ public class OnlineGameStarter extends SimpleGameStarter {
     Boolean isClient = false;
     String lastBoardReceived;
     SettingHandler settingHandler = new SettingHandler();
-    String CLEAR = "\033[H\033[2J";
-
-    @Override
-    public void displayWinner() {
-        displayMessage(
-                CLEAR + String.format("%s has won", game.getCurrentPlayer()).toUpperCase() + "\n");
-    }
-
-    @Override
-    public void display() {
-        System.out.println(CLEAR + game.getBoard());
-        List<Cell> lastMoves = game.getLastMoves();
-        if (lastMoves != null && !lastMoves.isEmpty()) {
-            if (lastMoves.size() == 1)
-                displayMessage("The last stone pleased is " + lastMoves.get(0) + "\n");
-            else displayMessage("The last stones pleased are " + lastMoves + "\n");
-        }
-    }
 
     public void run(Scanner scanner) {
         displayMessage("Enter commands (type 'exit' to quit):\n");
         displayMessage(
-                "Type 'startserver' if you want to host a match. Type 'startclient' if you want"
-                        + " to join a match\n");
+                "Type 'startserver' if you want to host a match. Type 'startclient' if you want to"
+                        + " join a match\n");
         while (true) {
             try {
                 printGamePrompt();
@@ -160,16 +142,18 @@ public class OnlineGameStarter extends SimpleGameStarter {
 
     @Override
     public void start() {
-        game = new LocalGame();
         if (!isOnline
                 || (isServer && !server.isClientAuth())
-                || isClient && !client.isAuthenticated()) return;
+                || isClient && !client.isAuthenticated()) {
+            return;
+        }
         displayMessage("New game started!\n");
         display();
         if (isServer) {
+            game = new OnlineGame(new Player(BoardPoint.BLACK));
             isWaiting = false;
         } else if (isClient) {
-            game.changeCurrentPlayer();
+            game = new OnlineGame(new Player(BoardPoint.WHITE));
             waitMove();
         }
     }
@@ -200,7 +184,12 @@ public class OnlineGameStarter extends SimpleGameStarter {
                                     sleepSafely(500);
                                 }
                             }
-                            display();
+                            if (game != null) {
+                                display();
+                                if (hasWon()) {
+                                    return;
+                                }
+                            }
                             if (!game.canPlayerPlay()) {
                                 displayMessage(
                                         CLEAR
@@ -218,7 +207,6 @@ public class OnlineGameStarter extends SimpleGameStarter {
         threadWaitMove.start();
     }
 
-    @Override
     public void makeMove(String input) {
         if ((isServer && !server.isClientAuth()) || isClient && !client.isAuthenticated()) {
             displayMessage("Client is not yet authenticated");
@@ -235,7 +223,7 @@ public class OnlineGameStarter extends SimpleGameStarter {
             if (isClient && input.equals("pie") && game.isFirstMove()) {
                 game.setFirstMove(false);
                 displayMessage("Now you are black! Wait messages\n");
-                game.changeCurrentPlayer();
+                game.applyPieRule();
                 sendBoard();
                 waitMove();
                 return;
@@ -247,10 +235,12 @@ public class OnlineGameStarter extends SimpleGameStarter {
             Cell cell = new MoveParser(input).parse();
             game.place(cell);
             game.coverTerritories(cell);
-
-            if (hasWon()) return;
-
             sendBoard();
+            if (hasWon()) {
+                display();
+                return;
+            }
+
             display();
 
             if (!game.canPlayerPlay()) {
@@ -265,7 +255,6 @@ public class OnlineGameStarter extends SimpleGameStarter {
         }
 
         if (!isOnline) {
-            game.changeCurrentPlayer();
             if (!game.canPlayerPlay()) {
                 displayMessage(
                         CLEAR
@@ -273,23 +262,20 @@ public class OnlineGameStarter extends SimpleGameStarter {
                                                 "You/The %s player can't play",
                                                 game.getCurrentPlayer())
                                         .toUpperCase());
-                game.changeCurrentPlayer();
                 displayMessage(", so the next player is " + game.getCurrentPlayer());
             }
         }
     }
 
     public boolean hasWon() {
-        if (game.hasWon(game.getCurrentPlayer())) {
+        if (game.hasWon(new Player(BoardPoint.BLACK))) {
             displayWinner();
             return true;
         }
-        game.changeCurrentPlayer();
-        if (game.hasWon(game.getCurrentPlayer())) {
+        if (game.hasWon(new Player(BoardPoint.WHITE))) {
             displayWinner();
             return true;
         }
-        game.changeCurrentPlayer();
         return false;
     }
 
@@ -407,10 +393,12 @@ public class OnlineGameStarter extends SimpleGameStarter {
             return false;
         }
 
-        if (Objects.equals(game.getBoard().toCompactString(), compactBoard)) { // pie rule
+        if (game.getBoard().toCompactString().equals(compactBoard)) { // pie rule
             displayMessage("Your opponent player used the pie rule, now you are White!\n");
-            game.changeCurrentPlayer();
-        } else game.updateBoard(new Board(compactBoard));
+            game.applyPieRule();
+        } else {
+            game.updateBoard(new Board(compactBoard));
+        }
         lastBoardReceived = compactBoard;
         return true;
     }
@@ -422,5 +410,10 @@ public class OnlineGameStarter extends SimpleGameStarter {
             Thread.currentThread().interrupt();
             System.err.println("Thread interrupted while waiting for client" + " authentication");
         }
+    }
+
+    @Override
+    public Game getGame() {
+        return game;
     }
 }

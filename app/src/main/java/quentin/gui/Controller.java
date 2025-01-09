@@ -24,6 +24,7 @@ import quentin.cache.GameLog;
 import quentin.exceptions.MoveException;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
+import quentin.game.Game;
 import quentin.game.GameStarter;
 import quentin.game.LocalGame;
 
@@ -97,7 +98,8 @@ public class Controller implements Initializable, GameStarter {
         }
     }
 
-    public void startDisplay() {
+    @Override
+    public void start() {
         displayMessage(game.getCurrentPlayer() + "'s turn!");
         messageField.toBack();
         base.setEffect(null);
@@ -107,11 +109,8 @@ public class Controller implements Initializable, GameStarter {
     }
 
     public void startWithMouseClick(MouseEvent e) {
-        startDisplay();
+        start();
     }
-
-    @Override
-    public void start() {}
 
     @Override
     public void displayWinner() {
@@ -213,5 +212,10 @@ public class Controller implements Initializable, GameStarter {
 
     public Cache<GameLog> getCache() {
         return cache;
+    }
+
+    @Override
+    public Game getGame() {
+        return game;
     }
 }
