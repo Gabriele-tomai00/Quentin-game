@@ -1,7 +1,6 @@
 package quentin.exceptions;
 
 import java.io.Serial;
-
 import quentin.game.Cell;
 
 public class CellAlreadyTakenException extends MoveException {
