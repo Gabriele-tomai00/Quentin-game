@@ -41,7 +41,8 @@ public class LoaderController implements Initializable {
         bar.getButtons().addAll(yesButton, noButton);
         label.setText(
                 String.format(
-                        "Found saved game: %s%nWant to resume game?", cache.getLog().timeStamp()));
+                        "Found saved game: %s%nWant to resume game?",
+                        cache.getLog().getReadableTimestamp()));
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("Main.fxml"));
             loader.setController(new Controller(cache));
