@@ -19,8 +19,9 @@ public class Main {
 | |  | | |  | |/ _ \\ '_ \\| __| | '_ \\  | | |_ |/ _` | '_ ` _ \\ / _ \\
 | |__| | |__| |  __/ | | | |_| | | | | | |__| | (_| | | | | | |  __/
  \\___\\_\\\\____/ \\___|_| |_|\\__|_|_| |_|  \\_____|\\__,_|_| |_| |_|\\___|
-        by Luis Bolaños Mures                                                         \
-       \s""");
+by Luis Bolaños Mures
+
+""");
 
             System.out.println("Welcome to Quentin!");
             System.out.println("Enter commands (type 'exit' to quit):");
