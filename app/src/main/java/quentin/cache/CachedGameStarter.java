@@ -1,7 +1,6 @@
 package quentin.cache;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import quentin.game.LocalGame;
 import quentin.game.SimpleGameStarter;
@@ -10,14 +9,11 @@ public class CachedGameStarter extends SimpleGameStarter {
 
     private final Cache<GameLog> cache;
     private boolean gameFinished = true;
-    private static final DateTimeFormatter TIMESTAMP_FORMATTER =
-            DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
     public CachedGameStarter() {
         super();
         this.cache = new Cache<>();
-        this.cache.saveLog(
-                new GameLog(LocalDateTime.now().format(TIMESTAMP_FORMATTER), new LocalGame(game)));
+        this.cache.saveLog(new GameLog(LocalDateTime.now(), new LocalGame(game)));
     }
 
     public CachedGameStarter(Cache<GameLog> cache) {
@@ -27,9 +23,7 @@ public class CachedGameStarter extends SimpleGameStarter {
             this.cache = cache;
         } else {
             this.cache = new Cache<>();
-            this.cache.saveLog(
-                    new GameLog(
-                            LocalDateTime.now().format(TIMESTAMP_FORMATTER), new LocalGame(game)));
+            this.cache.saveLog(new GameLog(LocalDateTime.now(), new LocalGame(game)));
 
             game = new LocalGame();
         }
@@ -59,10 +53,7 @@ public class CachedGameStarter extends SimpleGameStarter {
                     default -> {
                         makeMove(command);
                         exitGame = hasWon();
-                        cache.saveLog(
-                                new GameLog(
-                                        LocalDateTime.now().format(TIMESTAMP_FORMATTER),
-                                        new LocalGame(game)));
+                        cache.saveLog(new GameLog(LocalDateTime.now(), new LocalGame(game)));
                     }
                 }
             } catch (RuntimeException e) {
