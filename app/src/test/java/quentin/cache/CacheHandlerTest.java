@@ -3,15 +3,12 @@ package quentin.cache;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.Test;
 import quentin.game.Cell;
 import quentin.game.LocalGame;
 
 public class CacheHandlerTest {
     CacheHandler cache = new CacheHandler();
-    private static final DateTimeFormatter TIMESTAMP_FORMATTER =
-            DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
     @Test
     public void readAndWriteCacheToFileTest() {
@@ -19,12 +16,10 @@ public class CacheHandlerTest {
         LocalGame game = new LocalGame();
         game.place(new Cell(0, 0));
         game.changeCurrentPlayer();
-        cache.saveLog(
-                new GameLog(LocalDateTime.now().format(TIMESTAMP_FORMATTER), new LocalGame(game)));
+        cache.saveLog(new GameLog(LocalDateTime.now(), new LocalGame(game)));
         game.place(new Cell(1, 0));
         game.changeCurrentPlayer();
-        cache.saveLog(
-                new GameLog(LocalDateTime.now().format(TIMESTAMP_FORMATTER), new LocalGame(game)));
+        cache.saveLog(new GameLog(LocalDateTime.now(), new LocalGame(game)));
         CacheHandler.saveCache(cache);
         Cache<GameLog> cache2 = CacheHandler.initialize();
         assertEquals(cache2, cache);
