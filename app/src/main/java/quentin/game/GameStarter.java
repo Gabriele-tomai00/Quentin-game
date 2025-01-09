@@ -9,9 +9,6 @@ public interface GameStarter {
     }
 
     default void displayWinner() {
-        if (getGame() == null) {
-            System.out.println("é qui l'errore dio cane");
-        }
         System.out.println(
                 CLEAR + String.format("%s has won", getGame().getCurrentPlayer()).toUpperCase());
     }

@@ -24,6 +24,7 @@ public class OnlineGame implements Game {
 
     public OnlineGame(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
+        board = new Board();
     }
 
     public OnlineGame(OnlineGame game) {

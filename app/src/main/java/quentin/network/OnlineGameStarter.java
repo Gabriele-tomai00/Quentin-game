@@ -148,7 +148,6 @@ public class OnlineGameStarter implements GameStarter {
             return;
         }
         displayMessage("New game started!\n");
-        display();
         if (isServer) {
             game = new OnlineGame(new Player(BoardPoint.BLACK));
             isWaiting = false;
@@ -156,6 +155,7 @@ public class OnlineGameStarter implements GameStarter {
             game = new OnlineGame(new Player(BoardPoint.WHITE));
             waitMove();
         }
+        display();
     }
 
     private void waitMove() {
@@ -184,11 +184,9 @@ public class OnlineGameStarter implements GameStarter {
                                     sleepSafely(500);
                                 }
                             }
-                            if (game != null) {
-                                display();
-                                if (hasWon()) {
-                                    return;
-                                }
+                            display();
+                            if (hasWon()) {
+                                return;
                             }
                             if (!game.canPlayerPlay()) {
                                 displayMessage(
@@ -389,7 +387,7 @@ public class OnlineGameStarter implements GameStarter {
     }
 
     private Boolean isBoardValid(String compactBoard) {
-        if (compactBoard == null || compactBoard.equals(lastBoardReceived)) {
+        if (game == null || compactBoard == null || compactBoard.equals(lastBoardReceived)) {
             return false;
         }
 
