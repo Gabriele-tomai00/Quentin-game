@@ -166,7 +166,7 @@ public class OnlineGameStarter implements GameStarter {
                             isWaiting = true;
                             displayMessage("Waiting for messages...\n");
                             if (isClient) {
-                                while (true) {
+                                while (isOnline) {
                                     String boardReceived = client.getBoardReceived();
                                     if (boardReceived != null && boardReceived.equals("quit")) {
                                         client.stop();
@@ -176,8 +176,8 @@ public class OnlineGameStarter implements GameStarter {
                                 }
                             }
                             if (isServer) {
-                                while (true) {
-                                    String boardReceived = server.getMessageReceived();
+                                while (isOnline) {
+                                    String boardReceived = server.getBoardReceived();
                                     if (boardReceived != null && boardReceived.equals("quit")) {
                                         server.stop();
                                         return;
@@ -189,19 +189,8 @@ public class OnlineGameStarter implements GameStarter {
                             if (hasWon()) {
                                 return;
                             }
-                            if (!game.canPlayerPlay()) {
-                                displayMessage(
-                                        CLEAR
-                                                + String.format(
-                                                                "You/The %s player can't play",
-                                                                game.getCurrentPlayer())
-                                                        .toUpperCase());
-
-                                waitMove();
-                            } else {
-                                isWaiting = false;
-                                displayMessage("It's your turn to play: ");
-                            }
+                            isWaiting = false;
+                            displayMessage("It's your turn to play: ");
                         });
         threadWaitMove.start();
     }
@@ -234,8 +223,8 @@ public class OnlineGameStarter implements GameStarter {
             Cell cell = new MoveParser(input).parse();
             game.place(cell);
             game.coverTerritories(cell);
-            sendBoard();
             if (hasWon()) {
+                sendBoard();
                 display();
                 return;
             }
@@ -243,25 +232,10 @@ public class OnlineGameStarter implements GameStarter {
             display();
 
             if (!game.canPlayerPlay()) {
-                displayMessage(
-                        CLEAR
-                                + String.format(
-                                                "You/The %s player can't play",
-                                                game.getCurrentPlayer())
-                                        .toUpperCase());
-                displayMessage("It' your turn again");
-            } else waitMove();
-        }
-
-        if (!isOnline) {
-            if (!game.canPlayerPlay()) {
-                displayMessage(
-                        CLEAR
-                                + String.format(
-                                                "You/The %s player can't play",
-                                                game.getCurrentPlayer())
-                                        .toUpperCase());
-                displayMessage(", so the next player is " + game.getCurrentPlayer());
+                displayMessage(CLEAR + "You can play again (the opponent player can't play)");
+            } else {
+                sendBoard();
+                waitMove();
             }
         }
     }
@@ -418,10 +392,9 @@ public class OnlineGameStarter implements GameStarter {
 
     @Override
     public void display() {
+        System.out.println(game.getBoard());
         List<Cell> moves = game.getLastMoves();
         if (!moves.isEmpty()) {
-            System.out.println("LastMoves size: " + moves.size());
-
             if (moves.size() > 1) {
                 System.out.println("Last moves of the opponent player are: " + game.getLastMoves());
             } else {

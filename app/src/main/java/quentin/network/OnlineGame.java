@@ -3,6 +3,7 @@ package quentin.network;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
+import quentin.exceptions.MoveException;
 import quentin.game.Board;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
@@ -70,5 +71,25 @@ public class OnlineGame implements Game {
                 currentPlayer.color() == BoardPoint.BLACK
                         ? new Player(BoardPoint.WHITE)
                         : new Player(BoardPoint.BLACK);
+    }
+
+    @Override
+    public boolean canPlayerPlay() {
+        Player otherPlayer =
+                BoardPoint.BLACK == currentPlayer.color()
+                        ? new Player(BoardPoint.WHITE)
+                        : new Player(BoardPoint.BLACK);
+        for (int row = 0; row < boardSize(); row++) {
+            for (int col = 0; col < boardSize(); col++) {
+                try {
+                    if (isMoveValid(otherPlayer.color(), new Cell(row, col))) {
+                        return true;
+                    }
+                } catch (MoveException e) {
+                    // do nothing
+                }
+            }
+        }
+        return false;
     }
 }

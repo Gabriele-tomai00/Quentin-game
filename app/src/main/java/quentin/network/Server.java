@@ -68,7 +68,7 @@ public class Server {
         return tcpServer.getClientAuth();
     }
 
-    public String getMessageReceived() {
+    public String getBoardReceived() {
         if (tcpServer == null) return null;
         return tcpServer.getMessageReceived();
     }
