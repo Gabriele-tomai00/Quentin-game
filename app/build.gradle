@@ -95,3 +95,17 @@ spotless {
 run {
     standardInput = System.in
 }
+
+jar {
+    archiveBaseName.set('app') // Sets the name of the output archive
+    archiveExtension.set('jar') // Ensures the file has a .jar extension
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    manifest {
+        attributes 'Main-Class': 'quentin.Main'
+    }
+}
