@@ -1,5 +1,6 @@
 package quentin.network;
 
+import java.util.List;
 import java.util.Scanner;
 import quentin.SettingHandler;
 import quentin.exceptions.InvalidCellValuesException;
@@ -413,5 +414,20 @@ public class OnlineGameStarter implements GameStarter {
     @Override
     public Game getGame() {
         return game;
+    }
+
+    @Override
+    public void display() {
+        List<Cell> moves = game.getLastMoves();
+        if (!moves.isEmpty()) {
+            System.out.println("LastMoves size: " + moves.size());
+
+            if (moves.size() > 1) {
+                System.out.println("Last moves of the opponent player are: " + game.getLastMoves());
+            } else {
+                System.out.println(
+                        "Last move of the opponent player is : " + game.getLastMoves().get(0));
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 package quentin.network;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import quentin.game.Board;
@@ -10,28 +11,15 @@ import quentin.game.Player;
 
 public class OnlineGame implements Game {
 
-    private static final long serialVersionUID = 5269244630137536200L;
+    @Serial private static final long serialVersionUID = 5269244630137536200L;
     private Player currentPlayer;
-    private Board board;
-    private final List<Cell> lastMoves =
-            new ArrayList<>(); // moves can be two if the opponent player can't play
+    private final Board board;
+    private final List<Cell> lastMoves = new ArrayList<>();
     private boolean isFirstMove = true;
-
-    public OnlineGame() {
-        currentPlayer = new Player(BoardPoint.BLACK);
-        board = new Board();
-    }
 
     public OnlineGame(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
         board = new Board();
-    }
-
-    public OnlineGame(OnlineGame game) {
-        this.board = new Board();
-        board.setBoard(game.getBoard());
-        this.currentPlayer = new Player(game.getCurrentPlayer().color());
-        this.isFirstMove = game.isFirstMove();
     }
 
     public void updateLastMoves(Board newBoard) {
