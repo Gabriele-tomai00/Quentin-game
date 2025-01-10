@@ -42,7 +42,7 @@ public class Main {
                         startOnlineGame(scanner);
                     }
                     case "sg", "startgui" -> {
-                        startGui(args);
+                        startGui();
                     }
                     case "" -> {
                         continue;
@@ -89,7 +89,7 @@ public class Main {
         parser.run(scanner);
     }
 
-    public static void startGui(String... args) {
-        GuiMain.main(args);
+    public static void startGui() {
+        GuiMain.main();
     }
 }

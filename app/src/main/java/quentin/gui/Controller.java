@@ -69,7 +69,6 @@ public class Controller implements Initializable, GameStarter {
                 panes[i][j] = new Pane();
                 panes[i][j].addEventHandler(MouseEvent.MOUSE_CLICKED, this::placeCell);
                 panes[i][j].setStyle("-fx-border-color: grey");
-                // pane.setPrefSize(30, 30);
                 board.add(panes[i][j], j, i);
             }
         }
@@ -102,6 +101,7 @@ public class Controller implements Initializable, GameStarter {
     public void start() {
         displayMessage(game.getCurrentPlayer() + "'s turn!");
         messageField.toBack();
+        messageField.setText(null);
         base.setEffect(null);
         base.setOpacity(1);
         base.toFront();
@@ -182,7 +182,11 @@ public class Controller implements Initializable, GameStarter {
         textField.setText(null);
     }
 
-    public void resetWithMouseClicked(Object e) {
+    public void resetWithMouseClicked(MouseEvent e) {
+        reset();
+    }
+
+    public void resetWithButtonPressed(ActionEvent e) {
         reset();
     }
 
