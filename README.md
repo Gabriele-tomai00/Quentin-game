@@ -50,11 +50,6 @@ For detailed instructions on how to play Quentin, refer to the [Instructions Fil
    ./gradlew run
    ```
 
-2. Alternatively, execute the JAR file (after building):
-   ```bash
-   java -jar app/build/libs/app.jar
-   ```
-
 ---
 
 ## **Uninstalling**

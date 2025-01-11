@@ -26,6 +26,10 @@ dependencies {
 
     // This dependency is used by the application.
     implementation libs.guava
+    implementation 'org.openjfx:javafx-controls:20'
+    implementation 'org.openjfx:javafx-fxml:20'
+
+
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -94,18 +98,4 @@ spotless {
 }
 run {
     standardInput = System.in
-}
-
-jar {
-    archiveBaseName.set('app') // Sets the name of the output archive
-    archiveExtension.set('jar') // Ensures the file has a .jar extension
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-
-    manifest {
-        attributes 'Main-Class': 'quentin.Main'
-    }
 }

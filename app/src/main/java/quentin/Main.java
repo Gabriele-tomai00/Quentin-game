@@ -89,7 +89,7 @@ public class Main {
         parser.run(scanner);
     }
 
-    public static void startGui() {
-        GuiMain.main();
+    public static void startGui(String... args) {
+        GuiMain.main(args);
     }
 }
