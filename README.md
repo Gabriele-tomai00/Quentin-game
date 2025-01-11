@@ -16,6 +16,7 @@ Quentin is a drawless connection game for two players: Black and White. It's pla
 - Designed to run on any platform with Java.
 
 ---
+![Demo](demo.gif)
 
 ## **Instructions**
 For detailed instructions on how to play Quentin, refer to the [Instructions File](instructions.md).
