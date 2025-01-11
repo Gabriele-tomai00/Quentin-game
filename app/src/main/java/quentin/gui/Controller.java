@@ -6,7 +6,6 @@ import java.util.ResourceBundle;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -143,7 +142,7 @@ public class Controller implements Initializable, GameStarter {
             cache.saveLog(new GameLog(LocalDateTime.now(), new LocalGame(game)));
             displayMessage(game.getCurrentPlayer() + "'s turn!");
         } catch (MoveException e1) {
-            errorMessage(e1.getMessage());
+            errorMessage("Invalid move!");
         }
     }
 
@@ -156,17 +155,13 @@ public class Controller implements Initializable, GameStarter {
         messageField.setOpacity(.8);
         PauseTransition transition = new PauseTransition(Duration.millis(1000));
         transition.setOnFinished(
-                new EventHandler<ActionEvent>() {
-
-                    @Override
-                    public void handle(ActionEvent event) {
-                        messageField.setTextFill(Color.WHITE);
-                        messageField.toBack();
-                        messageField.setFont(Font.font("Menlo bold", 36));
-                        base.setOpacity(1);
-                        messageField.setBackground(null);
-                        messageField.setOpacity(1);
-                    }
+                (_) -> {
+                    messageField.setTextFill(Color.WHITE);
+                    messageField.toBack();
+                    messageField.setFont(Font.font("Menlo bold", 36));
+                    base.setOpacity(1);
+                    messageField.setBackground(null);
+                    messageField.setOpacity(1);
                 });
         transition.play();
     }
@@ -195,7 +190,7 @@ public class Controller implements Initializable, GameStarter {
             game = new LocalGame(cache.goBack().game());
             displayMessage(game.getCurrentPlayer() + "'s turn!");
         } catch (RuntimeException ex) {
-            displayMessage(ex.getMessage());
+            errorMessage("No more memory left!");
         }
         display();
     }
@@ -205,7 +200,7 @@ public class Controller implements Initializable, GameStarter {
             game = new LocalGame(cache.goForward().game());
             displayMessage(game.getCurrentPlayer() + "'s turn!");
         } catch (RuntimeException ex) {
-            displayMessage(ex.getMessage());
+            errorMessage("Cannot go forward!");
         }
         display();
     }
