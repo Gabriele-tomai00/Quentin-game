@@ -52,7 +52,7 @@ For detailed instructions on how to play Quentin, refer to the [Instructions Fil
 
 2. Alternatively, execute the JAR file (after building):
    ```bash
-   java -jar build/libs/quentin-1.0.jar
+   java -jar app/build/libs/app.jar
    ```
 
 ---
