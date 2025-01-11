@@ -88,7 +88,7 @@ public class TCPServer implements TcpCliSerInterface {
                                 System.out.println("client connection interrupted");
                                 stop();
                             } catch (IOException e) {
-                                System.out.println("IOException in listenForMessages");
+                                //
                             }
                         });
         waitMessageThread.start();

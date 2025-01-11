@@ -3,6 +3,7 @@ package quentin.network;
 public class Client {
     private UDPClient udpClient;
     private TCPClient tcpClient;
+    private boolean serverFound;
 
     public void startDiscovery() {
         udpClient = new UDPClient();
@@ -15,11 +16,16 @@ public class Client {
     }
 
     public void stop() {
-        udpClient.stopDiscovery();
-        tcpClient.stop();
+        if (udpClient != null) {
+            udpClient.stopDiscovery();
+        }
+        if (tcpClient != null) {
+            tcpClient.stop();
+        }
     }
 
     public void linkWithTCPServer() {
+        serverFound = true;
         System.out.println("Linking with TCP server...");
         ServerInfo tcpServerInfo = udpClient.getTcpServerInfo();
         if (tcpServerInfo != null) {
@@ -51,5 +57,9 @@ public class Client {
 
     public Boolean isAuthenticated() {
         return tcpClient.getState() == ClientAuthState.AUTHENTICATED;
+    }
+
+    public boolean isServerFound() {
+        return serverFound;
     }
 }
