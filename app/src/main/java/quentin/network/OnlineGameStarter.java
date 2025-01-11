@@ -272,7 +272,6 @@ public class OnlineGameStarter implements GameStarter {
                                     return;
                                 }
                             }
-                            isOnline = true;
                         });
         waitAuthOfClient.start();
         try {
@@ -308,19 +307,28 @@ public class OnlineGameStarter implements GameStarter {
                 .start();
 
         isOnline = true;
-        sleepSafely(1000);
-        displayMessage("\nType 'clienta' to insert the password\n");
+        new Thread(
+                        () -> {
+                            while (!client.isServerFound()) {
+                                sleepSafely(500);
+                            }
+                            displayMessage("\nType 'clienta' to insert the password\n");
+                        })
+                .start();
     }
 
     private void clientAuth(Scanner scanner) throws InterruptedException {
         int attempts = 3;
         String password;
-        while (true) {
+        while (isOnline) {
             if (attempts == 0) return;
 
             displayMessage("attempts: " + attempts + "\n");
             displayMessage("password > ");
             password = scanner.nextLine().trim();
+            if ((password.equals("exit"))) {
+                return;
+            }
             if ((password.length() != 5 || !password.matches("\\d{5}"))) {
                 displayMessage("Invalid password, retry\n");
                 attempts--;
@@ -336,7 +344,7 @@ public class OnlineGameStarter implements GameStarter {
     private boolean waitServerAuthenticationResponse() throws InterruptedException {
         displayMessage("Wait answer...\n");
         long startTime = System.currentTimeMillis();
-        while (true) {
+        while (isOnline) {
             Thread.sleep(500);
 
             if (System.currentTimeMillis() - startTime > 3000) {
@@ -352,6 +360,7 @@ public class OnlineGameStarter implements GameStarter {
                 return false;
             }
         }
+        return false;
     }
 
     private void sendBoard() {
