@@ -40,12 +40,12 @@ For detailed instructions on how to play Quentin, refer to the [Instructions Fil
    ```bash
    ./gradlew build
    ```
-
+If you already have Gradle installed you might need to run `gradle wrapper` before build.
 ---
 
 ## **Execution**
 
-1. Run the application using Gradle:
+Run the application using Gradle:
    ```bash
    ./gradlew run
    ```
