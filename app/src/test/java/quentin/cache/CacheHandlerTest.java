@@ -8,8 +8,6 @@ import quentin.game.Cell;
 import quentin.game.LocalGame;
 
 public class CacheHandlerTest {
-    CacheHandler cache = new CacheHandler();
-
     @Test
     public void readAndWriteCacheToFileTest() {
         Cache<GameLog> cache = new Cache<>();

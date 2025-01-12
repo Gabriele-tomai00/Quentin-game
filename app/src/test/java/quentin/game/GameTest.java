@@ -57,7 +57,7 @@ public class GameTest {
 
     @Test
     public void canPlayerPlay() {
-        assertEquals(true, game.canPlayerPlay());
+        assertTrue(game.canPlayerPlay());
     }
 
     @Test
@@ -80,11 +80,11 @@ public class GameTest {
 
     @Test
     public void neighborsTest() {
-        Set<Cell> neigbors = new HashSet<Cell>();
-        neigbors.add(new Cell(0, 0));
-        neigbors.add(new Cell(1, 1));
-        neigbors.add(new Cell(2, 0));
-        assertEquals(neigbors, game.getNeighbors(new Cell(1, 0)));
+        Set<Cell> neighbors = new HashSet<Cell>();
+        neighbors.add(new Cell(0, 0));
+        neighbors.add(new Cell(1, 1));
+        neighbors.add(new Cell(2, 0));
+        assertEquals(neighbors, game.getNeighbors(new Cell(1, 0)));
     }
 
     @Test
@@ -167,7 +167,7 @@ public class GameTest {
             }
             game.coverTerritories(new Cell(12, 10));
         } catch (MoveException e) {
-            // do nothing
+            System.out.println("MoveException error: " + e.getMessage());
         }
         assertAll(
                 () -> assertEquals(BoardPoint.BLACK, game.getBoard().getPoint(new Cell(0, 12))),

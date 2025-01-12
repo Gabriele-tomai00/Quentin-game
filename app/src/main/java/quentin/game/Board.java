@@ -141,8 +141,8 @@ public class Board implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (obj instanceof Board board) {
-            return Arrays.deepEquals(this.board, board.board);
+        if (obj instanceof Board bd) {
+            return Arrays.deepEquals(this.board, bd.board);
         }
         return false;
     }

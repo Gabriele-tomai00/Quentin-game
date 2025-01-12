@@ -35,8 +35,7 @@ public class Cache<E> implements Serializable {
             currentLog += moves;
             return memory.get(currentLog);
         } else {
-            throw new IndexOutOfBoundsException(
-                    String.format("Index: %d, Size: %d", currentLog + moves, memory.size()));
+            throw new IndexOutOfBoundsException("you can't go back one more move");
         }
     }
 
@@ -49,18 +48,13 @@ public class Cache<E> implements Serializable {
             currentLog -= moves;
             return memory.get(currentLog);
         } else {
-            throw new IndexOutOfBoundsException(
-                    String.format("Index: %d, currentLog: %d", currentLog - moves, currentLog));
+            throw new IndexOutOfBoundsException("you can't go forward one more move");
         }
     }
 
     public void clear() {
         currentLog = 0;
         memory.clear();
-    }
-
-    public int getCurrentLog() {
-        return currentLog;
     }
 
     public int getMemorySize() {

@@ -33,14 +33,14 @@ public class CachedGameStarter extends SimpleGameStarter {
     public boolean processInput(Scanner scanner) {
         boolean exitGame = false;
         while (true) {
-            displayMessage("QuentinGame - local mode\n" + game.getCurrentPlayer() + " >");
+            displayMessage("QuentinGame - local mode\n" + game.getCurrentPlayer() + " > ");
             String command = scanner.nextLine().trim().toLowerCase();
             try {
                 switch (command) {
-                    case "back" -> {
+                    case "back", "b" -> {
                         game = new LocalGame(cache.goBack().game());
                     }
-                    case "forward" -> {
+                    case "forward", "f" -> {
                         game = new LocalGame(cache.goForward().game());
                     }
                     case "exit" -> {
@@ -74,8 +74,8 @@ public class CachedGameStarter extends SimpleGameStarter {
             {"exit", "Quits the game and exits the program"},
             {"help", "Shows this help"},
             {"<coordinates>", "Makes a move. Examples: A1 b2 C5 (wrong examples: 5A, 24)"},
-            {"back", "go back one move"},
-            {"forward", "go forward one move"}
+            {"back or b", "go back one move"},
+            {"forward or f", "go forward one move"}
         };
         for (String[] strings : commands) {
             System.out.printf("  %-25s: %-40s%n", strings[0], strings[1]);

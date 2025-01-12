@@ -138,7 +138,7 @@ public class OnlineGameStarter implements GameStarter {
 
     private void printGamePrompt() {
         if (!isWaiting) displayMessage("QuentinGame - online mode > ");
-        else displayMessage("wait your turn or quit \n");
+        else displayMessage("wait your turn or quit (exit command) \n");
     }
 
     @Override
@@ -401,14 +401,17 @@ public class OnlineGameStarter implements GameStarter {
 
     @Override
     public void display() {
-        System.out.println(game.getBoard());
-        List<Cell> moves = game.getLastMoves();
-        if (!moves.isEmpty()) {
-            if (moves.size() > 1) {
-                System.out.println("Last moves of the opponent player are: " + game.getLastMoves());
-            } else {
-                System.out.println(
-                        "Last move of the opponent player is : " + game.getLastMoves().get(0));
+        if (isOnline) {
+            System.out.println(game.getBoard());
+            List<Cell> moves = game.getLastMoves();
+            if (!moves.isEmpty()) {
+                if (moves.size() > 1) {
+                    System.out.println(
+                            "Last moves of the opponent player are: " + game.getLastMoves());
+                } else {
+                    System.out.println(
+                            "Last move of the opponent player is : " + game.getLastMoves().get(0));
+                }
             }
         }
     }

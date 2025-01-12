@@ -23,7 +23,7 @@ class CacheTest {
 
         Exception notEnoughLogs =
                 assertThrows(IndexOutOfBoundsException.class, () -> cache.goBack(2));
-        assertEquals("Index: 2, Size: 1", notEnoughLogs.getMessage());
+        assertEquals("you can't go back one more move", notEnoughLogs.getMessage());
 
         assertEquals("First", cache.getLog());
         cache.saveLog("Second");

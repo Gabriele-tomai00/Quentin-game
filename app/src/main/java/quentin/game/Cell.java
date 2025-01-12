@@ -37,8 +37,7 @@ public class Cell {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof Cell) {
-            Cell cell = (Cell) obj;
+        if (obj instanceof Cell cell) {
             return cell.row == this.row && cell.col == this.col;
         }
         return false;

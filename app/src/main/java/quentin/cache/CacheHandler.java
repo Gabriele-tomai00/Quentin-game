@@ -24,12 +24,17 @@ public class CacheHandler {
             try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(file))) {
                 cache = (Cache<GameLog>) input.readObject();
                 System.out.println("Cache loaded successfully from " + CACHE_FILE);
-            } catch (IOException | ClassNotFoundException e) {
-                // e.getMessage());
+            } catch (IOException e) {
+                System.err.println("Failed to load cache due to an IO error: " + e.getMessage());
+            } catch (ClassNotFoundException e) {
+                System.err.println(
+                        "Failed to load cache: Class not found. This may indicate incompatible"
+                                + " serialization.");
             }
         } else {
             System.out.println("Cache file does not exist. Using a new cache.");
         }
+
         return cache;
     }
 

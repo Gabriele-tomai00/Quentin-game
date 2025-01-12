@@ -1,8 +1,10 @@
 package quentin.exceptions;
 
+import java.io.Serial;
+
 public class IllegalBoardException extends RuntimeException {
 
-    private static final long serialVersionUID = -5208454396928964658L;
+    @Serial private static final long serialVersionUID = -5208454396928964658L;
     String message;
     String compactBoard;
 

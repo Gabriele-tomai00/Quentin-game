@@ -8,7 +8,7 @@ public class LocalGame implements Game {
     private static final Player white = new Player(BoardPoint.WHITE);
     private static final Player black = new Player(BoardPoint.BLACK);
     private Player currentPlayer;
-    private Board board;
+    private final Board board;
 
     public LocalGame() {
         currentPlayer = black;
