@@ -11,10 +11,6 @@ public class Client {
         udpClient.startDiscovery(); // non-blocking
     }
 
-    public void stopDiscovery() {
-        udpClient.stopDiscovery();
-    }
-
     public void stop() {
         if (udpClient != null) {
             udpClient.stopDiscovery();

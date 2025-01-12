@@ -61,7 +61,9 @@ public class TCPClient implements TcpCliSerInterface {
                                     System.out.println("server connection interrupted");
                                     stop();
                                 } catch (IOException e) {
-                                    // here when I call close() after a client connection
+                                    if (clientConnected) {
+                                        System.out.println("IOException error in TCP client");
+                                    }
                                 }
                             })
                     .start();
@@ -69,14 +71,17 @@ public class TCPClient implements TcpCliSerInterface {
     }
 
     public void stop() {
-        out.println("quit");
-        try {
-            if (in != null) in.close();
-            if (out != null) out.close();
-            if (socket != null) socket.close();
-            System.out.println("Client process closed");
-        } catch (IOException e) {
-            //
+        if (clientConnected) {
+            clientConnected = false;
+            out.println("quit");
+            try {
+                if (in != null) in.close();
+                if (out != null) out.close();
+                if (socket != null) socket.close();
+                System.out.println("Client process closed");
+            } catch (IOException e) {
+                System.out.println("Error closing the client connection: " + e.getMessage());
+            }
         }
     }
 

@@ -86,14 +86,17 @@ public class UDPServer {
     }
 
     public void stopServer() {
-        discovery = false;
-        try {
-            discoveryThread.join();
-            if (!discoveryThread.isAlive()) {
+        if (discovery) {
+            discovery = false;
+            try {
+                discoveryThread.join();
                 System.out.println("UDP server successfully stopped");
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.err.println("Error stopping UDP server: Thread was interrupted");
+            } catch (Exception e) {
+                System.err.println("Unexpected error while stopping UDP server: " + e.getMessage());
             }
-        } catch (Exception e) {
-            System.err.println("Error stopping UDP server");
         }
     }
 }

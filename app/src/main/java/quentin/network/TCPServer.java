@@ -14,6 +14,7 @@ public class TCPServer implements TcpCliSerInterface {
     private PrintWriter out;
     private BufferedReader in;
     private final String PASSWORD;
+    private volatile boolean isOn = false;
     private Boolean isClientAuth = false;
     public int port;
     public String messageReceived;
@@ -31,6 +32,7 @@ public class TCPServer implements TcpCliSerInterface {
             System.err.println("Error during socket creation in TCP Server");
             return;
         }
+        isOn = true;
         System.out.println("TCP Server started on port " + port + ", waiting for client...");
         try {
             clientSocket = serverSocket.accept(); // Blocking call: waits for a client to connect
@@ -64,6 +66,9 @@ public class TCPServer implements TcpCliSerInterface {
             out.println("too many authentication attempts with TCP server, exiting");
             stop();
         } catch (SocketException e) {
+            if (isOn) {
+                System.err.println("Unexpected error in TCP server");
+            }
         } catch (IOException e) {
             System.err.println("IOException: problems with client connection");
         }
@@ -88,7 +93,9 @@ public class TCPServer implements TcpCliSerInterface {
                                 System.out.println("client connection interrupted");
                                 stop();
                             } catch (IOException e) {
-                                //
+                                if (isOn) {
+                                    System.err.println("Unexpected error in TCP server");
+                                }
                             }
                         });
         waitMessageThread.start();
@@ -101,28 +108,34 @@ public class TCPServer implements TcpCliSerInterface {
     }
 
     public void stop() {
-        try {
-            if (clientSocket != null) {
-                clientSocket.close();
+        if (isOn) {
+            isOn = false;
+            try {
+                if (clientSocket != null) {
+                    clientSocket.close();
+                }
+                if (serverSocket != null) {
+                    serverSocket.close();
+                }
+                if (in != null) {
+                    in.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                System.out.println("Error closing the client connection: " + e.getMessage());
             }
-            if (serverSocket != null) {
-                serverSocket.close();
+            if (isClientAuth) {
+                try {
+                    waitMessageThread.join();
+                } catch (Exception e) {
+                    System.out.println(
+                            "Error closing waitMessageThread in TCP server: " + e.getMessage());
+                }
+                System.out.println("TCP server successfully stopped");
             }
-            if (in != null) {
-                in.close();
-            }
-            if (out != null) {
-                out.close();
-            }
-        } catch (IOException e) {
-            //
         }
-        try {
-            waitMessageThread.join();
-        } catch (Exception e) {
-            //
-        }
-        System.out.println("TCP server successfully stopped");
     }
 
     public Boolean getClientAuth() {

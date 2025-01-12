@@ -11,11 +11,4 @@ public interface TcpCliSerInterface {
     void sendMessage(String message) throws IOException;
 
     void listenForMessages() throws IOException;
-
-    /**
-     * Checks if the connection is still active.
-     *
-     * @return true if the connection is active, false otherwise
-     */
-    // boolean isConnected();
 }

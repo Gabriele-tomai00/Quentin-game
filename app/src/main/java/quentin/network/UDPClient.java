@@ -73,11 +73,8 @@ public class UDPClient {
 
                                             break;
                                         } catch (Exception e) {
-                                            // Gestione del caso in cui il server non è ancora stato
-                                            // trovato
+                                            Thread.sleep(400);
                                         }
-
-                                        Thread.sleep(400);
                                     }
                                 }
                             } catch (Exception e) {
