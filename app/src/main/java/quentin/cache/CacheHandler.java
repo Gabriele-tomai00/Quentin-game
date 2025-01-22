@@ -12,7 +12,7 @@ import java.util.Objects;
 import quentin.game.Board;
 
 public class CacheHandler {
-    private static final String GAME_DIR = System.getProperty("user.home") + "/.quentinGame";
+    private static final String GAME_DIR = ".quentinGame";
     private static final String CACHE_FILE = GAME_DIR + "/last_match_cache.dat";
 
     @SuppressWarnings("unchecked")
