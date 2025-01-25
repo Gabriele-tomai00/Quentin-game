@@ -5,10 +5,10 @@ import java.util.Scanner;
 import quentin.SettingHandler;
 import quentin.exceptions.InvalidCellValuesException;
 import quentin.exceptions.MoveException;
-import quentin.game.Board;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
 import quentin.game.Game;
+import quentin.game.GameBoard;
 import quentin.game.GameStarter;
 import quentin.game.MoveParser;
 import quentin.game.Player;
@@ -379,7 +379,7 @@ public class OnlineGameStarter implements GameStarter {
             displayMessage("Your opponent player used the pie rule, now you are White!\n");
             game.applyPieRule();
         } else {
-            game.updateBoard(new Board(compactBoard));
+            game.updateBoard(new GameBoard(compactBoard));
         }
         lastBoardReceived = compactBoard;
         return true;

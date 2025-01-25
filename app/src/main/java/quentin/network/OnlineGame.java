@@ -4,26 +4,26 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import quentin.exceptions.MoveException;
-import quentin.game.Board;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
 import quentin.game.Game;
+import quentin.game.GameBoard;
 import quentin.game.Player;
 
 public class OnlineGame implements Game {
 
     @Serial private static final long serialVersionUID = 5269244630137536200L;
     private Player currentPlayer;
-    private final Board board;
+    private final GameBoard board;
     private final List<Cell> lastMoves = new ArrayList<>();
     private boolean isFirstMove = true;
 
     public OnlineGame(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
-        board = new Board();
+        board = new GameBoard();
     }
 
-    public void updateLastMoves(Board newBoard) {
+    public void updateLastMoves(GameBoard newBoard) {
         lastMoves.clear();
         BoardPoint[][] points = newBoard.getBoard();
         for (int row = 0; row < getBoard().size(); row++) {
@@ -35,7 +35,7 @@ public class OnlineGame implements Game {
         }
     }
 
-    public void updateBoard(Board newBoard) {
+    public void updateBoard(GameBoard newBoard) {
         updateLastMoves(newBoard);
         setBoard(newBoard);
     }
@@ -58,11 +58,11 @@ public class OnlineGame implements Game {
     }
 
     @Override
-    public Board getBoard() {
+    public GameBoard getBoard() {
         return board;
     }
 
-    public void setBoard(Board board) {
+    public void setBoard(GameBoard board) {
         this.board.setBoard(board);
     }
 

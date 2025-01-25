@@ -36,8 +36,8 @@ public interface Game extends Serializable {
     }
 
     default boolean findWinnerPath(BoardPoint color, Cell startPoint) {
-        Set<Cell> visited = new HashSet<Cell>();
-        Deque<Cell> toVisit = new LinkedList<Cell>();
+        Set<Cell> visited = new HashSet<>();
+        Deque<Cell> toVisit = new LinkedList<>();
 
         toVisit.push(startPoint);
 
@@ -64,45 +64,35 @@ public interface Game extends Serializable {
                 continue;
             }
             Set<Cell> territory = findTerritories(neighbor);
-            Set<Cell> frontier = new HashSet<Cell>();
+            Set<Cell> frontier = new HashSet<>();
             for (Cell tile : territory) {
                 frontier.addAll(getNeighbors(tile));
             }
-            int whites =
-                    (int)
-                            frontier.stream()
-                                    .map(getBoard()::getPoint)
-                                    .filter(a -> a == BoardPoint.WHITE)
-                                    .count();
-            int blacks =
-                    (int)
-                            frontier.stream()
-                                    .map(getBoard()::getPoint)
-                                    .filter(a -> a == BoardPoint.BLACK)
-                                    .count();
+            int whites = countCells(frontier, BoardPoint.WHITE);
+            int blacks = countCells(frontier, BoardPoint.BLACK);
             if (whites > blacks) {
-                for (Cell tile : territory) {
-                    getBoard().placeStone(BoardPoint.WHITE, tile.row(), tile.col());
-                }
+                territory.stream()
+                        .forEach(a -> getBoard().placeStone(BoardPoint.WHITE, a.row(), a.col()));
             } else if (whites < blacks) {
-                for (Cell tile : territory) {
-                    getBoard().placeStone(BoardPoint.BLACK, tile.row(), tile.col());
-                }
+                territory.stream()
+                        .forEach(a -> getBoard().placeStone(BoardPoint.BLACK, a.row(), a.col()));
             } else {
-                for (Cell tile : territory) {
-                    BoardPoint color =
-                            getCurrentPlayer().color() == BoardPoint.BLACK
-                                    ? BoardPoint.WHITE
-                                    : BoardPoint.BLACK;
-                    getBoard().placeStone(color, tile.row(), tile.col());
-                }
+                BoardPoint color =
+                        getCurrentPlayer().color() == BoardPoint.BLACK
+                                ? BoardPoint.WHITE
+                                : BoardPoint.BLACK;
+                territory.stream().forEach(a -> getBoard().placeStone(color, a.row(), a.col()));
             }
         }
     }
 
+    default int countCells(Set<Cell> frontier, BoardPoint color) {
+        return (int) frontier.stream().map(getBoard()::getPoint).filter(a -> a == color).count();
+    }
+
     default Set<Cell> findTerritories(Cell startingCell) {
-        Set<Cell> territory = new HashSet<Cell>();
-        Deque<Cell> visiting = new LinkedList<Cell>();
+        Set<Cell> territory = new HashSet<>();
+        Deque<Cell> visiting = new LinkedList<>();
         visiting.add(startingCell);
 
         while (!visiting.isEmpty()) {
@@ -130,7 +120,7 @@ public interface Game extends Serializable {
     default Set<Cell> getNeighbors(Cell pos) {
         int row = pos.row();
         int col = pos.col();
-        Set<Cell> neighbors = new HashSet<Cell>();
+        Set<Cell> neighbors = new HashSet<>();
         if (row > 0) {
             neighbors.add(new Cell(row - 1, col));
         }
@@ -211,5 +201,5 @@ public interface Game extends Serializable {
         return getBoard().size();
     }
 
-    Board getBoard();
+    GameBoard getBoard();
 }

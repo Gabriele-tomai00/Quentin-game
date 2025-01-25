@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test; // Test of JUnit 5
 
-public class SettingHandlerTest {
+class SettingHandlerTest {
 
     @Test
     void testSetAndGetUsername() {

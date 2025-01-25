@@ -5,10 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test; // Test of JUnit 5
 
-public class BoardPointTest {
+class BoardPointTest {
 
     @Test
-    public void testFromString() {
+    void testFromString() {
         assertAll(
                 () -> assertEquals(BoardPoint.BLACK, BoardPoint.fromString("B")),
                 () -> assertEquals(BoardPoint.BLACK, BoardPoint.fromString("Black")),
@@ -19,7 +19,7 @@ public class BoardPointTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         assertAll(
                 () -> assertEquals("B", BoardPoint.BLACK.toString()),
                 () -> assertEquals("W", BoardPoint.WHITE.toString()),

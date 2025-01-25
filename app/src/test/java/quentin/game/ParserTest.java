@@ -14,19 +14,14 @@ class ParserTest {
     void testParsedInput() {
         assertAll(
                 () -> assertEquals(new Cell(0, 0), new MoveParser("a1").parse()),
-                () ->
-                        assertThrows(
-                                InvalidCellValuesException.class,
-                                () -> new MoveParser("n3").parse()),
-                () -> assertEquals(new Cell(12, 12), new MoveParser("m13").parse()),
-                () ->
-                        assertThrows(
-                                InvalidCellValuesException.class,
-                                () -> new MoveParser("a14").parse()));
-        Exception exception =
-                assertThrows(InvalidCellValuesException.class, () -> new MoveParser("n1").parse());
-        String expectedMessage =
-                String.format("Row values span from 'a' to 'm', received %c", "n3".charAt(0));
-        assertTrue(expectedMessage.contains(exception.getMessage()));
+                () -> assertEquals(new Cell(12, 12), new MoveParser("m13").parse()));
+        MoveParser parser = new MoveParser("n1");
+        Exception exception = assertThrows(InvalidCellValuesException.class, parser::parse);
+        String expectedMessage = "Row values span from 'a' to 'm', received";
+        assertTrue(exception.getMessage().contains(expectedMessage));
+        parser = new MoveParser("a14");
+        exception = assertThrows(InvalidCellValuesException.class, parser::parse);
+        expectedMessage = "Column values span from '1' to '13', received";
+        assertTrue(exception.getMessage().contains(expectedMessage));
     }
 }

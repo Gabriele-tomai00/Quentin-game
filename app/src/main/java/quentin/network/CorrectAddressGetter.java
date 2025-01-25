@@ -8,6 +8,10 @@ import java.util.Enumeration;
 
 public class CorrectAddressGetter {
 
+    private CorrectAddressGetter() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static String getLocalIpAddress() {
         NetworkInterface networkInterface = null;
         Enumeration<InetAddress> addresses = null;

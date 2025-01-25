@@ -5,10 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-public class PlayerTest {
+class PlayerTest {
 
     @Test
-    public void assignationTest() {
+    void assignationTest() {
         Player playerBlack = new Player(BoardPoint.BLACK);
         Player playerWhite = new Player(BoardPoint.WHITE);
 

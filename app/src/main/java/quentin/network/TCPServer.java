@@ -16,8 +16,8 @@ public class TCPServer implements TcpCliSerInterface {
     private final String PASSWORD;
     private volatile boolean isOn = false;
     private Boolean isClientAuth = false;
-    public int port;
-    public String messageReceived;
+    private int port;
+    private String messageReceived;
     private Thread waitMessageThread;
 
     public TCPServer(int port1, String pwd) throws IOException {

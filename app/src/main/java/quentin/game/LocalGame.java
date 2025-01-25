@@ -1,6 +1,7 @@
 package quentin.game;
 
 import java.io.Serial;
+import java.util.Objects;
 
 public class LocalGame implements Game {
 
@@ -8,15 +9,15 @@ public class LocalGame implements Game {
     private static final Player white = new Player(BoardPoint.WHITE);
     private static final Player black = new Player(BoardPoint.BLACK);
     private Player currentPlayer;
-    private final Board board;
+    private final GameBoard board;
 
     public LocalGame() {
         currentPlayer = black;
-        board = new Board();
+        board = new GameBoard();
     }
 
     public LocalGame(LocalGame game) {
-        this.board = new Board();
+        this.board = new GameBoard();
         board.setBoard(game.getBoard());
         this.currentPlayer = new Player(game.getCurrentPlayer().color());
     }
@@ -35,7 +36,7 @@ public class LocalGame implements Game {
     }
 
     @Override
-    public Board getBoard() {
+    public GameBoard getBoard() {
         return board;
     }
 
@@ -52,5 +53,10 @@ public class LocalGame implements Game {
                     && this.getCurrentPlayer().equals(game.getCurrentPlayer());
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getBoard(), getCurrentPlayer());
     }
 }

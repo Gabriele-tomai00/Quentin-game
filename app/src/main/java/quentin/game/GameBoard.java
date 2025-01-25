@@ -8,19 +8,19 @@ import java.io.Serializable;
 import java.util.Arrays;
 import quentin.exceptions.IllegalBoardException;
 
-public class Board implements Serializable {
+public class GameBoard implements Serializable {
 
     @Serial private static final long serialVersionUID = 8169137628862217460L;
     private static final int SIZE = 13;
     private BoardPoint[][] board = new BoardPoint[SIZE][SIZE];
 
-    public Board() {
+    public GameBoard() {
         for (BoardPoint[] row : board) {
             Arrays.fill(row, BoardPoint.EMPTY);
         }
     }
 
-    public Board(String compactBoard) {
+    public GameBoard(String compactBoard) {
         fromCompactString(compactBoard);
     }
 
@@ -106,16 +106,14 @@ public class Board implements Serializable {
                 int count = Integer.parseInt(compactString.substring(start, i));
                 for (int j = 0; j < count; j++) {
                     if (flattenedIndex >= SIZE * SIZE) {
-                        throw new IllegalBoardException(
-                                "Compact string exceeds board size", compactString);
+                        throw new IllegalBoardException("Compact string exceeds board size");
                     }
                     this.board[flattenedIndex / SIZE][flattenedIndex % SIZE] = BoardPoint.EMPTY;
                     flattenedIndex++;
                 }
             } else {
                 if (flattenedIndex >= SIZE * SIZE) {
-                    throw new IllegalBoardException(
-                            "Compact string exceeds board size", compactString);
+                    throw new IllegalBoardException("Compact string exceeds board size");
                 }
                 this.board[flattenedIndex / SIZE][flattenedIndex % SIZE] =
                         BoardPoint.fromString(String.valueOf(ch));
@@ -124,8 +122,7 @@ public class Board implements Serializable {
             }
         }
         if (flattenedIndex != SIZE * SIZE) {
-            throw new IllegalBoardException(
-                    "Compact string does not match the board size.", compactString);
+            throw new IllegalBoardException("Compact string does not match the board size.");
         }
     }
 
@@ -141,16 +138,21 @@ public class Board implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (obj instanceof Board bd) {
+        if (obj instanceof GameBoard bd) {
             return Arrays.deepEquals(this.board, bd.board);
         }
         return false;
     }
 
-    public void setBoard(Board board) {
+    public void setBoard(GameBoard board) {
         for (int row = 0; row < SIZE; row++) {
             System.arraycopy(board.getBoard()[row], 0, this.board[row], 0, SIZE);
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(getBoard());
     }
 
     @Serial

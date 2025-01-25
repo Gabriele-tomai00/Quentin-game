@@ -7,17 +7,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import quentin.exceptions.MoveException;
 
-public class HasWonTest {
+class HasWonTest {
 
     LocalGame game = new LocalGame();
 
     @Test
-    public void hasWonException() {
+    void hasWonException() {
         assertFalse(game.hasWon(game.getCurrentPlayer()));
     }
 
     @Test
-    public void findWhiteLine() throws MoveException {
+    void findWhiteLine() throws MoveException {
         game.changeCurrentPlayer();
         assertEquals(BoardPoint.WHITE, game.getCurrentPlayer().color());
 
@@ -30,7 +30,7 @@ public class HasWonTest {
     }
 
     @Test
-    public void findWhite2Lines() throws MoveException {
+    void findWhite2Lines() throws MoveException {
         game.changeCurrentPlayer();
         Cell first = new Cell(3, 0);
         Cell second = new Cell(6, 0);
@@ -44,7 +44,7 @@ public class HasWonTest {
     }
 
     @Test
-    public void findWhiteOrthogonalDownLines() throws MoveException {
+    void findWhiteOrthogonalDownLines() throws MoveException {
         game.changeCurrentPlayer();
         assertEquals(BoardPoint.WHITE, game.getCurrentPlayer().color());
         for (Cell cell = new Cell(4, 0);
@@ -61,7 +61,7 @@ public class HasWonTest {
     }
 
     @Test
-    public void findWhiteLinesWithLoops() throws MoveException {
+    void findWhiteLinesWithLoops() throws MoveException {
         game.changeCurrentPlayer();
         assertEquals(BoardPoint.WHITE, game.getCurrentPlayer().color());
         for (int i = 0; i < 9; i++) {
@@ -76,7 +76,7 @@ public class HasWonTest {
     }
 
     @Test
-    public void findWhiteDifficultPath() throws MoveException {
+    void findWhiteDifficultPath() throws MoveException {
         game.changeCurrentPlayer();
         assertEquals(BoardPoint.WHITE, game.getCurrentPlayer().color());
         for (int j = 1; j < 9; j++) {
@@ -111,7 +111,7 @@ public class HasWonTest {
     }
 
     @Test
-    public void findWhitePathInNormalSituation() throws MoveException {
+    void findWhitePathInNormalSituation() throws MoveException {
         for (int i = 1; i < 4; i++) {
             game.place(new Cell(i, 4));
         }
@@ -157,7 +157,7 @@ public class HasWonTest {
     }
 
     @Test
-    public void findBlackLine() throws MoveException {
+    void findBlackLine() throws MoveException {
         for (Cell cell = new Cell(0, 4);
                 cell.row() < game.boardSize();
                 cell.setRow(cell.row() + 1)) {
@@ -168,7 +168,7 @@ public class HasWonTest {
     }
 
     @Test
-    public void findBlack2Lines() throws MoveException {
+    void findBlack2Lines() throws MoveException {
         Cell first = new Cell(0, 3);
         Cell second = new Cell(0, 6);
         for (int i = 0; i < game.boardSize(); i++, first.setRow(i), second.setRow(i)) {
@@ -181,7 +181,7 @@ public class HasWonTest {
     }
 
     @Test
-    public void findDarkOrthogonalLeftLines() throws MoveException {
+    void findDarkOrthogonalLeftLines() throws MoveException {
         for (Cell cell = new Cell(0, 4);
                 cell.row() < game.boardSize();
                 cell.setRow(cell.row() + 1)) {
@@ -197,7 +197,7 @@ public class HasWonTest {
     }
 
     @Test
-    public void findDarkOrthogonalRightLines() throws MoveException {
+    void findDarkOrthogonalRightLines() throws MoveException {
         for (Cell cell = new Cell(0, 2);
                 cell.row() < game.boardSize();
                 cell.setRow(cell.row() + 1)) {
@@ -213,7 +213,7 @@ public class HasWonTest {
     }
 
     @Test
-    public void findDarkOrthogonalDifficultLines() throws MoveException {
+    void findDarkOrthogonalDifficultLines() throws MoveException {
         for (int i = 0; i < 10; i++) {
             if (i == 6) {
                 continue;
@@ -247,5 +247,10 @@ public class HasWonTest {
         assertTrue(game.hasWon(game.getCurrentPlayer()));
         assertTrue(game.findWinnerPath(BoardPoint.BLACK, new Cell(0, 0)));
         assertTrue(game.findWinnerPath(BoardPoint.BLACK, new Cell(0, 2)));
+    }
+
+    @Test
+    void noWinnerTest() {
+        assertFalse(game.hasWon(game.getCurrentPlayer()));
     }
 }
