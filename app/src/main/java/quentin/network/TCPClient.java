@@ -14,7 +14,7 @@ public class TCPClient implements TcpCliSerInterface {
     private final int port;
     private final String address;
     private Boolean clientConnected = false;
-    private ClientAuthState AuthState = ClientAuthState.NOT_YET_AUTHENTICATED;
+    private ClientAuthState authState = ClientAuthState.NOT_YET_AUTHENTICATED;
 
     public TCPClient(ServerInfo info) {
         address = info.IpAddress();
@@ -36,7 +36,9 @@ public class TCPClient implements TcpCliSerInterface {
     }
 
     public void sendMessage(String message) {
-        if (clientConnected) out.println(message);
+        if (clientConnected) {
+            out.println(message);
+        }
     }
 
     public void listenForMessages() {
@@ -46,37 +48,52 @@ public class TCPClient implements TcpCliSerInterface {
                                 try {
                                     String serverMessage;
                                     while ((serverMessage = in.readLine()) != null) {
-                                        if (AuthState != ClientAuthState.AUTHENTICATED) {
+                                        if (authState != ClientAuthState.AUTHENTICATED) {
                                             if (serverMessage.equals(
                                                     "Password accepted from TCP server")) {
-                                                AuthState = ClientAuthState.AUTHENTICATED;
+                                                authState = ClientAuthState.AUTHENTICATED;
 
                                             } else if (serverMessage.equals("server closed")) {
-                                                AuthState = ClientAuthState.FAILED_AUTHENTICATION;
+                                                authState = ClientAuthState.FAILED_AUTHENTICATION;
                                                 stop();
-                                            } else if (serverMessage.startsWith("Invalid password"))
-                                                AuthState = ClientAuthState.FAILED_AUTHENTICATION;
-                                        } else boardReceived = serverMessage;
+                                            } else if (serverMessage.startsWith(
+                                                    "Invalid password")) {
+                                                authState = ClientAuthState.FAILED_AUTHENTICATION;
+                                            }
+                                        } else {
+                                            boardReceived = serverMessage;
+                                        }
                                     }
                                     System.out.println("server connection interrupted");
                                     stop();
                                 } catch (IOException e) {
-                                    // here when I call close() after a client connection
+                                    if (clientConnected) {
+                                        System.out.println("IOException error in TCP client");
+                                    }
                                 }
                             })
                     .start();
-        } else System.out.println("Can't receive from server because It's not authenticated");
+        } else {
+            System.out.println("Can't receive from server because It's not authenticated");
+        }
     }
 
     public void stop() {
-        out.println("quit");
-        try {
-            if (in != null) in.close();
-            if (out != null) out.close();
-            if (socket != null) socket.close();
-            System.out.println("Client process closed");
-        } catch (IOException e) {
-            //
+        if (clientConnected) {
+            clientConnected = false;
+            out.println("quit");
+            try {
+                if (in != null) {
+                    in.close();
+                    out.close();
+                }
+                if (socket != null) {
+                    socket.close();
+                }
+                System.out.println("Client process closed");
+            } catch (IOException e) {
+                System.out.println("Error closing the client connection: " + e.getMessage());
+            }
         }
     }
 
@@ -85,6 +102,6 @@ public class TCPClient implements TcpCliSerInterface {
     }
 
     public ClientAuthState getState() {
-        return AuthState;
+        return authState;
     }
 }

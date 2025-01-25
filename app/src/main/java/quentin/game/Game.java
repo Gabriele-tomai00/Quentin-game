@@ -12,7 +12,7 @@ import quentin.exceptions.IllegalMoveException;
 import quentin.exceptions.MoveException;
 
 public interface Game extends Serializable {
-    public default boolean hasWon(Player player) {
+    default boolean hasWon(Player player) {
         if (player.color() == BoardPoint.WHITE) {
             for (Cell cell = new Cell(0, 0);
                     cell.row() < boardSize();
@@ -35,9 +35,9 @@ public interface Game extends Serializable {
         return false;
     }
 
-    public default boolean findWinnerPath(BoardPoint color, Cell startPoint) {
-        Set<Cell> visited = new HashSet<Cell>();
-        Deque<Cell> toVisit = new LinkedList<Cell>();
+    default boolean findWinnerPath(BoardPoint color, Cell startPoint) {
+        Set<Cell> visited = new HashSet<>();
+        Deque<Cell> toVisit = new LinkedList<>();
 
         toVisit.push(startPoint);
 
@@ -57,52 +57,42 @@ public interface Game extends Serializable {
         return false;
     }
 
-    public default void coverTerritories(Cell cell) {
+    default void coverTerritories(Cell cell) {
         Set<Cell> neighbors = getNeighbors(cell);
         for (Cell neighbor : neighbors) {
             if (getBoard().getPoint(neighbor) != BoardPoint.EMPTY) {
                 continue;
             }
             Set<Cell> territory = findTerritories(neighbor);
-            Set<Cell> frontier = new HashSet<Cell>();
+            Set<Cell> frontier = new HashSet<>();
             for (Cell tile : territory) {
                 frontier.addAll(getNeighbors(tile));
             }
-            int whites =
-                    (int)
-                            frontier.stream()
-                                    .map(getBoard()::getPoint)
-                                    .filter(a -> a == BoardPoint.WHITE)
-                                    .count();
-            int blacks =
-                    (int)
-                            frontier.stream()
-                                    .map(getBoard()::getPoint)
-                                    .filter(a -> a == BoardPoint.BLACK)
-                                    .count();
+            int whites = countCells(frontier, BoardPoint.WHITE);
+            int blacks = countCells(frontier, BoardPoint.BLACK);
             if (whites > blacks) {
-                for (Cell tile : territory) {
-                    getBoard().placeStone(BoardPoint.WHITE, tile.row(), tile.col());
-                }
+                territory.stream()
+                        .forEach(a -> getBoard().placeStone(BoardPoint.WHITE, a.row(), a.col()));
             } else if (whites < blacks) {
-                for (Cell tile : territory) {
-                    getBoard().placeStone(BoardPoint.BLACK, tile.row(), tile.col());
-                }
+                territory.stream()
+                        .forEach(a -> getBoard().placeStone(BoardPoint.BLACK, a.row(), a.col()));
             } else {
-                for (Cell tile : territory) {
-                    BoardPoint color =
-                            getCurrentPlayer().color() == BoardPoint.BLACK
-                                    ? BoardPoint.WHITE
-                                    : BoardPoint.BLACK;
-                    getBoard().placeStone(color, tile.row(), tile.col());
-                }
+                BoardPoint color =
+                        getCurrentPlayer().color() == BoardPoint.BLACK
+                                ? BoardPoint.WHITE
+                                : BoardPoint.BLACK;
+                territory.stream().forEach(a -> getBoard().placeStone(color, a.row(), a.col()));
             }
         }
     }
 
-    public default Set<Cell> findTerritories(Cell startingCell) {
-        Set<Cell> territory = new HashSet<Cell>();
-        Deque<Cell> visiting = new LinkedList<Cell>();
+    default int countCells(Set<Cell> frontier, BoardPoint color) {
+        return (int) frontier.stream().map(getBoard()::getPoint).filter(a -> a == color).count();
+    }
+
+    default Set<Cell> findTerritories(Cell startingCell) {
+        Set<Cell> territory = new HashSet<>();
+        Deque<Cell> visiting = new LinkedList<>();
         visiting.add(startingCell);
 
         while (!visiting.isEmpty()) {
@@ -127,10 +117,10 @@ public interface Game extends Serializable {
         return territory;
     }
 
-    public default Set<Cell> getNeighbors(Cell pos) {
+    default Set<Cell> getNeighbors(Cell pos) {
         int row = pos.row();
         int col = pos.col();
-        Set<Cell> neighbors = new HashSet<Cell>();
+        Set<Cell> neighbors = new HashSet<>();
         if (row > 0) {
             neighbors.add(new Cell(row - 1, col));
         }
@@ -146,7 +136,7 @@ public interface Game extends Serializable {
         return neighbors;
     }
 
-    public default boolean isMoveValid(BoardPoint color, Cell cell) {
+    default boolean isMoveValid(BoardPoint color, Cell cell) {
         if (getBoard().getPoint(cell) != BoardPoint.EMPTY) {
             throw new CellAlreadyTakenException(cell);
         }
@@ -177,24 +167,22 @@ public interface Game extends Serializable {
         if (row < getBoard().size() - 1
                 && col < getBoard().size() - 1
                 && getBoard().getPoint(new Cell(row + 1, col + 1)) == color) {
-            if (getBoard().getPoint(new Cell(row, col + 1)) != color
-                    && getBoard().getPoint(new Cell(row + 1, col)) != color) {
-                return false;
-            }
+            return getBoard().getPoint(new Cell(row, col + 1)) == color
+                    || getBoard().getPoint(new Cell(row + 1, col)) == color;
         }
         return true;
     }
 
-    public default void place(Cell cell) {
+    default void place(Cell cell) {
         if (!isMoveValid(getCurrentPlayer().color(), cell)) {
             throw new IllegalMoveException(cell);
         }
         getBoard().placeStone(getCurrentPlayer().color(), cell.row(), cell.col());
     }
 
-    public Player getCurrentPlayer();
+    Player getCurrentPlayer();
 
-    public default boolean canPlayerPlay() {
+    default boolean canPlayerPlay() {
         for (int row = 0; row < boardSize(); row++) {
             for (int col = 0; col < boardSize(); col++) {
                 try {
@@ -209,9 +197,9 @@ public interface Game extends Serializable {
         return false;
     }
 
-    public default int boardSize() {
+    default int boardSize() {
         return getBoard().size();
     }
 
-    public Board getBoard();
+    GameBoard getBoard();
 }

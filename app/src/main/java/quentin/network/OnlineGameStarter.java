@@ -1,19 +1,20 @@
 package quentin.network;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Scanner;
 import quentin.SettingHandler;
 import quentin.exceptions.InvalidCellValuesException;
 import quentin.exceptions.MoveException;
-import quentin.game.Board;
+import quentin.game.BoardPoint;
 import quentin.game.Cell;
-import quentin.game.LocalGame;
+import quentin.game.Game;
+import quentin.game.GameBoard;
+import quentin.game.GameStarter;
 import quentin.game.MoveParser;
-import quentin.game.SimpleGameStarter;
+import quentin.game.Player;
 
-public class OnlineGameStarter extends SimpleGameStarter {
-    private LocalGame game;
+public class OnlineGameStarter implements GameStarter {
+    private OnlineGame game;
     Client client;
     Server server;
     Boolean isOnline = false;
@@ -22,30 +23,12 @@ public class OnlineGameStarter extends SimpleGameStarter {
     Boolean isClient = false;
     String lastBoardReceived;
     SettingHandler settingHandler = new SettingHandler();
-    String CLEAR = "\033[H\033[2J";
-
-    @Override
-    public void displayWinner() {
-        displayMessage(
-                CLEAR + String.format("%s has won", game.getCurrentPlayer()).toUpperCase() + "\n");
-    }
-
-    @Override
-    public void display() {
-        System.out.println(CLEAR + game.getBoard());
-        List<Cell> lastMoves = game.getLastMoves();
-        if (lastMoves != null && !lastMoves.isEmpty()) {
-            if (lastMoves.size() == 1)
-                displayMessage("The last stone pleased is " + lastMoves.get(0) + "\n");
-            else displayMessage("The last stones pleased are " + lastMoves + "\n");
-        }
-    }
 
     public void run(Scanner scanner) {
         displayMessage("Enter commands (type 'exit' to quit):\n");
         displayMessage(
-                "Type 'startserver' if you want to host a match. Type 'startclient' if you want"
-                        + " to join a match\n");
+                "Type 'startserver' if you want to host a match. Type 'startclient' if you want to"
+                        + " join a match\n");
         while (true) {
             try {
                 printGamePrompt();
@@ -155,23 +138,25 @@ public class OnlineGameStarter extends SimpleGameStarter {
 
     private void printGamePrompt() {
         if (!isWaiting) displayMessage("QuentinGame - online mode > ");
-        else displayMessage("wait your turn or quit \n");
+        else displayMessage("wait your turn or quit (exit command) \n");
     }
 
     @Override
     public void start() {
-        game = new LocalGame();
         if (!isOnline
                 || (isServer && !server.isClientAuth())
-                || isClient && !client.isAuthenticated()) return;
+                || isClient && !client.isAuthenticated()) {
+            return;
+        }
         displayMessage("New game started!\n");
-        display();
         if (isServer) {
+            game = new OnlineGame(new Player(BoardPoint.BLACK));
             isWaiting = false;
         } else if (isClient) {
-            game.changeCurrentPlayer();
+            game = new OnlineGame(new Player(BoardPoint.WHITE));
             waitMove();
         }
+        display();
     }
 
     private void waitMove() {
@@ -181,7 +166,7 @@ public class OnlineGameStarter extends SimpleGameStarter {
                             isWaiting = true;
                             displayMessage("Waiting for messages...\n");
                             if (isClient) {
-                                while (true) {
+                                while (isOnline) {
                                     String boardReceived = client.getBoardReceived();
                                     if (boardReceived != null && boardReceived.equals("quit")) {
                                         client.stop();
@@ -191,8 +176,8 @@ public class OnlineGameStarter extends SimpleGameStarter {
                                 }
                             }
                             if (isServer) {
-                                while (true) {
-                                    String boardReceived = server.getMessageReceived();
+                                while (isOnline) {
+                                    String boardReceived = server.getBoardReceived();
                                     if (boardReceived != null && boardReceived.equals("quit")) {
                                         server.stop();
                                         return;
@@ -201,24 +186,15 @@ public class OnlineGameStarter extends SimpleGameStarter {
                                 }
                             }
                             display();
-                            if (!game.canPlayerPlay()) {
-                                displayMessage(
-                                        CLEAR
-                                                + String.format(
-                                                                "You/The %s player can't play",
-                                                                game.getCurrentPlayer())
-                                                        .toUpperCase());
-
-                                waitMove();
-                            } else {
-                                isWaiting = false;
-                                displayMessage("It's your turn to play: ");
+                            if (hasWon()) {
+                                return;
                             }
+                            isWaiting = false;
+                            displayMessage("It's your turn to play: ");
                         });
         threadWaitMove.start();
     }
 
-    @Override
     public void makeMove(String input) {
         if ((isServer && !server.isClientAuth()) || isClient && !client.isAuthenticated()) {
             displayMessage("Client is not yet authenticated");
@@ -235,7 +211,7 @@ public class OnlineGameStarter extends SimpleGameStarter {
             if (isClient && input.equals("pie") && game.isFirstMove()) {
                 game.setFirstMove(false);
                 displayMessage("Now you are black! Wait messages\n");
-                game.changeCurrentPlayer();
+                game.applyPieRule();
                 sendBoard();
                 waitMove();
                 return;
@@ -247,49 +223,32 @@ public class OnlineGameStarter extends SimpleGameStarter {
             Cell cell = new MoveParser(input).parse();
             game.place(cell);
             game.coverTerritories(cell);
+            if (hasWon()) {
+                sendBoard();
+                display();
+                return;
+            }
 
-            if (hasWon()) return;
-
-            sendBoard();
             display();
 
             if (!game.canPlayerPlay()) {
-                displayMessage(
-                        CLEAR
-                                + String.format(
-                                                "You/The %s player can't play",
-                                                game.getCurrentPlayer())
-                                        .toUpperCase());
-                displayMessage("It' your turn again");
-            } else waitMove();
-        }
-
-        if (!isOnline) {
-            game.changeCurrentPlayer();
-            if (!game.canPlayerPlay()) {
-                displayMessage(
-                        CLEAR
-                                + String.format(
-                                                "You/The %s player can't play",
-                                                game.getCurrentPlayer())
-                                        .toUpperCase());
-                game.changeCurrentPlayer();
-                displayMessage(", so the next player is " + game.getCurrentPlayer());
+                displayMessage(CLEAR + "You can play again (the opponent player can't play)");
+            } else {
+                sendBoard();
+                waitMove();
             }
         }
     }
 
     public boolean hasWon() {
-        if (game.hasWon(game.getCurrentPlayer())) {
+        if (game.hasWon(new Player(BoardPoint.BLACK))) {
             displayWinner();
             return true;
         }
-        game.changeCurrentPlayer();
-        if (game.hasWon(game.getCurrentPlayer())) {
+        if (game.hasWon(new Player(BoardPoint.WHITE))) {
             displayWinner();
             return true;
         }
-        game.changeCurrentPlayer();
         return false;
     }
 
@@ -313,7 +272,6 @@ public class OnlineGameStarter extends SimpleGameStarter {
                                     return;
                                 }
                             }
-                            isOnline = true;
                         });
         waitAuthOfClient.start();
         try {
@@ -349,19 +307,28 @@ public class OnlineGameStarter extends SimpleGameStarter {
                 .start();
 
         isOnline = true;
-        sleepSafely(1000);
-        displayMessage("\nType 'clienta' to insert the password\n");
+        new Thread(
+                        () -> {
+                            while (!client.isServerFound()) {
+                                sleepSafely(500);
+                            }
+                            displayMessage("\nType 'clienta' to insert the password\n");
+                        })
+                .start();
     }
 
     private void clientAuth(Scanner scanner) throws InterruptedException {
         int attempts = 3;
         String password;
-        while (true) {
+        while (isOnline) {
             if (attempts == 0) return;
 
             displayMessage("attempts: " + attempts + "\n");
             displayMessage("password > ");
             password = scanner.nextLine().trim();
+            if ((password.equals("exit"))) {
+                return;
+            }
             if ((password.length() != 5 || !password.matches("\\d{5}"))) {
                 displayMessage("Invalid password, retry\n");
                 attempts--;
@@ -377,7 +344,7 @@ public class OnlineGameStarter extends SimpleGameStarter {
     private boolean waitServerAuthenticationResponse() throws InterruptedException {
         displayMessage("Wait answer...\n");
         long startTime = System.currentTimeMillis();
-        while (true) {
+        while (isOnline) {
             Thread.sleep(500);
 
             if (System.currentTimeMillis() - startTime > 3000) {
@@ -393,6 +360,7 @@ public class OnlineGameStarter extends SimpleGameStarter {
                 return false;
             }
         }
+        return false;
     }
 
     private void sendBoard() {
@@ -403,14 +371,16 @@ public class OnlineGameStarter extends SimpleGameStarter {
     }
 
     private Boolean isBoardValid(String compactBoard) {
-        if (compactBoard == null || compactBoard.equals(lastBoardReceived)) {
+        if (game == null || compactBoard == null || compactBoard.equals(lastBoardReceived)) {
             return false;
         }
 
-        if (Objects.equals(game.getBoard().toCompactString(), compactBoard)) { // pie rule
+        if (game.getBoard().toCompactString().equals(compactBoard)) { // pie rule
             displayMessage("Your opponent player used the pie rule, now you are White!\n");
-            game.changeCurrentPlayer();
-        } else game.updateBoard(new Board(compactBoard));
+            game.applyPieRule();
+        } else {
+            game.updateBoard(new GameBoard(compactBoard));
+        }
         lastBoardReceived = compactBoard;
         return true;
     }
@@ -421,6 +391,28 @@ public class OnlineGameStarter extends SimpleGameStarter {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             System.err.println("Thread interrupted while waiting for client" + " authentication");
+        }
+    }
+
+    @Override
+    public Game getGame() {
+        return game;
+    }
+
+    @Override
+    public void display() {
+        if (isOnline) {
+            System.out.println(game.getBoard());
+            List<Cell> moves = game.getLastMoves();
+            if (!moves.isEmpty()) {
+                if (moves.size() > 1) {
+                    System.out.println(
+                            "Last moves of the opponent player are: " + game.getLastMoves());
+                } else {
+                    System.out.println(
+                            "Last move of the opponent player is : " + game.getLastMoves().get(0));
+                }
+            }
         }
     }
 }

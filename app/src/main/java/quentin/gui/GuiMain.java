@@ -27,7 +27,7 @@ public class GuiMain extends Application {
             primaryStage.setTitle("Quentin");
             primaryStage.show();
         } else {
-            cache = new Cache<GameLog>();
+            cache = new Cache<>();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("Main.fxml"));
             loader.setController(new Controller(cache));
             Parent root = loader.load();

@@ -8,7 +8,7 @@ import java.net.SocketAddress;
 
 public class UDPClient {
     private static final int UDP_SERVER_PORT = 9876;
-    public Boolean discovery = true;
+    private Boolean discovery = true;
     private Thread discoveryThread;
     private ServerInfo tcpServerInfo;
     private Runnable onDiscoveredCallback;

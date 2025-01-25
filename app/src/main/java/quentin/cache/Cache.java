@@ -3,8 +3,9 @@ package quentin.cache;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.Objects;
 
-public class Cache<E> implements Serializable {
+public class Cache<E extends Serializable> implements Serializable {
 
     @Serial private static final long serialVersionUID = 7440346358324416350L;
     private final LinkedList<E> memory;
@@ -83,5 +84,10 @@ public class Cache<E> implements Serializable {
             return this.memory.equals(cache.memory);
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(memory, currentLog);
     }
 }

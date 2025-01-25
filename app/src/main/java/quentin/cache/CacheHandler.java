@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Objects;
-import quentin.game.Board;
+import quentin.game.GameBoard;
 
 public class CacheHandler {
     private static final String GAME_DIR = System.getProperty("user.home") + "/.quentinGame";
@@ -35,7 +35,7 @@ public class CacheHandler {
 
     public static void saveCache(Cache<GameLog> cache) {
         if (cache.getMemorySize() == 1
-                && Objects.equals(cache.getLog().game().getBoard(), new Board())) return;
+                && Objects.equals(cache.getLog().game().getBoard(), new GameBoard())) return;
         File cacheDirectory = new File(GAME_DIR);
         if (!cacheDirectory.exists() && !cacheDirectory.mkdirs()) {
             throw new RuntimeException("Failed to create cache directory: " + GAME_DIR);

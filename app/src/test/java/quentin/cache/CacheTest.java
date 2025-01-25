@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
-import quentin.game.Board;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
+import quentin.game.GameBoard;
 import quentin.game.LocalGame;
 import quentin.game.Player;
 
@@ -16,35 +16,35 @@ class CacheTest {
     LocalGame game = new LocalGame();
 
     @Test
-    public void simpleCacheTest() {
-        Cache<String> cache = new Cache<>();
+    void simpleCacheTest() {
+        Cache<String> stringCache = new Cache<>();
 
-        cache.saveLog("First");
+        stringCache.saveLog("First");
 
         Exception notEnoughLogs =
-                assertThrows(IndexOutOfBoundsException.class, () -> cache.goBack(2));
-        assertEquals("Index: 2, Size: 1", notEnoughLogs.getMessage());
+                assertThrows(IndexOutOfBoundsException.class, () -> stringCache.goBack(2));
+        assertEquals("you can't go back one more move", notEnoughLogs.getMessage());
 
-        assertEquals("First", cache.getLog());
-        cache.saveLog("Second");
+        assertEquals("First", stringCache.getLog());
+        stringCache.saveLog("Second");
         assertAll(
-                () -> assertEquals(2, cache.getMemorySize()),
-                () -> assertEquals("Second", cache.getLog()),
-                () -> assertEquals("First", cache.goBack()));
-        cache.saveLog("Third");
+                () -> assertEquals(2, stringCache.getMemorySize()),
+                () -> assertEquals("Second", stringCache.getLog()),
+                () -> assertEquals("First", stringCache.goBack()));
+        stringCache.saveLog("Third");
         assertAll(
-                () -> assertEquals("Third", cache.getLog()),
-                        () -> assertEquals(2, cache.getMemorySize()),
-                () -> assertEquals("First", cache.goBack()),
-                        () -> assertEquals("Third", cache.goForward()));
-        assertThrows(IndexOutOfBoundsException.class, () -> cache.goBack(2));
+                () -> assertEquals("Third", stringCache.getLog()),
+                () -> assertEquals(2, stringCache.getMemorySize()),
+                () -> assertEquals("First", stringCache.goBack()),
+                () -> assertEquals("Third", stringCache.goForward()));
+        assertThrows(IndexOutOfBoundsException.class, () -> stringCache.goBack(2));
     }
 
     @Test
-    public void goBackOnce() {
-        Board board1 = new Board();
+    void goBackOnce() {
+        GameBoard board1 = new GameBoard();
         board1.placeStone(BoardPoint.BLACK, 4, 5);
-        Board board2 = new Board();
+        GameBoard board2 = new GameBoard();
         board2.setBoard(board1);
         board2.placeStone(BoardPoint.BLACK, 2, 3);
         game.place(new Cell(4, 5));
@@ -59,14 +59,14 @@ class CacheTest {
     }
 
     @Test
-    public void goBackAndForwardTest() {
+    void goBackAndForwardTest() {
         game.place(new Cell(4, 5));
         cache.saveLog(new LocalGame(game));
         game.place(new Cell(2, 3));
         cache.saveLog(new LocalGame(game));
-        Board board1 = new Board();
+        GameBoard board1 = new GameBoard();
         board1.placeStone(BoardPoint.BLACK, 4, 5);
-        Board board2 = new Board();
+        GameBoard board2 = new GameBoard();
         board2.setBoard(board1);
         board2.placeStone(BoardPoint.BLACK, 2, 3);
         assertAll(
@@ -78,7 +78,7 @@ class CacheTest {
     }
 
     @Test
-    public void addAfterGoingBackTest() {
+    void addAfterGoingBackTest() {
         game.place(new Cell(4, 5));
         cache.saveLog(new LocalGame(game));
         game.place(new Cell(2, 3));
@@ -86,9 +86,9 @@ class CacheTest {
         game = new LocalGame(cache.goBack());
         game.place(new Cell(1, 1));
         cache.saveLog(new LocalGame(game));
-        Board board1 = new Board();
+        GameBoard board1 = new GameBoard();
         board1.placeStone(BoardPoint.BLACK, 4, 5);
-        Board board2 = new Board();
+        GameBoard board2 = new GameBoard();
         board2.setBoard(board1);
         board2.placeStone(BoardPoint.BLACK, 1, 1);
         assertAll(

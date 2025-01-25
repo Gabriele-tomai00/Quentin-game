@@ -8,7 +8,7 @@ public class Server {
 
     private UDPServer udpServer;
     private TCPServer tcpServer;
-    public String codeForClientAuth;
+    private String codeForClientAuth;
     private String username;
     private int tcpPort;
 
@@ -64,12 +64,16 @@ public class Server {
     }
 
     public Boolean isClientAuth() {
-        if (tcpServer == null) return false;
+        if (tcpServer == null) {
+            return false;
+        }
         return tcpServer.getClientAuth();
     }
 
-    public String getMessageReceived() {
-        if (tcpServer == null) return null;
+    public String getBoardReceived() {
+        if (tcpServer == null) {
+            return null;
+        }
         return tcpServer.getMessageReceived();
     }
 }

@@ -14,17 +14,17 @@ import quentin.exceptions.CellAlreadyTakenException;
 import quentin.exceptions.IllegalMoveException;
 import quentin.exceptions.MoveException;
 
-public class GameTest {
+class GameTest {
     LocalGame game = new LocalGame();
 
     @Test
-    public void initializationTest() {
+    void initializationTest() {
         assertEquals(BoardPoint.BLACK, game.getCurrentPlayer().color());
         assertEquals(BoardPoint.BLACK, game.getCurrentPlayer().color());
     }
 
     @Test
-    public void testMoveIsValid() {
+    void testMoveIsValid() {
         assertTrue(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(0, 0)));
         game.place(new Cell(0, 0));
         assertTrue(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(12, 12)));
@@ -39,30 +39,30 @@ public class GameTest {
     }
 
     @Test
-    public void testMoveA1IsValid() {
+    void testMoveA1IsValid() {
         assertTrue(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(0, 0)));
     }
 
     @Test
-    public void testMoveM13IsValid() {
+    void testMoveM13IsValid() {
         assertTrue(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(12, 12)));
     }
 
     @Test
-    public void testB2IsNotValid() {
+    void testB2IsNotValid() {
         game.place(new Cell(0, 0));
         assertFalse(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(1, 1)));
     }
 
     @Test
-    public void testB2NowIsValid() {
+    void testB2NowIsValid() {
         game.place(new Cell(0, 0));
         game.place(new Cell(0, 1));
         assertTrue(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(1, 1)));
     }
 
     @Test
-    public void testAlsoWorksWithWhite() {
+    void testAlsoWorksWithWhite() {
         game.changeCurrentPlayer();
         game.place(new Cell(1, 1));
         game.changeCurrentPlayer();
@@ -72,45 +72,45 @@ public class GameTest {
     @Test
     void exceptionsTest() {
         game.place(new Cell(0, 0));
+        Cell cell = new Cell(0, 0);
+        BoardPoint color = game.getCurrentPlayer().color();
         MoveException exception =
-                assertThrows(
-                        CellAlreadyTakenException.class,
-                        () -> game.isMoveValid(game.getCurrentPlayer().color(), new Cell(0, 0)));
+                assertThrows(CellAlreadyTakenException.class, () -> game.isMoveValid(color, cell));
         String expectedMessage = "Cell (a, 1) is not empty!";
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
+        Cell cell2 = new Cell(1, 1);
         MoveException exception2 =
-                assertThrows(IllegalMoveException.class, () -> game.place(new Cell(1, 1)));
+                assertThrows(IllegalMoveException.class, () -> game.place(cell2));
         expectedMessage = "Cell (b, 2), is not connected to other cells of the same color!";
         actualMessage = exception2.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test
-    public void canPlayerPlay() {
+    void canPlayerPlay() {
         assertEquals(true, game.canPlayerPlay());
     }
 
     @Test
-    public void testChangePlayer() {
+    void testChangePlayer() {
         assertEquals(BoardPoint.BLACK, game.getCurrentPlayer().color());
         game.changeCurrentPlayer();
         assertEquals(BoardPoint.WHITE, game.getCurrentPlayer().color());
     }
 
     @Test
-    public void playerPlays() {
-        Board board = new Board();
+    void playerPlays() {
+        GameBoard board = new GameBoard();
         board.placeStone(BoardPoint.BLACK, 0, 0);
-
         game.place(new Cell(0, 0));
-
         assertEquals(board, game.getBoard());
-        assertThrows(MoveException.class, () -> game.place(new Cell(0, 0)));
+        Cell cell = new Cell(0, 0);
+        assertThrows(MoveException.class, () -> game.place(cell));
     }
 
     @Test
-    public void neighborsTest() {
+    void neighborsTest() {
         Set<Cell> neigbors = new HashSet<Cell>();
         neigbors.add(new Cell(0, 0));
         neigbors.add(new Cell(1, 1));
@@ -119,7 +119,7 @@ public class GameTest {
     }
 
     @Test
-    public void findNoTerritory() {
+    void findNoTerritory() {
         Cell cell = new Cell(0, 0);
 
         game.place(cell);
@@ -129,7 +129,7 @@ public class GameTest {
     }
 
     @Test
-    public void findOneCellTerritory() {
+    void findOneCellTerritory() {
 
         game.place(new Cell(0, 0));
         game.place(new Cell(0, 1));
@@ -145,7 +145,7 @@ public class GameTest {
     }
 
     @Test
-    public void findLargeTerritory() {
+    void findLargeTerritory() {
         for (int i = 0; i < game.boardSize(); i++) {
 
             game.place(new Cell(i, 10));
@@ -166,7 +166,7 @@ public class GameTest {
     }
 
     @Test
-    public void smallTerritoryIsCovered() {
+    void smallTerritoryIsCovered() {
         game.place(new Cell(0, 11));
         game.place(new Cell(1, 11));
         game.place(new Cell(1, 12));
@@ -175,7 +175,7 @@ public class GameTest {
     }
 
     @Test
-    public void small2CellsTerritoryIsCoveredTest() {
+    void small2CellsTerritoryIsCoveredTest() {
         game.place(new Cell(0, 0));
         for (int i = 0; i < 4; i++) {
             game.place(new Cell(i, 1));
@@ -187,7 +187,7 @@ public class GameTest {
     }
 
     @Test
-    public void oneCellTerritoryBothPlayersTest() {
+    void oneCellTerritoryBothPlayersTest() {
         game.place(new Cell(1, 2));
         game.place(new Cell(2, 2));
         game.place(new Cell(3, 2));
@@ -202,7 +202,7 @@ public class GameTest {
     }
 
     @Test
-    public void longLineBothPlayersTest() {
+    void longLineBothPlayersTest() {
         for (int i = 0; i < game.boardSize(); i++) {
             game.changeCurrentPlayer();
             game.place(new Cell(i, 8));
@@ -214,7 +214,7 @@ public class GameTest {
     }
 
     @Test
-    public void constructorCopyTest() {
+    void constructorCopyTest() {
         game.changeCurrentPlayer();
         game.place(new Cell(0, 0));
         LocalGame localGame2 = new LocalGame(game);

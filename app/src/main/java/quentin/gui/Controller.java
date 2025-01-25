@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -24,6 +22,7 @@ import quentin.cache.GameLog;
 import quentin.exceptions.MoveException;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
+import quentin.game.Game;
 import quentin.game.GameStarter;
 import quentin.game.LocalGame;
 
@@ -68,7 +67,6 @@ public class Controller implements Initializable, GameStarter {
                 panes[i][j] = new Pane();
                 panes[i][j].addEventHandler(MouseEvent.MOUSE_CLICKED, this::placeCell);
                 panes[i][j].setStyle("-fx-border-color: grey");
-                // pane.setPrefSize(30, 30);
                 board.add(panes[i][j], j, i);
             }
         }
@@ -82,13 +80,13 @@ public class Controller implements Initializable, GameStarter {
 
     @Override
     public void display() {
-        BoardPoint[][] board = game.getBoard().getBoard();
+        BoardPoint[][] gameBoard = game.getBoard().getBoard();
         for (int i = 0; i < 13; i++) {
             for (int j = 0; j < 13; j++) {
                 panes[i][j].setStyle("-fx-border-color: grey");
-                if (board[i][j] == BoardPoint.BLACK) {
+                if (gameBoard[i][j] == BoardPoint.BLACK) {
                     panes[i][j].setBackground(black);
-                } else if (board[i][j] == BoardPoint.WHITE) {
+                } else if (gameBoard[i][j] == BoardPoint.WHITE) {
                     panes[i][j].setBackground(white);
                 } else {
                     panes[i][j].setBackground(Background.EMPTY);
@@ -97,9 +95,11 @@ public class Controller implements Initializable, GameStarter {
         }
     }
 
-    public void startDisplay() {
+    @Override
+    public void start() {
         displayMessage(game.getCurrentPlayer() + "'s turn!");
         messageField.toBack();
+        messageField.setText(null);
         base.setEffect(null);
         base.setOpacity(1);
         base.toFront();
@@ -107,15 +107,12 @@ public class Controller implements Initializable, GameStarter {
     }
 
     public void startWithMouseClick(MouseEvent e) {
-        startDisplay();
+        start();
     }
 
     @Override
-    public void start() {}
-
-    @Override
     public void displayWinner() {
-        messageField.setText(new String(game.getCurrentPlayer() + " wins").toUpperCase());
+        messageField.setText((game.getCurrentPlayer() + " wins").toUpperCase());
         messageField.addEventHandler(MouseEvent.MOUSE_PRESSED, this::resetWithMouseClicked);
         messageField.toFront();
         base.setEffect(new BoxBlur());
@@ -144,7 +141,7 @@ public class Controller implements Initializable, GameStarter {
             cache.saveLog(new GameLog(LocalDateTime.now(), new LocalGame(game)));
             displayMessage(game.getCurrentPlayer() + "'s turn!");
         } catch (MoveException e1) {
-            errorMessage(e1.getMessage());
+            errorMessage("Invalid move!");
         }
     }
 
@@ -157,17 +154,13 @@ public class Controller implements Initializable, GameStarter {
         messageField.setOpacity(.8);
         PauseTransition transition = new PauseTransition(Duration.millis(1000));
         transition.setOnFinished(
-                new EventHandler<ActionEvent>() {
-
-                    @Override
-                    public void handle(ActionEvent event) {
-                        messageField.setTextFill(Color.WHITE);
-                        messageField.toBack();
-                        messageField.setFont(Font.font("Menlo bold", 36));
-                        base.setOpacity(1);
-                        messageField.setBackground(null);
-                        messageField.setOpacity(1);
-                    }
+                _ -> {
+                    messageField.setTextFill(Color.WHITE);
+                    messageField.toBack();
+                    messageField.setFont(Font.font("Menlo bold", 36));
+                    base.setOpacity(1);
+                    messageField.setBackground(null);
+                    messageField.setOpacity(1);
                 });
         transition.play();
     }
@@ -183,35 +176,44 @@ public class Controller implements Initializable, GameStarter {
         textField.setText(null);
     }
 
-    public void resetWithMouseClicked(Object e) {
+    public void resetWithMouseClicked(MouseEvent e) {
         reset();
     }
 
-    public void goBack(ActionEvent e) {
+    public void resetWithButtonPressed() {
+        reset();
+    }
+
+    public void goBack() {
         try {
             game = new LocalGame(cache.goBack().game());
             displayMessage(game.getCurrentPlayer() + "'s turn!");
         } catch (RuntimeException ex) {
-            displayMessage(ex.getMessage());
+            errorMessage("No more memory left!");
         }
         display();
     }
 
-    public void goForward(ActionEvent e) {
+    public void goForward() {
         try {
             game = new LocalGame(cache.goForward().game());
             displayMessage(game.getCurrentPlayer() + "'s turn!");
         } catch (RuntimeException ex) {
-            displayMessage(ex.getMessage());
+            errorMessage("Cannot go forward!");
         }
         display();
     }
 
-    public void exitGame(ActionEvent e) {
+    public void exitGame() {
         Platform.exit();
     }
 
     public Cache<GameLog> getCache() {
         return cache;
+    }
+
+    @Override
+    public Game getGame() {
+        return game;
     }
 }
