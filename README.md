@@ -58,8 +58,3 @@ To uninstall Quentin, simply delete the cloned repository:
 ```bash
 rm -rf quentin
 ```
-
-If you also built the project, you can remove the Gradle build files:
-```bash
-rm -rf ~/.gradle/caches
-```
