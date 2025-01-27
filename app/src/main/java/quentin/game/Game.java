@@ -14,18 +14,16 @@ import quentin.exceptions.MoveException;
 public interface Game extends Serializable {
     default boolean hasWon(Player player) {
         if (player.color() == BoardPoint.WHITE) {
-            for (Cell cell = new Cell(0, 0);
-                    cell.row() < boardSize();
-                    cell.setRow(cell.row() + 1)) {
+            for (int row = 0; row < boardSize(); row++) {
+                Cell cell = new Cell(row, 0);
                 if (getBoard().getPoint(cell) == BoardPoint.WHITE
                         && findWinnerPath(BoardPoint.WHITE, cell)) {
                     return true;
                 }
             }
         } else {
-            for (Cell cell = new Cell(0, 0);
-                    cell.col() < boardSize();
-                    cell.setCol(cell.col() + 1)) {
+            for (int col = 0; col < boardSize(); col++) {
+                Cell cell = new Cell(0, col);
                 if (getBoard().getPoint(cell) == BoardPoint.BLACK
                         && findWinnerPath(BoardPoint.BLACK, cell)) {
                     return true;

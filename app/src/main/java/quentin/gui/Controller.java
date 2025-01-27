@@ -3,7 +3,6 @@ package quentin.gui;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
-
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -108,7 +107,7 @@ public class Controller implements Initializable, GameStarter {
     }
 
     private String displayPlayerName() {
-      return game.getCurrentPlayer() + "'s turn!";
+        return game.getCurrentPlayer() + "'s turn!";
     }
 
     public void startWithMouseClick(MouseEvent e) {
