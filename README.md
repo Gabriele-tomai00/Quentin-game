@@ -5,6 +5,7 @@
 # **Quentin**
 
 [![Java CI with Gradle](https://github.com/Gabriele-tomai00/Quentin-game/actions/workflows/gradle.yml/badge.svg)](https://github.com/Gabriele-tomai00/Quentin-game/actions/workflows/gradle.yml)
+[![Qodana](https://github.com/Gabriele-tomai00/Quentin-game/actions/workflows/qodana_code_quality.yml/badge.svg)](https://github.com/Gabriele-tomai00/Quentin-game/actions/workflows/qodana_code_quality.yml)
 
 Quentin is a drawless connection game for two players: Black and White. It's played on the intersections (points) of a square board, which is initially empty. The top and bottom edges of the board are colored black; the left and right edges are colored white. Luis Bolaños Mures designed Quentin in April, 2012.
 
