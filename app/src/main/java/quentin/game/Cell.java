@@ -4,7 +4,8 @@ import java.util.Objects;
 
 public class Cell {
 
-    private int row, col;
+    private int row;
+    private int col;
 
     public Cell(int row, int col) {
         this.row = row;

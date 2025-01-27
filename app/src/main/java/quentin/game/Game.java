@@ -71,17 +71,15 @@ public interface Game extends Serializable {
             int whites = countCells(frontier, BoardPoint.WHITE);
             int blacks = countCells(frontier, BoardPoint.BLACK);
             if (whites > blacks) {
-                territory.stream()
-                        .forEach(a -> getBoard().placeStone(BoardPoint.WHITE, a.row(), a.col()));
+                territory.forEach(a -> getBoard().placeStone(BoardPoint.WHITE, a.row(), a.col()));
             } else if (whites < blacks) {
-                territory.stream()
-                        .forEach(a -> getBoard().placeStone(BoardPoint.BLACK, a.row(), a.col()));
+                territory.forEach(a -> getBoard().placeStone(BoardPoint.BLACK, a.row(), a.col()));
             } else {
                 BoardPoint color =
                         getCurrentPlayer().color() == BoardPoint.BLACK
                                 ? BoardPoint.WHITE
                                 : BoardPoint.BLACK;
-                territory.stream().forEach(a -> getBoard().placeStone(color, a.row(), a.col()));
+                territory.forEach(a -> getBoard().placeStone(color, a.row(), a.col()));
             }
         }
     }
@@ -142,28 +140,30 @@ public interface Game extends Serializable {
         }
         int row = cell.row();
         int col = cell.col();
-        if (row > 0 && col > 0 && getBoard().getPoint(new Cell(row - 1, col - 1)) == color) {
-            if (getBoard().getPoint(new Cell(row, col - 1)) != color
-                    && getBoard().getPoint(new Cell(row - 1, col)) != color) {
-                return false;
-            }
-        }
         if (row > 0
-                && col < getBoard().size() - 1
-                && getBoard().getPoint(new Cell(row - 1, col + 1)) == color) {
-            if (getBoard().getPoint(new Cell(row, col + 1)) != color
-                    && getBoard().getPoint(new Cell(row - 1, col)) != color) {
-                return false;
-            }
+                && col > 0
+                && getBoard().getPoint(new Cell(row - 1, col - 1)) == color
+                && getBoard().getPoint(new Cell(row, col - 1)) != color
+                && getBoard().getPoint(new Cell(row - 1, col)) != color) {
+            return false;
         }
+
+        if ((row > 0)
+                && (col < (getBoard().size() - 1))
+                && (getBoard().getPoint(new Cell(row - 1, col + 1)) == color)
+                && getBoard().getPoint(new Cell(row, col + 1)) != color
+                && getBoard().getPoint(new Cell(row - 1, col)) != color) {
+            return false;
+        }
+
         if (row < getBoard().size() - 1
                 && col > 0
-                && getBoard().getPoint(new Cell(row + 1, col - 1)) == color) {
-            if (getBoard().getPoint(new Cell(row, col - 1)) != color
-                    && getBoard().getPoint(new Cell(row + 1, col)) != color) {
-                return false;
-            }
+                && getBoard().getPoint(new Cell(row + 1, col - 1)) == color
+                && getBoard().getPoint(new Cell(row, col - 1)) != color
+                && getBoard().getPoint(new Cell(row + 1, col)) != color) {
+            return false;
         }
+
         if (row < getBoard().size() - 1
                 && col < getBoard().size() - 1
                 && getBoard().getPoint(new Cell(row + 1, col + 1)) == color) {
