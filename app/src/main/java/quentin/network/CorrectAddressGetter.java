@@ -13,8 +13,8 @@ public class CorrectAddressGetter {
     }
 
     public static String getLocalIpAddress() {
-        NetworkInterface networkInterface = null;
-        Enumeration<InetAddress> addresses = null;
+        NetworkInterface networkInterface;
+        Enumeration<InetAddress> addresses;
         try {
             for (Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
                     interfaces.hasMoreElements(); ) {

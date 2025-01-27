@@ -152,7 +152,7 @@ public class GameBoard implements Serializable {
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(getBoard());
+        return Arrays.deepHashCode(getBoard());
     }
 
     @Serial

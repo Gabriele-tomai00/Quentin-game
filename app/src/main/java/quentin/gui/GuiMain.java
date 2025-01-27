@@ -19,7 +19,7 @@ public class GuiMain extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        if (cache != null && cache.getMemorySize() > 0 && cache.getLog() instanceof GameLog) {
+        if (cache != null && cache.getMemorySize() > 0 && cache.getLog() != null) {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Load.fxml"));
             fxmlLoader.setController(new LoaderController(cache));
             Parent root = fxmlLoader.load();
@@ -40,12 +40,12 @@ public class GuiMain extends Application {
     }
 
     @Override
-    public void init() throws Exception {
+    public void init() {
         cache = CacheHandler.initialize();
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         CacheHandler.saveCache(cache);
     }
 }
