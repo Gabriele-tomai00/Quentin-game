@@ -35,15 +35,9 @@ public class Main {
                 String command = scanner.nextLine().trim().toLowerCase();
 
                 switch (command) {
-                    case "slg", "startlocalgame" -> {
-                        startLocalGame(scanner);
-                    }
-                    case "og", "onlinegame" -> {
-                        startOnlineGame(scanner);
-                    }
-                    case "sg", "startgui" -> {
-                        startGui();
-                    }
+                    case "slg", "startlocalgame" -> startLocalGame();
+                    case "og", "onlinegame" -> startOnlineGame(scanner);
+                    case "sg", "startgui" -> startGui();
                     case "" -> {
                         continue;
                     }
@@ -51,9 +45,7 @@ public class Main {
                         showHelper();
                         continue;
                     }
-                    case "exit" -> {
-                        System.out.println("Exiting the game...");
-                    }
+                    case "exit" -> System.out.println("Exiting the game...");
                     default -> {
                         System.out.println("Unknown command: " + command);
                         continue;
@@ -79,7 +71,7 @@ public class Main {
         }
     }
 
-    public static void startLocalGame(Scanner scanner) {
+    public static void startLocalGame() {
         CachedGameStarter starter = new CachedGameStarter();
         starter.start();
     }

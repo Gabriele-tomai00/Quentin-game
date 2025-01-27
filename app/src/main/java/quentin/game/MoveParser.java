@@ -25,7 +25,7 @@ public class MoveParser {
         } else {
             throw new InvalidCellValuesException(
                     String.format(
-                            "Column values span from '1' to '13', received: %s\n",
+                            "Column values span from '1' to '13', received: %s%n",
                             string.substring(1)));
         }
         return new Cell(row, col);
