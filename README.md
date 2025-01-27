@@ -20,7 +20,7 @@ Quentin is a drawless connection game for two players: Black and White. It's pla
 ![Demo](demo.gif)
 
 ## **Instructions**
-For detailed instructions on how to play Quentin, refer to the [Instructions File](instructions.md).
+For detailed instructions on how to play Quentin, refer to the [Instructions File](Quentin.pdf).
 
 ---
 
