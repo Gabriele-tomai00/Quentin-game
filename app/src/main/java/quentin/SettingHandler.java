@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+import quentin.exceptions.CacheDirectoryException;
 
 public class SettingHandler {
     private static final String GAME_DIR = System.getProperty("user.home") + "/.quentinGame";
@@ -12,12 +13,18 @@ public class SettingHandler {
 
     private final Properties settings;
 
+    public static final String USERNAME = "username";
+    public static final String DEFAULT = "default";
+    public static final String TCP_PORT = "TCP_port";
+    public static final String GAMES_WON = "games_won";
+    public static final String GAMES_LOST = "games_lost";
+
     public SettingHandler() {
         settings = new Properties();
 
         File cacheDirectory = new File(GAME_DIR);
         if (!cacheDirectory.exists() && !cacheDirectory.mkdirs()) {
-            throw new RuntimeException("Failed to create cache directory: " + GAME_DIR);
+            throw new CacheDirectoryException("Failed to create cache directory: " + GAME_DIR);
         }
         loadSettings();
     }
@@ -31,10 +38,10 @@ public class SettingHandler {
                 System.err.println("Error loading settings: " + e.getMessage());
             }
         } else {
-            settings.setProperty("username", "default");
-            settings.setProperty("TCP_port", "6789");
-            settings.setProperty("games_won", "0");
-            settings.setProperty("games_lost", "0");
+            settings.setProperty(USERNAME, DEFAULT);
+            settings.setProperty(TCP_PORT, "6789");
+            settings.setProperty(GAMES_WON, "0");
+            settings.setProperty(GAMES_LOST, "0");
             saveSettings();
         }
     }
@@ -48,12 +55,12 @@ public class SettingHandler {
     }
 
     public String getUsername() {
-        return settings.getProperty("username", "default");
+        return settings.getProperty(USERNAME, DEFAULT);
     }
 
     public void setUsername(String username) {
-        if (!"default".equalsIgnoreCase(username)) {
-            settings.setProperty("username", username);
+        if (!DEFAULT.equalsIgnoreCase(username)) {
+            settings.setProperty(USERNAME, username);
             saveSettings();
         } else {
             throw new IllegalArgumentException("Username cannot be 'default'.");
@@ -61,48 +68,48 @@ public class SettingHandler {
     }
 
     public int getPort() {
-        return Integer.parseInt(settings.getProperty("TCP_port", "8080"));
+        return Integer.parseInt(settings.getProperty(TCP_PORT, "8080"));
     }
 
     public void setPort(int port) {
-        settings.setProperty("TCP_port", String.valueOf(port));
+        settings.setProperty(TCP_PORT, String.valueOf(port));
         saveSettings();
     }
 
     public int getGamesWon() {
-        return Integer.parseInt(settings.getProperty("games_won", "0"));
+        return Integer.parseInt(settings.getProperty(GAMES_WON, "0"));
     }
 
     public void setGamesWon(int gamesWon) {
-        settings.setProperty("games_won", String.valueOf(gamesWon));
+        settings.setProperty(GAMES_WON, String.valueOf(gamesWon));
         saveSettings();
     }
 
     public void incrementGamesWon() {
-        int GamesWon = Integer.parseInt(settings.getProperty("games_won", "0"));
-        GamesWon++;
-        settings.setProperty("games_won", Integer.toString(GamesWon));
+        int gamesWon = Integer.parseInt(settings.getProperty(GAMES_WON, "0"));
+        gamesWon++;
+        settings.setProperty(GAMES_WON, Integer.toString(gamesWon));
         saveSettings();
     }
 
     public int getGamesLost() {
-        return Integer.parseInt(settings.getProperty("games_lost", "0"));
+        return Integer.parseInt(settings.getProperty(GAMES_LOST, "0"));
     }
 
     public void setGamesLost(int gamesLost) {
-        settings.setProperty("games_lost", String.valueOf(gamesLost));
+        settings.setProperty(GAMES_LOST, String.valueOf(gamesLost));
         saveSettings();
     }
 
     public void incrementGamesLost() {
-        int gamesLost = Integer.parseInt(settings.getProperty("games_lost", "0"));
+        int gamesLost = Integer.parseInt(settings.getProperty(GAMES_LOST, "0"));
         gamesLost++;
-        settings.setProperty("games_lost", Integer.toString(gamesLost));
+        settings.setProperty(GAMES_LOST, Integer.toString(gamesLost));
         saveSettings();
     }
 
     public void validateUsername() {
-        if ("default".equalsIgnoreCase(getUsername())) {
+        if (DEFAULT.equalsIgnoreCase(getUsername())) {
             throw new IllegalStateException(
                     "Username cannot be 'default'. Please set a valid username.");
         }

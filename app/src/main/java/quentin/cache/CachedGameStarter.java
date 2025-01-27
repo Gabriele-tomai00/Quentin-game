@@ -37,19 +37,13 @@ public class CachedGameStarter extends SimpleGameStarter {
             String command = scanner.nextLine().trim().toLowerCase();
             try {
                 switch (command) {
-                    case "back", "b" -> {
-                        game = new LocalGame(cache.goBack().game());
-                    }
-                    case "forward", "f" -> {
-                        game = new LocalGame(cache.goForward().game());
-                    }
+                    case "back", "b" -> game = new LocalGame(cache.goBack().game());
+                    case "forward", "f" -> game = new LocalGame(cache.goForward().game());
                     case "exit" -> {
                         exitGame = true;
                         gameFinished = false;
                     }
-                    case "help" -> {
-                        showHelper();
-                    }
+                    case "help" -> showHelper();
                     default -> {
                         makeMove(command);
                         if (hasWon()) {

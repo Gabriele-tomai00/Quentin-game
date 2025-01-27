@@ -17,12 +17,12 @@ public class SimpleGameStarter implements GameStarter {
             while (true) {
                 if (!game.canPlayerPlay()) {
                     game.changeCurrentPlayer();
-                    continue;
+                } else {
+                    if (processInput(scanner)) {
+                        break;
+                    }
+                    display();
                 }
-                if (processInput(scanner)) {
-                    break;
-                }
-                display();
             }
         }
     }
