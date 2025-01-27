@@ -1,6 +1,5 @@
 package quentin.network;
 
-import java.io.IOException;
 import java.util.Random;
 import quentin.SettingHandler;
 
@@ -26,12 +25,7 @@ public class Server {
     public void start() {
         udpServer = new UDPServer(username, tcpPort);
         udpServer.startServer();
-        try {
-            tcpServer = new TCPServer(tcpPort, codeForClientAuth);
-        } catch (IOException e) {
-            System.err.println("Error initializing the server connection");
-            return;
-        }
+        tcpServer = new TCPServer(tcpPort, codeForClientAuth);
         tcpServer.start();
     }
 

@@ -38,46 +38,28 @@ public class OnlineGameStarter implements GameStarter {
                 String command = scanner.nextLine().trim().toLowerCase();
                 switch (command) {
                     case "" -> {}
-                    case "help" -> {
-                        showHelper();
-                    }
+                    case "help" -> showHelper();
                     case "exit" -> {
                         if (isServer) stopServer();
                         else stopClient();
                         return;
                     }
-                    case "getusername", "getu" -> {
-                        displayMessage(
-                                "You current username is: " + settingHandler.getUsername() + "\n");
-                    }
-                    case "getport", "getp" -> {
-                        displayMessage(
-                                "You current username is: " + settingHandler.getPort() + "\n");
-                    }
-                    case "setusername", "setu" -> {
-                        setUsername(scanner);
-                    }
-                    case "setport", "setp" -> {
-                        setTCPport(scanner);
-                    }
-                    case "ss", "startserver", "starts" -> {
-                        startServer();
-                    }
-                    case "stopserver", "stops" -> {
-                        stopServer();
-                    }
-                    case "sc", "startclient", "startc" -> {
-                        startClient();
-                    }
-                    case "stopclient", "stopc" -> {
-                        stopClient();
-                    }
-                    case "clientauth", "clienta" -> {
-                        clientAuth(scanner);
-                    }
-                    default -> {
-                        makeMove(command);
-                    }
+                    case "getusername", "getu" ->
+                            displayMessage(
+                                    "You current username is: "
+                                            + settingHandler.getUsername()
+                                            + "\n");
+                    case "getport", "getp" ->
+                            displayMessage(
+                                    "You current username is: " + settingHandler.getPort() + "\n");
+                    case "setusername", "setu" -> setUsername(scanner);
+                    case "setport", "setp" -> setTCPport(scanner);
+                    case "ss", "startserver", "starts" -> startServer();
+                    case "stopserver", "stops" -> stopServer();
+                    case "sc", "startclient", "startc" -> startClient();
+                    case "stopclient", "stopc" -> stopClient();
+                    case "clientauth", "clienta" -> clientAuth(scanner);
+                    default -> makeMove(command);
                 }
             } catch (MoveException | InvalidCellValuesException e) {
                 displayMessage(e.getMessage() + "\n");

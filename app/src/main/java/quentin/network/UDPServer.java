@@ -30,52 +30,11 @@ public class UDPServer {
                                                 + address
                                                 + " port "
                                                 + UDP_SERVER_PORT);
-                                byte[] receiveBuffer = new byte[1024];
                                 discovery = true;
                                 serverSocket.setSoTimeout(1000);
 
                                 while (discovery) {
-                                    try {
-                                        DatagramPacket receivePacket =
-                                                new DatagramPacket(
-                                                        receiveBuffer, receiveBuffer.length);
-                                        serverSocket.receive(receivePacket);
-
-                                        InetAddress clientAddress = receivePacket.getAddress();
-                                        int clientPort = receivePacket.getPort();
-
-                                        System.out.println(
-                                                "UDP: Received request from client "
-                                                        + clientAddress
-                                                        + ":"
-                                                        + clientPort);
-                                        ServerInfo serverInfo =
-                                                new ServerInfo(address, tcpPort, username);
-
-                                        byte[] sendBuffer = serverInfo.toBytes();
-
-                                        DatagramPacket sendPacket =
-                                                new DatagramPacket(
-                                                        sendBuffer,
-                                                        sendBuffer.length,
-                                                        clientAddress,
-                                                        clientPort);
-                                        serverSocket.send(sendPacket);
-
-                                        System.out.println(
-                                                "UDP: Response sent to client: "
-                                                        + serverInfo
-                                                        + " clientAddress: "
-                                                        + clientAddress);
-                                    } catch (SocketTimeoutException e) {
-                                        if (!discovery) {
-                                            System.out.println(
-                                                    "Timeout occurred, stopping server.");
-                                        }
-                                    } catch (Exception e) {
-                                        System.err.println(
-                                                "Unexpected error occurred in UDP server");
-                                    }
+                                    receiveAndRespondUdp(serverSocket);
                                 }
                             } catch (Exception e) {
                                 System.err.println(
@@ -83,6 +42,39 @@ public class UDPServer {
                             }
                         });
         discoveryThread.start();
+    }
+
+    public void receiveAndRespondUdp(DatagramSocket serverSocket) {
+        byte[] receiveBuffer = new byte[1024];
+        try {
+            DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
+            serverSocket.receive(receivePacket);
+
+            InetAddress clientAddress = receivePacket.getAddress();
+            int clientPort = receivePacket.getPort();
+
+            System.out.println(
+                    "UDP: Received request from client " + clientAddress + ":" + clientPort);
+            ServerInfo serverInfo = new ServerInfo(address, tcpPort, username);
+
+            byte[] sendBuffer = serverInfo.toBytes();
+
+            DatagramPacket sendPacket =
+                    new DatagramPacket(sendBuffer, sendBuffer.length, clientAddress, clientPort);
+            serverSocket.send(sendPacket);
+
+            System.out.println(
+                    "UDP: Response sent to client: "
+                            + serverInfo
+                            + " clientAddress: "
+                            + clientAddress);
+        } catch (SocketTimeoutException e) {
+            if (!discovery) {
+                System.out.println("Timeout occurred, stopping server.");
+            }
+        } catch (Exception e) {
+            System.err.println("Unexpected error occurred in UDP server");
+        }
     }
 
     public void stopServer() {
