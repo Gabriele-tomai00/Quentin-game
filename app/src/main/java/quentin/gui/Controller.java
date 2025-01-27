@@ -3,6 +3,7 @@ package quentin.gui;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
+
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -97,13 +98,17 @@ public class Controller implements Initializable, GameStarter {
 
     @Override
     public void start() {
-        displayMessage(game.getCurrentPlayer() + "'s turn!");
+        displayMessage(displayPlayerName());
         messageField.toBack();
         messageField.setText(null);
         base.setEffect(null);
         base.setOpacity(1);
         base.toFront();
         display();
+    }
+
+    private String displayPlayerName() {
+      return game.getCurrentPlayer() + "'s turn!";
     }
 
     public void startWithMouseClick(MouseEvent e) {
@@ -139,7 +144,7 @@ public class Controller implements Initializable, GameStarter {
                 displayWinner();
             }
             cache.saveLog(new GameLog(LocalDateTime.now(), new LocalGame(game)));
-            displayMessage(game.getCurrentPlayer() + "'s turn!");
+            displayMessage(displayPlayerName());
         } catch (MoveException e1) {
             errorMessage("Invalid move!");
         }
@@ -187,7 +192,7 @@ public class Controller implements Initializable, GameStarter {
     public void goBack() {
         try {
             game = new LocalGame(cache.goBack().game());
-            displayMessage(game.getCurrentPlayer() + "'s turn!");
+            displayMessage(displayPlayerName());
         } catch (RuntimeException ex) {
             errorMessage("No more memory left!");
         }
@@ -197,7 +202,7 @@ public class Controller implements Initializable, GameStarter {
     public void goForward() {
         try {
             game = new LocalGame(cache.goForward().game());
-            displayMessage(game.getCurrentPlayer() + "'s turn!");
+            displayMessage(displayPlayerName());
         } catch (RuntimeException ex) {
             errorMessage("Cannot go forward!");
         }
