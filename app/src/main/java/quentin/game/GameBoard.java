@@ -49,12 +49,7 @@ public class GameBoard implements Serializable {
                     if (i + 1 > 9) toReturn.append(i + 1).append("   █");
                     else toReturn.append(i + 1).append("    █");
                 }
-                toReturn.append("│");
-                if (board[i][j].equals(BoardPoint.WHITE)) toReturn.append(" ██ ");
-                else if (board[i][j].equals(BoardPoint.BLACK)) toReturn.append(" XX ");
-                else if (board[i][j].equals(BoardPoint.EMPTY)) toReturn.append("    ");
-
-                if (j == SIZE - 1) toReturn.append("│█");
+                appendBoardPoint(i, j, toReturn);
             }
             toReturn.append("\n");
             if (i == SIZE - 1) {
@@ -68,6 +63,14 @@ public class GameBoard implements Serializable {
         }
 
         return toReturn.toString();
+    }
+
+    public void appendBoardPoint(int i, int j, StringBuilder toReturn) {
+        toReturn.append("│");
+        if (board[i][j].equals(BoardPoint.WHITE)) toReturn.append(" ██ ");
+        else if (board[i][j].equals(BoardPoint.BLACK)) toReturn.append(" XX ");
+        else if (board[i][j].equals(BoardPoint.EMPTY)) toReturn.append("    ");
+        if (j == SIZE - 1) toReturn.append("│█");
     }
 
     public String toCompactString() {
@@ -95,35 +98,42 @@ public class GameBoard implements Serializable {
     }
 
     public void fromCompactString(String compactString) {
+        int i = 0;
         int flattenedIndex = 0;
-        for (int i = 0; i < compactString.length(); ) {
+        while (i < compactString.length()) {
             char ch = compactString.charAt(i);
             if (Character.isDigit(ch)) {
                 int start = i;
                 while (i < compactString.length() && Character.isDigit(compactString.charAt(i))) {
                     i++;
                 }
-                int count = Integer.parseInt(compactString.substring(start, i));
-                for (int j = 0; j < count; j++) {
-                    if (flattenedIndex >= SIZE * SIZE) {
-                        throw new IllegalBoardException("Compact string exceeds board size");
-                    }
-                    this.board[flattenedIndex / SIZE][flattenedIndex % SIZE] = BoardPoint.EMPTY;
-                    flattenedIndex++;
-                }
+                flattenedIndex = fillBoardWithEmptyCells(compactString, flattenedIndex, start, i);
+
             } else {
                 if (flattenedIndex >= SIZE * SIZE) {
                     throw new IllegalBoardException("Compact string exceeds board size");
                 }
                 this.board[flattenedIndex / SIZE][flattenedIndex % SIZE] =
                         BoardPoint.fromString(String.valueOf(ch));
-                i++;
                 flattenedIndex++;
+                i++;
             }
         }
         if (flattenedIndex != SIZE * SIZE) {
             throw new IllegalBoardException("Compact string does not match the board size.");
         }
+    }
+
+    public int fillBoardWithEmptyCells(String compactString, int flattenedIndex, int start, int i) {
+        int count = Integer.parseInt(compactString.substring(start, i));
+        for (int j = 0; j < count; j++) {
+            if (flattenedIndex >= SIZE * SIZE) {
+                throw new IllegalBoardException("Compact string exceeds board size");
+            }
+            this.board[flattenedIndex / SIZE][flattenedIndex % SIZE] = BoardPoint.EMPTY;
+            flattenedIndex++;
+        }
+        return flattenedIndex;
     }
 
     public int size() {
