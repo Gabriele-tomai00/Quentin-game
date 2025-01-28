@@ -89,7 +89,7 @@ class GameTest {
 
     @Test
     void canPlayerPlay() {
-        assertEquals(true, game.canPlayerPlay());
+        assertTrue(game.canPlayerPlay());
     }
 
     @Test
@@ -111,7 +111,7 @@ class GameTest {
 
     @Test
     void neighborsTest() {
-        Set<Cell> neigbors = new HashSet<Cell>();
+        Set<Cell> neigbors = new HashSet<>();
         neigbors.add(new Cell(0, 0));
         neigbors.add(new Cell(1, 1));
         neigbors.add(new Cell(2, 0));
@@ -138,7 +138,7 @@ class GameTest {
         game.place(new Cell(3, 1));
         game.place(new Cell(3, 0));
 
-        Set<Cell> testSet = new HashSet<Cell>();
+        Set<Cell> testSet = new HashSet<>();
         testSet.add(new Cell(1, 0));
         testSet.add(new Cell(2, 0));
         assertEquals(testSet, game.findTerritories(new Cell(1, 0)));
@@ -153,7 +153,7 @@ class GameTest {
             game.place(new Cell(i, 8));
             game.changeCurrentPlayer();
         }
-        HashSet<Cell> testSet = new HashSet<Cell>();
+        HashSet<Cell> testSet = new HashSet<>();
         for (int i = 0; i < game.boardSize(); i++) {
             testSet.add(new Cell(i, 9));
         }

@@ -23,9 +23,7 @@ class SettingHandlerTest {
         IllegalArgumentException exception =
                 assertThrows(
                         IllegalArgumentException.class,
-                        () -> {
-                            settingHandler.setUsername("default");
-                        });
+                        () -> settingHandler.setUsername("default"));
         assertEquals("Username cannot be 'default'.", exception.getMessage());
     }
 
