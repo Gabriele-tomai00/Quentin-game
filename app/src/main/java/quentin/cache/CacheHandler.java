@@ -9,11 +9,18 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Objects;
+import quentin.exceptions.CacheClearException;
+import quentin.exceptions.CacheSaveException;
 import quentin.game.GameBoard;
 
 public class CacheHandler {
     private static final String GAME_DIR = ".quentinGame";
     private static final String CACHE_FILE = GAME_DIR + "/last_match_cache.dat";
+
+    private CacheHandler() {
+        throw new UnsupportedOperationException(
+                "CacheHandler is a utility class and cannot be instantiated.");
+    }
 
     @SuppressWarnings("unchecked")
     public static Cache<GameLog> initialize() {
@@ -40,10 +47,12 @@ public class CacheHandler {
 
     public static void saveCache(Cache<GameLog> cache) {
         if (cache.getMemorySize() == 1
-                && Objects.equals(cache.getLog().game().getBoard(), new GameBoard())) return;
+                && Objects.equals(cache.getLog().game().getBoard(), new GameBoard())) {
+            return;
+        }
         File cacheDirectory = new File(GAME_DIR);
         if (!cacheDirectory.exists() && !cacheDirectory.mkdirs()) {
-            throw new RuntimeException("Failed to create cache directory: " + GAME_DIR);
+            throw new CacheSaveException("Failed to create cache directory: " + GAME_DIR);
         }
         clearCache();
         try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(CACHE_FILE))) {
@@ -58,7 +67,7 @@ public class CacheHandler {
             writer.write("");
             writer.flush();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to clear the cache file");
+            throw new CacheClearException("Failed to clear the cache file: " + CACHE_FILE, e);
         }
     }
 }
