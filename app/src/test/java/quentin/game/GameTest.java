@@ -81,10 +81,11 @@ class GameTest {
 
   @Test
   void testIllegalMove() {
-    Cell cell2 = new Cell(1, 1);
-    MoveException exception2 = assertThrows(IllegalMoveException.class, () -> game.place(cell2));
+    game.place(new Cell(0, 0));
+    Cell cell = new Cell(1, 1);
+    MoveException exception = assertThrows(IllegalMoveException.class, () -> game.place(cell));
     String expectedMessage = "Cell (b, 2), is not connected to other cells of the same color!";
-    String actualMessage = exception2.getMessage();
+    String actualMessage = exception.getMessage();
     assertTrue(actualMessage.contains(expectedMessage));
   }
 
