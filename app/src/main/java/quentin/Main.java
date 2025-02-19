@@ -73,12 +73,12 @@ public class Main {
 
     public static void startLocalGame() {
         CachedGameStarter starter = new CachedGameStarter();
-        starter.start();
+        starter.run();
     }
 
     public static void startOnlineGame(Scanner scanner) {
         OnlineGameStarter parser = new OnlineGameStarter();
-        parser.run(scanner);
+        parser.run();
     }
 
     public static void startGui(String... args) {

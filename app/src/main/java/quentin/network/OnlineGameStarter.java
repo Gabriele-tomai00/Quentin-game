@@ -13,7 +13,7 @@ import quentin.game.GameStarter;
 import quentin.game.MoveParser;
 import quentin.game.Player;
 
-public class OnlineGameStarter implements GameStarter {
+public class OnlineGameStarter extends GameStarter {
     private OnlineGame game;
     Client client;
     Server server;
@@ -24,7 +24,9 @@ public class OnlineGameStarter implements GameStarter {
     String lastBoardReceived;
     SettingHandler settingHandler = new SettingHandler();
 
-    public void run(Scanner scanner) {
+    @Override
+    public void run() {
+        Scanner scanner = new Scanner(System.in);
         displayMessage("Enter commands (type 'exit' to quit):\n");
         displayMessage(
                 "Type 'startserver' if you want to host a match. Type 'startclient' if you want to"
@@ -90,7 +92,7 @@ public class OnlineGameStarter implements GameStarter {
         } else displayMessage("You are already online, you can't change parameters\n");
     }
 
-    private void showHelper() {
+    public void showHelper() {
         displayMessage("Available commands:\n");
         String[][] commands = {
             {"exit", "Quits the game and exits the program"},
@@ -123,7 +125,6 @@ public class OnlineGameStarter implements GameStarter {
         else displayMessage("wait your turn or quit (exit command) \n");
     }
 
-    @Override
     public void start() {
         if (!isOnline
                 || (isServer && !server.isClientAuth())

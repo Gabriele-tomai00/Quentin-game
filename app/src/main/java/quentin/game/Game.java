@@ -12,6 +12,7 @@ import quentin.exceptions.IllegalMoveException;
 import quentin.exceptions.MoveException;
 
 public interface Game extends Serializable {
+
     default boolean hasWon(Player player) {
         if (player.color() == BoardPoint.WHITE) {
             for (int row = 0; row < boardSize(); row++) {

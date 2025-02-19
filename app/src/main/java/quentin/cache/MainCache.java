@@ -17,7 +17,7 @@ public class MainCache {
                     CacheHandler.clearCache();
                 }
             }
-            gameStarter.start();
+            new Thread(gameStarter);
         }
         if (!gameStarter.isGameFinished()) {
             CacheHandler.saveCache(gameStarter.getCache());
