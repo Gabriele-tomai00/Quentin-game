@@ -42,6 +42,7 @@ For detailed instructions on how to play Quentin, refer to the [Instructions Fil
    ./gradlew build
    ```
 If you already have Gradle installed you might need to run `gradle wrapper` before build.
+
 ---
 
 ## **Execution**
@@ -50,6 +51,16 @@ Run the application using Gradle:
    ```bash
    ./gradlew run
    ```
+
+### Help
+
+To view help menus simply type `help` and press return. To exit use `exit`.  
+You can choose between 3 game modes:
+- **GUI mode:** with `startgui` or `sg`
+- **Online mode:** with `startonlinegame` or `og`
+- **Local mode:** with `startlocalgame` or `lg`
+
+once a mode has been chosen the program will prompt for further configuration or the game will simply start.
 
 ---
 
