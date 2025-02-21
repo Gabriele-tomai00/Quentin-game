@@ -35,7 +35,6 @@ public class CachedGameStarter extends GameStarter {
 
     @Override
     public boolean processInput(String command) {
-        displayMessage(String.format("%s > ", game.getCurrentPlayer()));
         switch (command) {
             case "back", "b" -> game = new LocalGame(cache.goBack().game());
             case "forward", "f" -> game = new LocalGame(cache.goForward().game());

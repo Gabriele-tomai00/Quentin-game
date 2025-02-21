@@ -24,7 +24,9 @@ public class GameStarter implements Runnable {
             if (!game.canPlayerPlay()) {
                 game.changeCurrentPlayer();
             } else {
-                while (!processInput(scanner.nextLine())) {}
+                do {
+                    displayMessage(String.format("%s > %n", game.getCurrentPlayer()));
+                } while (!processInput(scanner.nextLine()));
                 display();
                 if (game.hasWon(game.getCurrentPlayer())) {
                     displayWinner();
@@ -36,9 +38,9 @@ public class GameStarter implements Runnable {
     }
 
     public boolean processInput(String command) {
-        displayMessage(String.format("%s > ", game.getCurrentPlayer()));
         try {
             switch (command) {
+                case "" -> {}
                 case "exit" -> {
                     continueGame = false;
                     return true;
@@ -50,9 +52,13 @@ public class GameStarter implements Runnable {
                 }
             }
         } catch (RuntimeException e) {
-            displayMessage(e.getMessage());
+            displayError(e.getMessage());
         }
         return false;
+    }
+
+    private void displayError(String message) {
+        System.err.println(message);
     }
 
     public void makeMove(String position) {
