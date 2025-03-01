@@ -8,8 +8,7 @@ import java.util.Properties;
 import quentin.exceptions.CacheDirectoryException;
 
 public class SettingHandler {
-    private static final String GAME_DIR = System.getProperty("user.home") + "/.quentinGame";
-    private static final String SETTING_FILE = GAME_DIR + "/setting.dat";
+    private static final String SETTING_FILE =  "setting.dat";
 
     private final Properties settings;
 
@@ -20,8 +19,8 @@ public class SettingHandler {
     public static final String GAMES_LOST = "games_lost";
 
     public SettingHandler() {
+        // maybe can put info in file with name .username and delete when changing username
         settings = new Properties();
-
         File cacheDirectory = new File(GAME_DIR);
         if (!cacheDirectory.exists() && !cacheDirectory.mkdirs()) {
             throw new CacheDirectoryException("Failed to create cache directory: " + GAME_DIR);
@@ -29,10 +28,9 @@ public class SettingHandler {
         loadSettings();
     }
 
-    public void loadSettings() {
-        File settingFile = new File(SETTING_FILE);
-        if (settingFile.exists()) {
-            try (FileInputStream fis = new FileInputStream(settingFile)) {
+    public void loadSettings(File file) {
+        if (file.exists()) {
+            try (FileInputStream fis = new FileInputStream(file)) {
                 settings.load(fis);
             } catch (IOException e) {
                 System.err.println("Error loading settings: " + e.getMessage());
@@ -46,8 +44,8 @@ public class SettingHandler {
         }
     }
 
-    public void saveSettings() {
-        try (FileOutputStream fos = new FileOutputStream(SETTING_FILE)) {
+    public void saveSettings(File file) {
+        try (FileOutputStream fos = new FileOutputStream(file)) {
             settings.store(fos, "Quentin Game Settings");
         } catch (IOException e) {
             System.err.println("Error saving settings: " + e.getMessage());
