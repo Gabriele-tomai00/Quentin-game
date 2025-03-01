@@ -12,11 +12,11 @@ public class Server {
     private int tcpPort;
 
     public Server() {
-        generateRandomCode();
+        codeForClientAuth = generateRandomCode();
         setNetworkInfo();
     }
 
-    public void setNetworkInfo() {
+    public static void setNetworkInfo() {
         SettingHandler settingHandler = new SettingHandler();
         username = settingHandler.getUsername();
         tcpPort = settingHandler.getPort();
@@ -38,7 +38,7 @@ public class Server {
         tcpServer.stop();
     }
 
-    public void generateRandomCode() {
+    public String generateRandomCode() {
         long seed = System.currentTimeMillis();
         Random random = new Random(seed);
         StringBuilder randomNumbers = new StringBuilder();
@@ -46,7 +46,7 @@ public class Server {
             int randomNumber = random.nextInt(10);
             randomNumbers.append(randomNumber);
         }
-        codeForClientAuth = randomNumbers.toString();
+        return randomNumbers.toString();
     }
 
     public void sendMessage(String message) {

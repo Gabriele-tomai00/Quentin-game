@@ -24,21 +24,21 @@ public class TCPClient implements TcpCliSerInterface {
                     "TCP Client correctly authenticated, now you must send the password");
             while (true){
                 if (authState != ClientAuthState.AUTHENTICATED) {
-                                            if (serverMessage.equals(
-                                                    "Password accepted from TCP server")) {
-                                                authState = ClientAuthState.AUTHENTICATED;
-                                                break;
-                                            } else if (serverMessage.equals("server closed")) {
-                                                authState = ClientAuthState.FAILED_AUTHENTICATION;
-                                                break;
-                                            } else if (serverMessage.startsWith(
-                                                    "Invalid password")) {
-                                                authState = ClientAuthState.FAILED_AUTHENTICATION;
-                                            }
+                    if (serverMessage.equals("Password accepted from TCP server")) {
+                        authState = ClientAuthState.AUTHENTICATED;
+                        break;
+                    } else if (serverMessage.equals("server closed")) {
+                        authState = ClientAuthState.FAILED_AUTHENTICATION;
+                        break;
+                    } else if (serverMessage.startsWith("Invalid password")) {
+                    authState = ClientAuthState.FAILED_AUTHENTICATION;
+                    }
+                }
+            return socket;
             }
-        }} catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        return socket;
+        return null;
     }
 }
