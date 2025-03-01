@@ -1,32 +1,28 @@
 package quentin.network;
 
-import java.util.Random;
-import quentin.SettingHandler;
 import java.net.Socket;
+import java.util.Random;
+import java.util.concurrent.Callable;
+import quentin.SettingHandler;
 
-public class Server {
+public class Server implements Callable<Socket> {
 
-    private UDPServer udpServer;
-    private TCPServer tcpServer;
-    private String codeForClientAuth;
-    private String username;
-    private int tcpPort;
+    private final String codeForClientAuth;
+    private final String username;
+    private final int tcpPort;
 
     public Server() {
         codeForClientAuth = generateRandomCode();
-        setNetworkInfo();
-    }
-
-    public void setNetworkInfo() {
         SettingHandler settingHandler = new SettingHandler();
         username = settingHandler.getUsername();
         tcpPort = settingHandler.getPort();
     }
 
-    public Socket start() {
-        udpServer = new UDPServer(username, tcpPort);
-        udpServer.startServer();
-        tcpServer = new TCPServer(tcpPort, codeForClientAuth);
+    @Override
+    public Socket call() {
+        UDPServer udpServer = new UDPServer(username, tcpPort);
+        udpServer.run();
+        TCPServer tcpServer = new TCPServer(tcpPort, codeForClientAuth);
         return tcpServer.start();
     }
 

@@ -6,20 +6,19 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 
-public class TCPServer implements TcpCliSerInterface {
+public class TCPServer {
     private final String password;
     private final int port;
-    
+
     public TCPServer(int port, String password) {
         this.port = port;
         this.password = password;
     }
 
     public Socket start() {
-        try (serverSocket = new ServerSocket(port)){
-            socket = serverSocket.accept(); // Blocking call: waits for a client to connect
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            Socket socket = serverSocket.accept(); // Blocking call: waits for a client to connect
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             System.out.println("CODE: " + password);
@@ -29,14 +28,17 @@ public class TCPServer implements TcpCliSerInterface {
                     if (!message.equals(password)) {
                         System.out.println(
                                 "Invalid password, retry (attempt " + (attempt + 1) + "/3)");
-                        out.println("Invalid password, retry (attempt " + (attempt + 1) + "/3)");
+                        out.println("SERVER ERR");
                     } else {
                         System.out.println("Password of TCP client accepted");
-                        out.println("Password accepted from TCP server");
+                        out.println("SERVER OK");
                         return socket;
-                    }}}
+                    }
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 }

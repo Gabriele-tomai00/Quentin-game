@@ -4,7 +4,7 @@ import java.util.Scanner;
 import quentin.cache.CacheHandler;
 import quentin.cache.CachedGameStarter;
 import quentin.gui.GuiMain;
-import quentin.network.OnlineGameStarter;
+import quentin.network.NetworkStarter;
 
 public class Main {
 
@@ -93,8 +93,8 @@ public class Main {
     }
 
     public static void startOnlineGame(Scanner scanner) {
-        OnlineGameStarter parser = new OnlineGameStarter();
-        parser.run();
+        NetworkStarter starter = new NetworkStarter();
+        starter.run();
     }
 
     public static void startGui(String... args) {
