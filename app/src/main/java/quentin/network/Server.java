@@ -6,11 +6,11 @@ import java.net.Socket;
 
 public class Server {
 
-    private UDPServer udpServer;
-    private TCPServer tcpServer;
-    private String codeForClientAuth;
-    private String username;
-    private int tcpPort;
+    private final UDPServer udpServer;
+    private final TCPServer tcpServer;
+    private final String codeForClientAuth;
+    private final String username;
+    private final int tcpPort;
 
     public Server() {
         codeForClientAuth = generateRandomCode();
