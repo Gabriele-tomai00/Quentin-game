@@ -20,8 +20,8 @@ public class TCPServer implements TcpCliSerInterface {
     public Socket start() {
         try (serverSocket = new ServerSocket(port)){
             socket = serverSocket.accept(); // Blocking call: waits for a client to connect
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             System.out.println("CODE: " + password);
             String message;
             for (int attempt = 0; attempt < 3; attempt++) {
