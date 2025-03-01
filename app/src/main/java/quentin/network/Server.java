@@ -2,6 +2,7 @@ package quentin.network;
 
 import java.util.Random;
 import quentin.SettingHandler;
+import java.net.Socket;
 
 public class Server {
 
@@ -16,29 +17,20 @@ public class Server {
         setNetworkInfo();
     }
 
-    public static void setNetworkInfo() {
+    public void setNetworkInfo() {
         SettingHandler settingHandler = new SettingHandler();
         username = settingHandler.getUsername();
         tcpPort = settingHandler.getPort();
     }
 
-    public void start() {
+    public Socket start() {
         udpServer = new UDPServer(username, tcpPort);
         udpServer.startServer();
         tcpServer = new TCPServer(tcpPort, codeForClientAuth);
-        tcpServer.start();
+        return tcpServer.start();
     }
 
-    public void stop() {
-        if (udpServer == null) {
-            System.out.println("UDP server not running");
-            return;
-        }
-        udpServer.stopServer();
-        tcpServer.stop();
-    }
-
-    public String generateRandomCode() {
+    public static String generateRandomCode() {
         long seed = System.currentTimeMillis();
         Random random = new Random(seed);
         StringBuilder randomNumbers = new StringBuilder();
@@ -47,27 +39,5 @@ public class Server {
             randomNumbers.append(randomNumber);
         }
         return randomNumbers.toString();
-    }
-
-    public void sendMessage(String message) {
-        tcpServer.sendMessage(message);
-    }
-
-    public String getCodeForClientAuth() {
-        return codeForClientAuth;
-    }
-
-    public Boolean isClientAuth() {
-        if (tcpServer == null) {
-            return false;
-        }
-        return tcpServer.getClientAuth();
-    }
-
-    public String getBoardReceived() {
-        if (tcpServer == null) {
-            return null;
-        }
-        return tcpServer.getMessageReceived();
     }
 }
