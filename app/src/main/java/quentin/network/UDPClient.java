@@ -21,11 +21,8 @@ public class UDPClient {
         try {
             InetAddress localAddress = InetAddress.getByName(clientAddress);
             SocketAddress bindAddress = new InetSocketAddress(localAddress, 0);
-            try (DatagramSocket clientSocket =
-                    new DatagramSocket(bindAddress)) {
-                System.out.println(
-                        "C: client discovery started using address: "
-                                + clientAddress);
+            try (DatagramSocket clientSocket = new DatagramSocket(bindAddress)) {
+                System.out.println("C: client discovery started using address: " + clientAddress);
                 clientSocket.setBroadcast(true);
                 return handleDiscovery(clientSocket);
             }

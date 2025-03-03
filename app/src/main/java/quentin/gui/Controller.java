@@ -3,7 +3,6 @@ package quentin.gui;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
-
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;

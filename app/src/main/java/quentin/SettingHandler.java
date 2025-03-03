@@ -5,10 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
-import quentin.exceptions.CacheDirectoryException;
 
 public class SettingHandler {
-    private static final String SETTING_FILE =  "setting.dat";
 
     private final Properties settings;
 
@@ -21,11 +19,7 @@ public class SettingHandler {
     public SettingHandler() {
         // maybe can put info in file with name .username and delete when changing username
         settings = new Properties();
-        File cacheDirectory = new File(GAME_DIR);
-        if (!cacheDirectory.exists() && !cacheDirectory.mkdirs()) {
-            throw new CacheDirectoryException("Failed to create cache directory: " + GAME_DIR);
-        }
-        loadSettings();
+        loadSettings(new File(USERNAME));
     }
 
     public void loadSettings(File file) {
@@ -40,7 +34,7 @@ public class SettingHandler {
             settings.setProperty(TCP_PORT, "6789");
             settings.setProperty(GAMES_WON, "0");
             settings.setProperty(GAMES_LOST, "0");
-            saveSettings();
+            saveSettings(new File(USERNAME));
         }
     }
 
@@ -59,7 +53,7 @@ public class SettingHandler {
     public void setUsername(String username) {
         if (!DEFAULT.equalsIgnoreCase(username)) {
             settings.setProperty(USERNAME, username);
-            saveSettings();
+            saveSettings(new File(username));
         } else {
             throw new IllegalArgumentException("Username cannot be 'default'.");
         }
@@ -71,7 +65,7 @@ public class SettingHandler {
 
     public void setPort(int port) {
         settings.setProperty(TCP_PORT, String.valueOf(port));
-        saveSettings();
+        saveSettings(new File(USERNAME));
     }
 
     public int getGamesWon() {
@@ -80,14 +74,14 @@ public class SettingHandler {
 
     public void setGamesWon(int gamesWon) {
         settings.setProperty(GAMES_WON, String.valueOf(gamesWon));
-        saveSettings();
+        saveSettings(new File(USERNAME));
     }
 
     public void incrementGamesWon() {
         int gamesWon = Integer.parseInt(settings.getProperty(GAMES_WON, "0"));
         gamesWon++;
         settings.setProperty(GAMES_WON, Integer.toString(gamesWon));
-        saveSettings();
+        saveSettings(new File(USERNAME));
     }
 
     public int getGamesLost() {
@@ -96,14 +90,14 @@ public class SettingHandler {
 
     public void setGamesLost(int gamesLost) {
         settings.setProperty(GAMES_LOST, String.valueOf(gamesLost));
-        saveSettings();
+        saveSettings(new File(USERNAME));
     }
 
     public void incrementGamesLost() {
         int gamesLost = Integer.parseInt(settings.getProperty(GAMES_LOST, "0"));
         gamesLost++;
         settings.setProperty(GAMES_LOST, Integer.toString(gamesLost));
-        saveSettings();
+        saveSettings(new File(USERNAME));
     }
 
     public void validateUsername() {

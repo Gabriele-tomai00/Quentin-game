@@ -21,24 +21,21 @@ public class UDPServer {
     public void run() {
         try (DatagramSocket serverSocket = new DatagramSocket(UDP_SERVER_PORT)) {
             System.out.println(
-                        "UDP Server is listening: ip "
-                                + address
-                                + " port "
-                                + UDP_SERVER_PORT);
+                    "UDP Server is listening: ip " + address + " port " + UDP_SERVER_PORT);
             discovery = true;
             serverSocket.setSoTimeout(1000);
             receiveAndRespondUdp(serverSocket);
-            } catch (Exception e) {
-                System.err.println(
-                        "Error during server socket initialization in UDP server");
-            }
+        } catch (Exception e) {
+            System.err.println("Error during server socket initialization in UDP server");
         }
+    }
 
     public void receiveAndRespondUdp(DatagramSocket serverSocket) {
         byte[] receiveBuffer = new byte[1024];
         while (discovery) {
             try {
-                DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
+                DatagramPacket receivePacket =
+                        new DatagramPacket(receiveBuffer, receiveBuffer.length);
                 serverSocket.receive(receivePacket);
 
                 InetAddress clientAddress = receivePacket.getAddress();
@@ -51,7 +48,8 @@ public class UDPServer {
                 byte[] sendBuffer = serverInfo.toBytes();
 
                 DatagramPacket sendPacket =
-                        new DatagramPacket(sendBuffer, sendBuffer.length, clientAddress, clientPort);
+                        new DatagramPacket(
+                                sendBuffer, sendBuffer.length, clientAddress, clientPort);
                 serverSocket.send(sendPacket);
 
                 System.out.println(

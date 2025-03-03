@@ -5,43 +5,27 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test; // Test of JUnit 5
 import quentin.network.Server;
 
 class ServerTest {
 
-    private Server server;
-
-    @BeforeEach
-    public void setUp() {
-        server = new Server();
-    }
-
     @Test
     void testCodeLength() {
-        server.generateRandomCode();
-        String code = server.getCodeForClientAuth();
+        String code = Server.generateRandomCode();
         assertEquals(5, code.length(), "The code length should be 5 characters.");
     }
 
     @Test
     void testCodeContainsOnlyDigits() {
-        server.generateRandomCode();
-        String code = server.getCodeForClientAuth();
+        String code = Server.generateRandomCode();
         assertTrue(code.matches("\\d{5}"), "The code should contain only digits (0-9).");
     }
 
     @Test
-    void testCodeIsDifferentOnEachCall() throws InterruptedException {
-        server.generateRandomCode();
-        String code1 = server.getCodeForClientAuth();
-
-        Thread.sleep(10);
-
-        server.generateRandomCode();
-        String code2 = server.getCodeForClientAuth();
-
+    void testCodeIsDifferentOnEachCall() {
+        String code1 = Server.generateRandomCode();
+        String code2 = Server.generateRandomCode();
         assertNotEquals(
                 code1,
                 code2,
