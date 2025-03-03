@@ -1,6 +1,11 @@
 package quentin.network;
 
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.net.SocketTimeoutException;
 
 public class UDPClient {
     private static final int UDP_SERVER_PORT = 9876;
@@ -11,7 +16,7 @@ public class UDPClient {
         clientAddress = CorrectAddressGetter.getLocalIpAddress();
     }
 
-    public tcpServerInfo call() {
+    public ServerInfo call() {
         System.out.println("address of udp client: " + clientAddress);
         try {
             InetAddress localAddress = InetAddress.getByName(clientAddress);
@@ -27,9 +32,10 @@ public class UDPClient {
         } catch (Exception e) {
             System.err.println("Unexpected error in udp client discovery");
         }
+        return null;
     }
 
-    private tcpServerInfo handleDiscovery(DatagramSocket clientSocket) throws InterruptedException {
+    private ServerInfo handleDiscovery(DatagramSocket clientSocket) throws InterruptedException {
         byte[] sendBuffer = "Requesting server information".getBytes();
         byte[] receiveBuffer = new byte[1024];
         while (discovery) {
@@ -53,12 +59,13 @@ public class UDPClient {
                 clientSocket.receive(receivePacket);
 
                 return ServerInfo.fromBytes(receivePacket.getData());
-            } catch (SocketTimeOutException e) {
+            } catch (SocketTimeoutException e) {
                 // do nothing
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        return null;
     }
 
     public void stopDiscovery() {

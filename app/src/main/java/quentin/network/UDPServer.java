@@ -8,7 +8,6 @@ import java.net.SocketTimeoutException;
 public class UDPServer {
     private static final int UDP_SERVER_PORT = 9876;
     private volatile boolean discovery = true; // Use volatile for thread-safe visibility
-    private Thread discoveryThread;
     private final String username;
     private final int tcpPort;
     private final String address;
@@ -28,13 +27,12 @@ public class UDPServer {
                                 + UDP_SERVER_PORT);
             discovery = true;
             serverSocket.setSoTimeout(1000);
-            receiveAndRespondUdp(serverSocket)
+            receiveAndRespondUdp(serverSocket);
             } catch (Exception e) {
                 System.err.println(
                         "Error during server socket initialization in UDP server");
             }
         }
-    }
 
     public void receiveAndRespondUdp(DatagramSocket serverSocket) {
         byte[] receiveBuffer = new byte[1024];

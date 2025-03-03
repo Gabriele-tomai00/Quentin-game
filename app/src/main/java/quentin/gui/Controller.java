@@ -3,6 +3,7 @@ package quentin.gui;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
+
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -23,10 +24,9 @@ import quentin.exceptions.MoveException;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
 import quentin.game.Game;
-import quentin.game.GameStarter;
 import quentin.game.LocalGame;
 
-public class Controller implements Initializable, GameStarter {
+public class Controller implements Initializable {
 
     private final Pane[][] panes;
     private LocalGame game;
@@ -73,12 +73,10 @@ public class Controller implements Initializable, GameStarter {
         messageField.addEventHandler(MouseEvent.MOUSE_PRESSED, this::startWithMouseClick);
     }
 
-    @Override
     public void displayMessage(String message) {
         textField.setText(message);
     }
 
-    @Override
     public void display() {
         BoardPoint[][] gameBoard = game.getBoard().getBoard();
         for (int i = 0; i < 13; i++) {
@@ -95,7 +93,6 @@ public class Controller implements Initializable, GameStarter {
         }
     }
 
-    @Override
     public void start() {
         displayMessage(displayPlayerName());
         messageField.toBack();
@@ -114,7 +111,6 @@ public class Controller implements Initializable, GameStarter {
         start();
     }
 
-    @Override
     public void displayWinner() {
         messageField.setText((game.getCurrentPlayer() + " wins").toUpperCase());
         messageField.addEventHandler(MouseEvent.MOUSE_PRESSED, this::resetWithMouseClicked);
@@ -216,7 +212,6 @@ public class Controller implements Initializable, GameStarter {
         return cache;
     }
 
-    @Override
     public Game getGame() {
         return game;
     }
