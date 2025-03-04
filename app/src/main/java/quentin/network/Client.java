@@ -6,17 +6,17 @@ import quentin.SettingHandler;
 
 public class Client implements Callable<Socket> {
 
-    private final UDPClient client;
+    private final UdpClient client;
     private final String username;
 
     public Client() {
-        client = new UDPClient();
+        client = new UdpClient();
         SettingHandler settingHandler = new SettingHandler();
         username = settingHandler.getUsername();
     }
 
     public Socket call() {
-        TCPClient tcpClient = new TCPClient(client.call());
+        TCPClient tcpClient = new TCPClient(client.run());
         return tcpClient.start();
     }
 

@@ -25,6 +25,12 @@ class ServerTest {
     @Test
     void testCodeIsDifferentOnEachCall() {
         String code1 = Server.generateRandomCode();
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         String code2 = Server.generateRandomCode();
         assertNotEquals(
                 code1,
