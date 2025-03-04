@@ -1,8 +1,11 @@
 package quentin.network;
 
+import java.net.DatagramSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Random;
 import java.util.concurrent.Callable;
+
 import quentin.SettingHandler;
 
 public class Server implements Callable<Socket> {
@@ -20,10 +23,16 @@ public class Server implements Callable<Socket> {
 
     @Override
     public Socket call() {
-        UDPServer udpServer = new UDPServer(username, tcpPort);
-        udpServer.run();
-        TCPServer tcpServer = new TCPServer(tcpPort, codeForClientAuth);
-        return tcpServer.start();
+        try (DatagramSocket socket = new DatagramSocket()) {
+
+            UdpServer udpServer = new UdpServer(username, tcpPort);
+            udpServer.run();
+            TCPServer tcpServer = new TCPServer(tcpPort, codeForClientAuth);
+            return tcpServer.start();
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static String generateRandomCode() {

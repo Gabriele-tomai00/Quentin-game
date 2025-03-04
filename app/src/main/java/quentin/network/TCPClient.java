@@ -4,12 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner;
 
 public class TCPClient {
     private final int port;
-    private final String address;
+    private final InetAddress address;
     private ClientAuthState authState = ClientAuthState.NOT_YET_AUTHENTICATED;
 
     public TCPClient(ServerInfo info) {

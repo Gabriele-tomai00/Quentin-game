@@ -28,10 +28,9 @@ public class CorrectAddressGetter {
                     }
                 }
             }
-            return null;
         } catch (SocketException e) {
-            System.err.println("Error in retrieving IP address");
-            return null;
+            e.printStackTrace();
         }
+        return null;
     }
 }

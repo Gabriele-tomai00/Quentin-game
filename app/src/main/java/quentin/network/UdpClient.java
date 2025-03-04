@@ -1,42 +1,32 @@
 package quentin.network;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 
-public class UDPClient {
+public class UdpClient {
     private static final int UDP_SERVER_PORT = 9876;
     private boolean discovery = true;
     private final String clientAddress;
 
-    public UDPClient() {
+    public UdpClient() {
         clientAddress = CorrectAddressGetter.getLocalIpAddress();
     }
 
-    public ServerInfo call() {
+    public ServerInfo run() {
         System.out.println("address of udp client: " + clientAddress);
-        try {
-            InetAddress localAddress = InetAddress.getByName(clientAddress);
-            SocketAddress bindAddress = new InetSocketAddress(localAddress, 0);
-            try (DatagramSocket clientSocket = new DatagramSocket(bindAddress)) {
-                System.out.println("C: client discovery started using address: " + clientAddress);
-                clientSocket.setBroadcast(true);
-                return handleDiscovery(clientSocket);
-            }
-        } catch (Exception e) {
-            System.err.println("Unexpected error in udp client discovery");
-        }
-        return null;
-    }
+        try (DatagramSocket clientSocket =
+                new DatagramSocket(
+                        new InetSocketAddress(InetAddress.getByName(clientAddress), 0))) {
+            System.out.println("C: client discovery started using address: " + clientAddress);
+            clientSocket.setBroadcast(true);
 
-    private ServerInfo handleDiscovery(DatagramSocket clientSocket) throws InterruptedException {
-        byte[] sendBuffer = "Requesting server information".getBytes();
-        byte[] receiveBuffer = new byte[1024];
-        while (discovery) {
-            try {
+            byte[] sendBuffer = "Requesting server information".getBytes();
+            byte[] receiveBuffer = new byte[1024];
+            while (discovery) {
                 InetAddress broadcastAddress = InetAddress.getByName("255.255.255.255");
                 DatagramPacket sendPacket =
                         new DatagramPacket(
@@ -56,11 +46,11 @@ public class UDPClient {
                 clientSocket.receive(receivePacket);
 
                 return ServerInfo.fromBytes(receivePacket.getData());
-            } catch (SocketTimeoutException e) {
-                // do nothing
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+        } catch (SocketTimeoutException e) {
+            // do nothing
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }
