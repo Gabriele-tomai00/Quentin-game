@@ -2,10 +2,10 @@ package quentin.network;
 
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
 import quentin.SettingHandler;
 import quentin.exceptions.InvalidCellValuesException;
 import quentin.exceptions.MoveException;
@@ -32,19 +32,13 @@ public class NetworkStarter {
                     case "exit" -> {
                         return;
                     }
-                    case "getusername", "getu" ->
-                            System.out.println(
-                                    "You current username is: "
-                                            + settingHandler.getUsername()
-                                            + "\n");
-                    case "getport", "getp" ->
-                            System.out.println(
-                                    "You current username is: " + settingHandler.getPort() + "\n");
+                    case "getusername", "getu" -> System.out.println(settingHandler.getUsername());
+                    case "getport", "getp" -> System.out.println(settingHandler.getPort());
                     case "setusername", "setu" -> setUsername(scanner);
                     case "setport", "setp" -> setTCPport(scanner);
-                    case "ss", "startserver", "starts" -> startServer();
+                    case "ss", "startserver" -> startServer();
                     case "stop" -> stop();
-                    case "sc", "startclient", "startc" -> startClient();
+                    case "sc", "startclient" -> startClient();
                     default -> {
                         break;
                     }
@@ -107,28 +101,29 @@ public class NetworkStarter {
         Server server = new Server(new SettingHandler());
         executor = Executors.newSingleThreadExecutor();
         Future<Socket> future = executor.submit(server);
-        //    NetworkHandler handler = new NetworkHandler(future.get(), new OnlineGame(new
+        try {
+            future.get();
+        } catch (ExecutionException | InterruptedException e) {
+            Thread.currentThread().interrupt();
+            e.printStackTrace();
+        }
+        // NetworkHandler handler = new NetworkHandler(future.get(), new OnlineGame(new
         // Player(BoardPoint.BLACK)));
-        //    new Thread(handler).start();
+        // new Thread(handler).start();
     }
 
     private void startClient() {
         Client client = new Client();
         executor.submit(client);
-        //    TODO implement client start
+        // TODO implement client start
     }
 
     private void stop() {
-        executor.shutdown();
-        executor.shutdownNow();
-    }
-
-    private void sleepSafely(long millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            System.err.println("Thread interrupted while waiting for client" + " authentication");
+        if (executor == null) {
+            System.err.println("No process is running");
+        } else {
+            executor.shutdown();
+            executor.shutdownNow();
         }
     }
 }
