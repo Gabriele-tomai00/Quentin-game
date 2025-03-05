@@ -7,11 +7,11 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class TCPServer {
+public class TcpServer {
   private final String password;
   private final int port;
 
-  public TCPServer(int port, String password) {
+  public TcpServer(int port, String password) {
     this.port = port;
     this.password = password;
   }
