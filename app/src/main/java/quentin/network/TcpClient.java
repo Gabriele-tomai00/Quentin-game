@@ -6,18 +6,18 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class TcpClient {
   private final int port;
-  private final InetAddress address;
-  private ClientAuthState authState = ClientAuthState.NOT_YET_AUTHENTICATED;
   private Scanner scanner;
+  private final InetAddress address;
+  private boolean authenticating;
 
-  public TcpClient(ServerInfo info) throws UnknownHostException {
-    address = InetAddress.getByName(info.address());
-    port = info.port();
+  public TcpClient(int port, InetAddress address) {
+    this.address = address;
+    this.port = port;
+    authenticating = true;
   }
 
   public Socket start() {
@@ -27,7 +27,7 @@ public class TcpClient {
       Socket socket = new Socket(address, port);
       try (PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
           BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-        while (authState != ClientAuthState.AUTHENTICATED) {
+        while (authenticating) {
           System.out.println("password > ");
           String password = scanner.nextLine()
                                    .trim();
@@ -38,11 +38,8 @@ public class TcpClient {
           out.println(password);
           String message = in.readLine();
           if (message.equals("SERVER OK")) {
-            authState = ClientAuthState.AUTHENTICATED;
-          } else if (message.equals("SERVER ERR")) {
-            authState = ClientAuthState.FAILED_AUTHENTICATION;
-            throw new RuntimeException("Password was inputted incorrectly");
-          }
+            authenticating = false;
+          } else if (message.equals("SERVER ERR")) { throw new RuntimeException("Password was inputted incorrectly"); }
         }
         return socket;
       }

@@ -1,4 +1,4 @@
-package quentin;
+package quentin.network;
 
 // JUnit 5
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -6,8 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test; // Test of JUnit 5
-
-import quentin.network.Server;
 
 class ServerTest {
 

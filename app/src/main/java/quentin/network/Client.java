@@ -8,21 +8,16 @@ import quentin.SettingHandler;
 
 public class Client implements Callable<Socket> {
 
-  private final UdpClient client;
-  private final String username;
+  private final SettingHandler handler;
 
   public Client() {
-    client = new UdpClient();
-    SettingHandler settingHandler = new SettingHandler();
-    username = settingHandler.getUsername();
+    handler = new SettingHandler();
   }
 
   public Socket call() throws UnknownHostException {
-    TcpClient tcpClient = new TcpClient(client.run());
+    UdpClient udpClient = new UdpClient(handler.getPort(), handler.getUsername());
+    NetworkInfo info = udpClient.run();
+    TcpClient tcpClient = new TcpClient(handler.getPort(), info.address());
     return tcpClient.start();
-  }
-
-  public void stop() {
-    client.stop();
   }
 }

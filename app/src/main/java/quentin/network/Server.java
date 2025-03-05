@@ -8,22 +8,17 @@ import quentin.SettingHandler;
 
 public class Server implements Callable<Socket> {
 
-  private final String codeForClientAuth;
-  private final String username;
-  private final int tcpPort;
+  private final SettingHandler handler;
 
-  public Server() {
-    codeForClientAuth = generateRandomCode(System.currentTimeMillis());
-    SettingHandler settingHandler = new SettingHandler();
-    username = settingHandler.getUsername();
-    tcpPort = settingHandler.getPort();
+  public Server(SettingHandler handler) {
+    this.handler = handler;
   }
 
   @Override
   public Socket call() {
-    UdpServer udpServer = new UdpServer(username, tcpPort);
+    UdpServer udpServer = new UdpServer(handler.getUsername(), handler.getPort());
     udpServer.run();
-    TcpServer tcpServer = new TcpServer(tcpPort, codeForClientAuth);
+    TcpServer tcpServer = new TcpServer(handler.getPort(), generateRandomCode(System.currentTimeMillis()));
     return tcpServer.start();
   }
 

@@ -5,6 +5,7 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
 import quentin.SettingHandler;
 import quentin.exceptions.InvalidCellValuesException;
 import quentin.exceptions.MoveException;
@@ -103,7 +104,7 @@ public class NetworkStarter {
     }
 
     private void startServer() {
-        Server server = new Server();
+        Server server = new Server(new SettingHandler());
         executor = Executors.newSingleThreadExecutor();
         Future<Socket> future = executor.submit(server);
         //    NetworkHandler handler = new NetworkHandler(future.get(), new OnlineGame(new

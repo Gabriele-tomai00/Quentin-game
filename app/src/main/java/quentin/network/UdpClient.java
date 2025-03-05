@@ -8,34 +8,37 @@ import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
 
 public class UdpClient {
-  private static final int UDP_SERVER_PORT = 9876;
   private boolean discovery = true;
   private final String clientAddress;
+  private final int serverPort;
+  private String username;
 
-  public UdpClient() {
+  public UdpClient(int serverPort, String username) {
+    this.serverPort = serverPort;
+    this.username = username;
     clientAddress = CorrectAddressGetter.getLocalIpAddress();
   }
 
-  public ServerInfo run() {
+  public NetworkInfo run() {
     while (discovery) {
-//    System.out.println("address of udp client: " + clientAddress);
-      try (DatagramSocket clientSocket = new DatagramSocket(
-          new InetSocketAddress(InetAddress.getByName(clientAddress), 0))) {
+      try (DatagramSocket clientSocket = new DatagramSocket(new InetSocketAddress(InetAddress.getByName(clientAddress),
+                                                                                  0))) {
         clientSocket.setBroadcast(true);
-
-        byte[] buffer = "GET INFO".getBytes();
+        String message = InetAddress.getLocalHost()
+                                    .toString()
+            + " - " + username;
+        byte[] buffer = message.getBytes();
         InetAddress broadcastAddress = InetAddress.getByName("255.255.255.255");
-        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, broadcastAddress, UDP_SERVER_PORT);
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, broadcastAddress, serverPort);
         clientSocket.send(packet);
-
-//        System.out.println("Broadcast request sent (to: " + broadcastAddress + " port: " + UDP_SERVER_PORT + ")");
-
         buffer = new byte[1024];
         DatagramPacket recPacket = new DatagramPacket(buffer, buffer.length);
         clientSocket.setSoTimeout(1000);
         clientSocket.receive(recPacket);
-        String info = new String(recPacket.getData(), 0, recPacket.getLength());
-        return ServerInfo.fromString(info);
+
+        NetworkInfo info = NetworkInfo.fromString(new String(recPacket.getData(), 0, recPacket.getLength()));
+        System.out.println("Server found: " + info);
+        return info;
       } catch (SocketTimeoutException e) {
         // do nothing
       } catch (IOException e) {

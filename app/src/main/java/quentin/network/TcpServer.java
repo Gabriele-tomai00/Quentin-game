@@ -35,7 +35,8 @@ public class TcpServer {
             return socket;
           }
         }
-      }out.println("SERVER ERR");
+      }
+      out.println("SERVER ERR");
     } catch (IOException e) {
       e.printStackTrace();
     }

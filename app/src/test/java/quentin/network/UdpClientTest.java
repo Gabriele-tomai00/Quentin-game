@@ -17,12 +17,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class UdpClientTest {
+  private static final int PORT = 2000;
   private static UdpClient client;
-  private static Future<ServerInfo> submit;
+  private static Future<NetworkInfo> submit;
 
   @BeforeAll
   static void startClient() {
-    client = new UdpClient();
+    client = new UdpClient(PORT, "test");
     ExecutorService executor = Executors.newSingleThreadExecutor();
     submit = executor.submit(client::run);
   }
@@ -34,20 +35,17 @@ class UdpClientTest {
 
   @Test
   void testClient() throws IOException, InterruptedException, ExecutionException {
-    try (DatagramSocket datagramSocket = new DatagramSocket(9876)) {
+    try (DatagramSocket datagramSocket = new DatagramSocket(PORT)) {
       byte[] buff = new byte[1024];
       DatagramPacket packet = new DatagramPacket(buff, buff.length);
       datagramSocket.receive(packet);
-      ServerInfo info = new ServerInfo(InetAddress.getLocalHost()
-                                                  .toString(),
-          9876, "ca");
-      byte [] sendBuff = info.toBytes();
+      NetworkInfo info = new NetworkInfo(InetAddress.getLocalHost(), "serverTest");
+      byte[] sendBuff = info.toBytes();
       packet = new DatagramPacket(sendBuff, sendBuff.length, packet.getAddress(), packet.getPort());
       datagramSocket.send(packet);
 //      could use a future to obtain data from client -> client = callable
-      ServerInfo infoReceived = submit.get();
+      NetworkInfo infoReceived = submit.get();
       assertAll(() -> assertEquals(info.address(), infoReceived.address()),
-                () -> assertEquals(info.port(), infoReceived.port()),
                 () -> assertEquals(info.username(), infoReceived.username()));
     }
   }

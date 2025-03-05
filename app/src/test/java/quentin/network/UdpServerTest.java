@@ -35,7 +35,7 @@ class UdpServerTest {
       packet = new DatagramPacket(buff, buff.length);
       datagramSocket.receive(packet);
       String data = new String(packet.getData(), 0, packet.getLength());
-      assertEquals(data, "/192.168.1.197 - 9876 - default");
+      assertEquals("10.110.40.198 - default", data);
     }
   }
 }
