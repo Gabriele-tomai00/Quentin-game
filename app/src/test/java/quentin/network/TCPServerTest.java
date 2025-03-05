@@ -18,12 +18,12 @@ import org.junit.jupiter.api.Test;
 
 class TCPServerTest {
 
-  private static TCPServer tcpServer;
+  private static TcpServer tcpServer;
   private static Future<Socket> submit;
 
   @BeforeAll
   static void startServer() {
-    tcpServer = new TCPServer(2000, "pass");
+    tcpServer = new TcpServer(2000, "pass");
     ExecutorService executor = Executors.newSingleThreadExecutor();
     submit = executor.submit(tcpServer::start);
   }
