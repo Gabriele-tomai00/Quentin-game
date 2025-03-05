@@ -21,23 +21,23 @@ public class UdpServer {
   }
 
   public void run() {
-    try (DatagramSocket socket = new DatagramSocket(9876)) {
+    while (discovery) {
+    try (DatagramSocket socket = new DatagramSocket(UDP_SERVER_PORT)) {
 //      System.out.println("UDP Server is listening: ip " + address + " port " + UDP_SERVER_PORT);
       socket.setSoTimeout(1000);
       byte[] buffer = new byte[1024];
-      while (discovery) {
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         socket.receive(packet);
-        ServerInfo serverInfo = new ServerInfo(InetAddress.ofLiteral(address), tcpPort, username);
+        ServerInfo serverInfo = new ServerInfo(InetAddress.ofLiteral(address).toString(), tcpPort, username);
         buffer = serverInfo.toBytes();
         DatagramPacket sendPacket = new DatagramPacket(buffer, buffer.length, packet.getAddress(), packet.getPort());
         socket.send(sendPacket);
-      }
     } catch (SocketTimeoutException e) {
       // do nothing
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
   }
 
   public void stop() {
