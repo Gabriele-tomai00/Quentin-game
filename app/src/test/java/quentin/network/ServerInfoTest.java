@@ -12,7 +12,7 @@ class ServerInfoTest {
     void testToString() throws UnknownHostException {
         InetAddress host = InetAddress.getLocalHost();
         NetworkInfo info = new NetworkInfo(host, "aleq");
-        String expectedString = "10.110.40.198 - aleq";
+        String expectedString = InetAddress.getLocalHost().getHostAddress() + " - aleq";
         assertTrue(info.toString().contains(expectedString));
     }
 }
