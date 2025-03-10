@@ -22,7 +22,7 @@ public class GameStarter implements Runnable {
                 break;
             }
             if (!game.canPlayerPlay()) {
-                game.changeCurrentPlayer();
+                processCannotPlay();
             } else {
                 do {
                     displayMessage(String.format("%s > %n", game.getCurrentPlayer()));
@@ -32,9 +32,13 @@ public class GameStarter implements Runnable {
                     displayWinner();
                     break;
                 }
-                game.changeCurrentPlayer();
+                processCannotPlay();
             }
         }
+    }
+
+    public void processCannotPlay() {
+      game.changeCurrentPlayer();
     }
 
     public boolean processInput(String command) {
