@@ -7,7 +7,6 @@ import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 
 public class UdpServer {
-    private boolean discovery;
     private final String username;
     private final int port;
     private final String address;
@@ -16,11 +15,10 @@ public class UdpServer {
         username = user;
         this.port = port;
         address = CorrectAddressGetter.getLocalIpAddress();
-        discovery = true;
     }
 
     public void run() {
-        while (discovery) {
+        while (!Thread.currentThread().isInterrupted()) {
             try (DatagramSocket socket = new DatagramSocket(port)) {
                 System.out.println("UDP Server is listening: ip " + address + " port " + port);
                 socket.setSoTimeout(1000);
@@ -44,6 +42,6 @@ public class UdpServer {
     }
 
     public void stop() {
-        discovery = false;
+        Thread.currentThread().interrupt();
     }
 }
