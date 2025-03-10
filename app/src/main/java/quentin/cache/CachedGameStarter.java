@@ -1,7 +1,6 @@
 package quentin.cache;
 
 import java.time.LocalDateTime;
-
 import quentin.game.GameStarter;
 import quentin.game.LocalGame;
 
@@ -14,26 +13,25 @@ public class CachedGameStarter extends GameStarter {
     public CachedGameStarter() {
         super();
         this.cache = new Cache<>();
-        this.cache.saveLog(new GameLog(LocalDateTime.now(), new LocalGame()));
+        this.game = new LocalGame();
     }
 
     public CachedGameStarter(Cache<GameLog> cache) {
         super();
         if (cache != null && cache.getMemorySize() > 0) {
-            game = cache.getLog().game();
+            game = new LocalGame(cache.getLog().game());
             this.cache = cache;
         } else {
             this.cache = new Cache<>();
-            this.cache.saveLog(new GameLog(LocalDateTime.now(), new LocalGame(game)));
             game = new LocalGame();
         }
     }
 
-    //  @Override
-    //  public void start() {
-    //    super.start();
-    //    if (gameFinished) { CacheHandler.saveCache(cache); }
-    //  }
+    // @Override
+    // public void start() {
+    // super.start();
+    // if (gameFinished) { CacheHandler.saveCache(cache); }
+    // }
 
     @Override
     public boolean processInput(String command) {
