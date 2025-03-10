@@ -9,20 +9,20 @@ import java.net.Socket;
 
 public class FakeSocket extends Socket {
 
-  private final PipedOutputStream out = new PipedOutputStream();
-  private final PipedInputStream in = new PipedInputStream();
+    private final PipedOutputStream out = new PipedOutputStream();
+    private final PipedInputStream in = new PipedInputStream();
 
-  public FakeSocket() throws IOException {
-    out.connect(in);
-  }
+    public FakeSocket() throws IOException {
+        out.connect(in);
+    }
 
-  @Override
-  public InputStream getInputStream() throws IOException {
-    return in;
-  }
+    @Override
+    public InputStream getInputStream() throws IOException {
+        return in;
+    }
 
-  @Override
-  public OutputStream getOutputStream() throws IOException {
-    return out;
-  }
+    @Override
+    public OutputStream getOutputStream() throws IOException {
+        return out;
+    }
 }

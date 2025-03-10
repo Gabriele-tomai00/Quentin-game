@@ -18,26 +18,30 @@ public class UdpServer {
     }
 
     public void run() {
-        while (!Thread.currentThread().isInterrupted()) {
-            try (DatagramSocket socket = new DatagramSocket(port)) {
-                System.out.println("UDP Server is listening: ip " + address + " port " + port);
-                socket.setSoTimeout(1000);
-                byte[] buffer = new byte[1024];
-                DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-                socket.receive(packet);
-                String message = new String(packet.getData(), 0, packet.getLength());
-                System.out.println("Connection from: " + message);
-                NetworkInfo serverInfo = new NetworkInfo(InetAddress.ofLiteral(address), username);
-                buffer = serverInfo.getBytes();
-                DatagramPacket sendPacket =
-                        new DatagramPacket(
-                                buffer, buffer.length, packet.getAddress(), packet.getPort());
-                socket.send(sendPacket);
-            } catch (SocketTimeoutException e) {
-                // do nothing
-            } catch (IOException e) {
-                e.printStackTrace();
+        try (DatagramSocket socket = new DatagramSocket(port)) {
+            System.out.println("UDP Server is listening: ip " + address + " port " + port);
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    socket.setSoTimeout(1000);
+                    byte[] buffer = new byte[1024];
+                    DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+                    socket.receive(packet);
+                    String message = new String(packet.getData(), 0, packet.getLength());
+                    System.out.println("Connection from: " + message);
+                    NetworkInfo serverInfo =
+                            new NetworkInfo(InetAddress.ofLiteral(address), username);
+                    buffer = serverInfo.getBytes();
+                    DatagramPacket sendPacket =
+                            new DatagramPacket(
+                                    buffer, buffer.length, packet.getAddress(), packet.getPort());
+                    socket.send(sendPacket);
+                    break;
+                } catch (SocketTimeoutException e) {
+                    // do nothing
+                }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

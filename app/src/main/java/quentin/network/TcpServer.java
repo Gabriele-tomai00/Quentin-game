@@ -17,8 +17,8 @@ public class TcpServer {
     }
 
     public Socket start() {
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
-            Socket socket = serverSocket.accept();
+        try {
+            Socket socket = getConnection();
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             System.out.println("CODE: " + password);
@@ -26,8 +26,8 @@ public class TcpServer {
             for (int attempt = 0; attempt < 3; attempt++) {
                 message = in.readLine();
                 if (message != null) {
-                    if (!message.equals(password)) {
-                        //            System.out.println("Invalid password, retry (attempt " +
+                    if (!message.contains(password)) {
+                        // System.out.println("Invalid password, retry (attempt " +
                         // (attempt + 1) + "/3)");
                         out.println("ACCESS DENIED");
                     } else {
@@ -42,5 +42,11 @@ public class TcpServer {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public Socket getConnection() throws IOException {
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            return serverSocket.accept();
+        }
     }
 }

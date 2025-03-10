@@ -6,10 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import quentin.StreamUtility;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
@@ -24,7 +22,6 @@ class GameStarterTest {
         System.setOut(new PrintStream(output));
     }
 
-    
     @Test
     void testBlackWin() {
         StringBuilder builder = new StringBuilder();
@@ -78,6 +75,26 @@ class GameStarterTest {
                         assertTrue(
                                 output.toString()
                                         .contains(
-                                                "forward or f             : go forward one move")));
+                                                "forward or f             : go forward one move")),
+                () -> assertTrue(output.toString().contains("Available commands:\n")),
+                () ->
+                        assertTrue(
+                                output.toString()
+                                        .contains(
+                                                "  exit                     : Quits the game and"
+                                                        + " exits the program    \n")),
+                () ->
+                        assertTrue(
+                                output.toString()
+                                        .contains(
+                                                "  help                     : Shows this help      "
+                                                        + "                   \n")),
+                () ->
+                        assertTrue(
+                                output.toString()
+                                        .contains(
+                                                "  <coordinates>            : Makes a move."
+                                                        + " Examples: A1 b2 C5 (wrong examples: 5A,"
+                                                        + " 24)")));
     }
 }
