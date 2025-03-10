@@ -4,11 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import quentin.StreamUtility;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
 
@@ -22,11 +24,7 @@ class GameStarterTest {
         System.setOut(new PrintStream(output));
     }
 
-    void provideInput(String data) {
-        ByteArrayInputStream is = new ByteArrayInputStream(data.getBytes());
-        System.setIn(is);
-    }
-
+    
     @Test
     void testBlackWin() {
         StringBuilder builder = new StringBuilder();
@@ -34,7 +32,7 @@ class GameStarterTest {
             builder.append("a" + row + "\n");
             builder.append("c" + row + "\n");
         }
-        provideInput(builder.toString());
+        StreamUtility.provideInput(builder.toString());
         CachedGameStarter starter = new CachedGameStarter();
         starter.run();
         assertAll(
@@ -52,7 +50,7 @@ class GameStarterTest {
     @Test
     void testWrongMove() {
         String commands = "a1\na1\nexit\n";
-        provideInput(commands);
+        StreamUtility.provideInput(commands);
         CachedGameStarter starter = new CachedGameStarter();
         starter.run();
         assertTrue(outputErr.toString().contains("Cell (a, 1) is not empty!"));
@@ -61,7 +59,7 @@ class GameStarterTest {
     @Test
     void testBackAndForward() {
         String commands = "a1\na2\nback\nforward\nexit\n";
-        provideInput(commands);
+        StreamUtility.provideInput(commands);
         CachedGameStarter starter = new CachedGameStarter();
         starter.run();
         assertEquals(BoardPoint.WHITE, starter.getGame().getBoard().getPoint(new Cell(1, 0)));

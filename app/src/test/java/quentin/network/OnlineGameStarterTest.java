@@ -4,13 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import quentin.StreamUtility;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
 import quentin.game.Player;
@@ -19,7 +19,7 @@ class OnlineGameStarterTest {
 
   private ByteArrayOutputStream outputErr = new ByteArrayOutputStream();
   private ByteArrayOutputStream output = new ByteArrayOutputStream();
-  private NetworkHandler handler = new NetworkHandler(null, null) {
+  private NetworkHandler fakeHandler = new NetworkHandler(null, null) {
     @Override
     public synchronized void sendCommands(String command) {
       // do nothing
@@ -32,16 +32,11 @@ class OnlineGameStarterTest {
     System.setOut(new PrintStream(output));
   }
 
-  void provideInput(String data) {
-    ByteArrayInputStream is = new ByteArrayInputStream(data.getBytes());
-    System.setIn(is);
-  }
-
   @Test
   void testPieRule() {
     String commands = "pie\nexit\n";
-    provideInput(commands);
-    OnlineGameStarter starter = new OnlineGameStarter(handler, new OnlineGame(new Player(BoardPoint.WHITE)));
+    StreamUtility.provideInput(commands);
+    OnlineGameStarter starter = new OnlineGameStarter(fakeHandler, new OnlineGame(new Player(BoardPoint.WHITE)));
     starter.run();
     BoardPoint color = starter.getGame()
                               .getCurrentPlayer()
@@ -52,8 +47,8 @@ class OnlineGameStarterTest {
   @Test
   void testPieRuleNotPossible() {
     String commands = "pie\nexit\n";
-    provideInput(commands);
-    OnlineGameStarter starter = new OnlineGameStarter(handler, new OnlineGame(new Player(BoardPoint.BLACK)));
+    StreamUtility.provideInput(commands);
+    OnlineGameStarter starter = new OnlineGameStarter(fakeHandler, new OnlineGame(new Player(BoardPoint.BLACK)));
     starter.run();
     BoardPoint color = starter.getGame()
                               .getCurrentPlayer()
@@ -66,12 +61,13 @@ class OnlineGameStarterTest {
   @Test
   void placeOneTileTest() {
     String commands = "a1\nexit\n";
-    provideInput(commands);
-    OnlineGameStarter starter = new OnlineGameStarter(handler, new OnlineGame(new Player(BoardPoint.BLACK)));
+    StreamUtility.provideInput(commands);
+    OnlineGameStarter starter = new OnlineGameStarter(fakeHandler, new OnlineGame(new Player(BoardPoint.BLACK)));
     starter.run();
     BoardPoint cell = BoardPoint.BLACK;
     assertEquals(cell, starter.getGame()
                               .getBoard()
                               .getPoint(new Cell(0, 0)));
   }
+
 }

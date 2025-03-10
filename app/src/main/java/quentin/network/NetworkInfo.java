@@ -12,7 +12,7 @@ public record NetworkInfo(InetAddress address, String username) {
         return new NetworkInfo(InetAddress.ofLiteral(parts[0]), parts[1]);
     }
 
-    public byte[] toBytes() {
+    public byte[] getBytes() {
         return this.toString().getBytes();
     }
 

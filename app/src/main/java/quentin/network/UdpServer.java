@@ -28,7 +28,7 @@ public class UdpServer {
                 String message = new String(packet.getData(), 0, packet.getLength());
                 System.out.println("Connection from: " + message);
                 NetworkInfo serverInfo = new NetworkInfo(InetAddress.ofLiteral(address), username);
-                buffer = serverInfo.toBytes();
+                buffer = serverInfo.getBytes();
                 DatagramPacket sendPacket =
                         new DatagramPacket(
                                 buffer, buffer.length, packet.getAddress(), packet.getPort());
