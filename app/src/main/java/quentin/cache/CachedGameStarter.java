@@ -1,6 +1,7 @@
 package quentin.cache;
 
 import java.time.LocalDateTime;
+
 import quentin.game.GameStarter;
 import quentin.game.LocalGame;
 
@@ -8,11 +9,12 @@ public class CachedGameStarter extends GameStarter {
 
     private final Cache<GameLog> cache;
     private boolean gameFinished = true;
+    private LocalGame game;
 
     public CachedGameStarter() {
         super();
         this.cache = new Cache<>();
-        this.cache.saveLog(new GameLog(LocalDateTime.now(), new LocalGame(game)));
+        this.cache.saveLog(new GameLog(LocalDateTime.now(), new LocalGame()));
     }
 
     public CachedGameStarter(Cache<GameLog> cache) {
