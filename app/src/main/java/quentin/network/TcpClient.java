@@ -10,7 +10,6 @@ import java.util.Scanner;
 
 public class TcpClient {
     private final int port;
-    private Scanner scanner;
     private final InetAddress address;
     private boolean authenticating;
 
@@ -21,7 +20,7 @@ public class TcpClient {
     }
 
     public Socket start() {
-        scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
 
         try {
             Socket socket = new Socket(address, port);
@@ -35,7 +34,7 @@ public class TcpClient {
                         return null;
                     }
                     if ((password.length() != 5 || !password.matches("\\d{5}"))) {
-                        System.out.println("Invalid password, retry\n");
+                        System.out.println("Invalid password, retry");
                     }
                     out.println(password);
                     String message = in.readLine();

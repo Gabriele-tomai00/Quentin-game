@@ -6,10 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import quentin.StreamUtility;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
@@ -24,7 +22,6 @@ class GameStarterTest {
         System.setOut(new PrintStream(output));
     }
 
-    
     @Test
     void testBlackWin() {
         StringBuilder builder = new StringBuilder();

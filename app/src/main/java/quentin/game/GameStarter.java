@@ -38,7 +38,7 @@ public class GameStarter implements Runnable {
     }
 
     public void processCannotPlay() {
-      game.changeCurrentPlayer();
+        game.changeCurrentPlayer();
     }
 
     public boolean processInput(String command) {

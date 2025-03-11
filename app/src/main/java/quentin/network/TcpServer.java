@@ -26,7 +26,7 @@ public class TcpServer {
             for (int attempt = 0; attempt < 3; attempt++) {
                 message = in.readLine();
                 if (message != null) {
-                    if (!message.equals(password)) {
+                    if (!message.contains(password)) {
                         //            System.out.println("Invalid password, retry (attempt " +
                         // (attempt + 1) + "/3)");
                         out.println("ACCESS DENIED");

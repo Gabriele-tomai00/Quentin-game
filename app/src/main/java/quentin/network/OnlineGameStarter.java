@@ -19,7 +19,7 @@ public class OnlineGameStarter extends GameStarter {
   @Override
   public synchronized boolean processInput(String command) {
     return switch (command) {
-    case "pie"  -> {
+    case "pie" -> {
       if (canPlayPie) {
         game.applyPieRule();
         handler.sendCommands(command);
@@ -34,15 +34,17 @@ public class OnlineGameStarter extends GameStarter {
       setContinueGame(false);
       yield true;
     }
-    default     -> super.processInput(command);
+    default -> super.processInput(command);
     };
   }
 
   @Override
   public void makeMove(String position) {
-    if (canPlayPie) { canPlayPie = false; }
-    super.makeMove(position);
-    handler.sendCommands(position);
+    if (!handler.isWaiting()) {
+      if (canPlayPie) { canPlayPie = false; }
+      super.makeMove(position);
+      handler.sendCommands(position);
+    }
   }
 
   @Override
