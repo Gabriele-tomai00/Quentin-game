@@ -18,7 +18,7 @@ class OnlineGameStarterTest {
     private ByteArrayOutputStream outputErr = new ByteArrayOutputStream();
     private ByteArrayOutputStream output = new ByteArrayOutputStream();
     private NetworkHandler fakeHandler =
-            new NetworkHandler(null, null) {
+            new NetworkHandler(null, new OnlineGame(new Player(BoardPoint.BLACK))) {
                 @Override
                 public synchronized void sendCommands(String command) {
                     // do nothing

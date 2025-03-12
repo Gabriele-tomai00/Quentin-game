@@ -1,11 +1,11 @@
 package quentin.network;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.Socket;
+import quentin.game.BoardPoint;
 import quentin.game.Cell;
 import quentin.game.MoveParser;
 
@@ -16,17 +16,18 @@ public class NetworkHandler implements Runnable {
     private boolean waiting;
 
     public NetworkHandler(Socket socket, OnlineGame game) {
-        super();
         this.socket = socket;
         this.game = game;
+        this.waiting = game.getCurrentPlayer().color() == BoardPoint.WHITE;
     }
 
     @Override
     public void run() {
-        try (BufferedReader br =
-                new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String received;
             while ((received = br.readLine()) != null) {
+                System.out.println("Please make your move");
                 synchronized (game) {
                     switch (received) {
                         case "exit" -> {
@@ -42,10 +43,11 @@ public class NetworkHandler implements Runnable {
                         default -> {
                             Cell cell = new MoveParser(received).parse();
                             game.place(cell);
+                            System.out.println(game.getBoard());
                         }
                     }
-                    waiting = false;
                 }
+                waiting = false;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -57,14 +59,14 @@ public class NetworkHandler implements Runnable {
     }
 
     public synchronized void sendCommands(String command) {
-        try (BufferedWriter bw =
-                new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
-            if (!isWaiting()) {
-                bw.write(command);
+        if (!isWaiting()) {
+            try {
+                PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
+                pw.println(command);
                 waiting = true;
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

@@ -12,7 +12,7 @@ import quentin.game.Player;
 public class NetworkStarter {
 
     private SettingHandler settingHandler = new SettingHandler();
-    private BoardPoint color = BoardPoint.BLACK;
+    private BoardPoint color;
     private ExecutorService executor;
 
     public void run() {
@@ -96,6 +96,7 @@ public class NetworkStarter {
     }
 
     private void startServer() {
+        color = BoardPoint.BLACK;
         Server server = new Server(new SettingHandler());
         Socket socket = server.call();
         start(socket);
@@ -103,21 +104,22 @@ public class NetworkStarter {
 
     private void startClient() {
         try {
+            color = BoardPoint.WHITE;
             Client client = new Client();
             Socket socket = client.call();
             start(socket);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        color = BoardPoint.WHITE;
     }
 
     private void start(Socket socket) {
         OnlineGame game = new OnlineGame(new Player(color));
+        assert color == game.getCurrentPlayer().color() : "Qualcosa è andato storto";
         NetworkHandler handler = new NetworkHandler(socket, game);
         OnlineGameStarter starter = new OnlineGameStarter(handler, game);
         executor = Executors.newSingleThreadExecutor();
-        executor.submit(handler);
+        //        executor.submit(handler);
         starter.run();
     }
 
