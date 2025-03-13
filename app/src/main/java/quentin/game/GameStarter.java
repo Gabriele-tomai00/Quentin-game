@@ -2,15 +2,14 @@ package quentin.game;
 
 import java.util.Scanner;
 
-public class GameStarter implements Runnable {
+public abstract class GameStarter implements Runnable {
     protected static final String CLEAR = "\033[H\033[2J";
-    private LocalGame game;
     private Scanner scanner;
-    private boolean continueGame = true;
+    private boolean continueGame;
 
     public GameStarter() {
-        game = new LocalGame();
         scanner = new Scanner(System.in);
+        continueGame = true;
     }
 
     @Override
@@ -21,11 +20,11 @@ public class GameStarter implements Runnable {
                 displayWinner();
                 break;
             }
-            if (!game.canPlayerPlay()) {
+            if (!getGame().canPlayerPlay()) {
                 processCannotPlay();
             } else {
                 do {
-                    displayMessage(String.format("%s > %n", game.getCurrentPlayer()));
+                    displayMessage(String.format("%s > %n", getGame().getCurrentPlayer()));
                 } while (!processInput(scanner.nextLine()));
                 display();
                 if (hasWon()) {
@@ -37,9 +36,7 @@ public class GameStarter implements Runnable {
         }
     }
 
-    public void processCannotPlay() {
-        game.changeCurrentPlayer();
-    }
+    public abstract void processCannotPlay();
 
     public boolean processInput(String command) {
         try {
@@ -70,8 +67,8 @@ public class GameStarter implements Runnable {
 
     public void makeMove(String position) {
         Cell cell = new MoveParser(position).parse();
-        game.place(cell);
-        game.coverTerritories(cell);
+        getGame().place(cell);
+        getGame().coverTerritories(cell);
     }
 
     public void showHelper() {
@@ -87,12 +84,10 @@ public class GameStarter implements Runnable {
     }
 
     public boolean hasWon() {
-        return game.hasWon(game.getCurrentPlayer());
+        return getGame().hasWon(getGame().getCurrentPlayer());
     }
 
-    public Game getGame() {
-        return game;
-    }
+    public abstract Game getGame();
 
     public void setContinueGame(boolean wantToContinue) {
         continueGame = wantToContinue;

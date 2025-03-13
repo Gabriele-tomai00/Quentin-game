@@ -1,7 +1,7 @@
 package quentin.network;
 
-import java.util.Scanner;
 import quentin.game.BoardPoint;
+import quentin.game.Game;
 import quentin.game.GameStarter;
 
 public class OnlineGameStarter extends GameStarter {
@@ -9,36 +9,12 @@ public class OnlineGameStarter extends GameStarter {
     private final NetworkHandler handler;
     private final OnlineGame game;
     private boolean canPlayPie;
-    private boolean continueGame = true;
-    private final Scanner scanner = new Scanner(System.in);
 
     public OnlineGameStarter(NetworkHandler handler, OnlineGame game) {
+        super();
         this.handler = handler;
         this.game = game;
         canPlayPie = game.getCurrentPlayer().color() != BoardPoint.BLACK;
-    }
-
-    @Override
-    public void run() {
-        display();
-        while (continueGame) {
-            if (hasWon()) {
-                displayWinner();
-                break;
-            }
-            if (!game.canPlayerPlay()) {
-                processCannotPlay();
-            } else {
-                do {
-                    displayMessage(String.format("%s > %n", game.getCurrentPlayer()));
-                } while (!processInput(scanner.nextLine()));
-                display();
-                if (hasWon()) {
-                    displayWinner();
-                    break;
-                }
-            }
-        }
     }
 
     @Override
@@ -70,7 +46,7 @@ public class OnlineGameStarter extends GameStarter {
                 canPlayPie = false;
             }
             super.makeMove(position);
-            handler.sendCommands(position);
+            handler.sendCommands(game.getBoard().toCompactString());
         } else {
             System.err.println("Waiting for opponents move");
         }
@@ -79,5 +55,10 @@ public class OnlineGameStarter extends GameStarter {
     @Override
     public void processCannotPlay() {
         handler.sendCommands("change");
+    }
+
+    @Override
+    public Game getGame() {
+        return game;
     }
 }

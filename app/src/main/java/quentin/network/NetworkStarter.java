@@ -115,11 +115,10 @@ public class NetworkStarter {
 
     private void start(Socket socket) {
         OnlineGame game = new OnlineGame(new Player(color));
-        assert color == game.getCurrentPlayer().color() : "Qualcosa è andato storto";
         NetworkHandler handler = new NetworkHandler(socket, game);
         OnlineGameStarter starter = new OnlineGameStarter(handler, game);
         executor = Executors.newSingleThreadExecutor();
-        //        executor.submit(handler);
+        executor.submit(handler);
         starter.run();
     }
 
