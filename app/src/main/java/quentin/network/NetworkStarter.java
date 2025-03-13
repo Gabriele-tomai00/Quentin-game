@@ -1,7 +1,7 @@
 package quentin.network;
 
+import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -70,7 +70,6 @@ public class NetworkStarter {
         String[][] commands = {
             {"exit", "Quits the game and exits the program"},
             {"help", "Shows this help"},
-            {"<coordinates>", "Makes a move. Examples: A1 b2 C5 (wrong examples: 5A, 24)"},
             {"setusername", "Set a username to be recognized by other players when playing online"},
             {
                 "setport",
@@ -84,7 +83,6 @@ public class NetworkStarter {
             },
             {"startserver or ss", "Starts a server to play with other players"},
             {"startclient or sc", "Starts a client to play with other players"},
-            {"start", "Starts the match after successful authentication"}
         };
         for (String[] strings : commands) {
             System.out.printf("  %-25s: %-40s%n", strings[0], strings[1]);
@@ -108,7 +106,7 @@ public class NetworkStarter {
             Client client = new Client();
             Socket socket = client.call();
             start(socket);
-        } catch (UnknownHostException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

@@ -33,11 +33,6 @@ public class OnlineGame implements Game {
         }
     }
 
-    public void updateBoard(GameBoard newBoard) {
-        updateLastMoves(newBoard);
-        setBoard(newBoard);
-    }
-
     public List<Cell> getLastMoves() {
         return lastMoves;
     }
@@ -50,10 +45,6 @@ public class OnlineGame implements Game {
     @Override
     public GameBoard getBoard() {
         return board;
-    }
-
-    public void setBoard(GameBoard board) {
-        this.board.setBoard(board);
     }
 
     public void applyPieRule() {
