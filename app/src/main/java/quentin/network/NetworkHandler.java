@@ -6,8 +6,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import quentin.game.BoardPoint;
-import quentin.game.Cell;
-import quentin.game.MoveParser;
 
 public class NetworkHandler implements Runnable {
 
@@ -41,8 +39,7 @@ public class NetworkHandler implements Runnable {
                                             + game.getCurrentPlayer());
                         }
                         default -> {
-                            Cell cell = new MoveParser(received).parse();
-                            game.place(cell);
+                            game.getBoard().fromCompactString(received);
                             System.out.println(game.getBoard());
                         }
                     }

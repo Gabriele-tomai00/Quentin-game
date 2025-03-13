@@ -19,9 +19,9 @@ public class UdpServer {
 
     public void run() {
         try (DatagramSocket socket = new DatagramSocket(port)) {
+            System.out.println("UDP Server is listening: ip " + address + " port " + port);
             while (!Thread.currentThread().isInterrupted()) {
                 try {
-                    System.out.println("UDP Server is listening: ip " + address + " port " + port);
                     socket.setSoTimeout(1000);
                     byte[] buffer = new byte[1024];
                     DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
