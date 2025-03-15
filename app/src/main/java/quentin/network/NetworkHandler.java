@@ -44,7 +44,7 @@ public class NetworkHandler implements Runnable {
                         }
                         default -> {
        Cell cell = new MoveParser(received).parse();
-                            game.place(cell);
+                            game.opponentPlaces(cell);
                             game.coverTerritories(cell);
                             System.out.println(game.getBoard());
                         }

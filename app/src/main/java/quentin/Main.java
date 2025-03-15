@@ -2,9 +2,11 @@ package quentin;
 
 import java.io.File;
 import java.util.Scanner;
+
+import javafx.application.Application;
 import quentin.cache.CacheHandler;
 import quentin.game.CachedGameStarter;
-import quentin.gui.GuiMain;
+import quentin.gui.GuiMain2;
 import quentin.network.NetworkStarter;
 
 public class Main {
@@ -96,6 +98,6 @@ public class Main {
     }
 
     public static void startGui(String... args) {
-        GuiMain.main(args);
+        Application.launch(GuiMain2.class);
     }
 }

@@ -93,9 +93,11 @@ public class OnlineController implements Initializable {
         game.coverTerritories(cell);
         if (game.hasWon(game.getCurrentPlayer())) { displayWinner(); }
         // dio lampione
-        int row = cell.row() + 'a';
-
-        handler.sendCommands(row + "" + cell.col() + 1);
+        int row = cell.col() + 'a';
+        String command = String.valueOf((char) row)
+                               .concat(cell.row() + 1 + "");
+        System.out.println(command);
+        handler.sendCommands(command);
         if (game.hasWon(game.getCurrentPlayer())) { displayWinner(); }
 
       } catch (MoveException e1) {
