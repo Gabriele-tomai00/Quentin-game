@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import quentin.StreamUtility;
 import quentin.game.BoardPoint;
+import quentin.game.CachedGameStarter;
 import quentin.game.Cell;
 
 class GameStarterTest {

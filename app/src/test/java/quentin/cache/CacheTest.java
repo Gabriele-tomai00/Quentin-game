@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
+import quentin.game.Board;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
-import quentin.game.GameBoard;
 import quentin.game.LocalGame;
 import quentin.game.Player;
 
@@ -42,9 +42,9 @@ class CacheTest {
 
     @Test
     void goBackOnce() {
-        GameBoard board1 = new GameBoard();
+        Board board1 = new Board();
         board1.placeStone(BoardPoint.BLACK, 4, 5);
-        GameBoard board2 = new GameBoard();
+        Board board2 = new Board();
         board2.setBoard(board1);
         board2.placeStone(BoardPoint.BLACK, 2, 3);
         game.place(new Cell(4, 5));
@@ -64,9 +64,9 @@ class CacheTest {
         cache.saveLog(new LocalGame(game));
         game.place(new Cell(2, 3));
         cache.saveLog(new LocalGame(game));
-        GameBoard board1 = new GameBoard();
+        Board board1 = new Board();
         board1.placeStone(BoardPoint.BLACK, 4, 5);
-        GameBoard board2 = new GameBoard();
+        Board board2 = new Board();
         board2.setBoard(board1);
         board2.placeStone(BoardPoint.BLACK, 2, 3);
         assertAll(
@@ -86,9 +86,9 @@ class CacheTest {
         game = new LocalGame(cache.goBack());
         game.place(new Cell(1, 1));
         cache.saveLog(new LocalGame(game));
-        GameBoard board1 = new GameBoard();
+        Board board1 = new Board();
         board1.placeStone(BoardPoint.BLACK, 4, 5);
-        GameBoard board2 = new GameBoard();
+        Board board2 = new Board();
         board2.setBoard(board1);
         board2.placeStone(BoardPoint.BLACK, 1, 1);
         assertAll(

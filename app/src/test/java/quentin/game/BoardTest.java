@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test; // Test of JUnit 5
 
 class BoardTest {
 
-    GameBoard board = new GameBoard();
+    Board board = new Board();
 
     @Test
     void testCorrectValuesInMatrix() {
@@ -36,7 +36,7 @@ class BoardTest {
         board.placeStone(BoardPoint.BLACK, 2, 3);
         board.placeStone(BoardPoint.BLACK, 4, 5);
         String expectedResult = "29B27B111";
-        GameBoard newBoard = new GameBoard();
+        Board newBoard = new Board();
         newBoard.fromCompactString(expectedResult);
         assertAll(
                 () -> assertEquals(expectedResult, board.toCompactString()),
@@ -52,7 +52,7 @@ class BoardTest {
         String expectedResult = board.toCompactString();
         assertEquals("4B12B12B12B12B12B12B12B12B12B12B12B12B8", expectedResult);
 
-        board = new GameBoard();
+        board = new Board();
         board.fromCompactString(expectedResult);
         assertEquals("4B12B12B12B12B12B12B12B12B12B12B12B12B8", expectedResult);
     }
@@ -60,7 +60,7 @@ class BoardTest {
     @Test
     void gameCopyIsEqual() {
         board.placeStone(BoardPoint.BLACK, 0, 0);
-        GameBoard board2 = new GameBoard();
+        Board board2 = new Board();
         board2.setBoard(board);
         assertEquals(board, board2);
     }

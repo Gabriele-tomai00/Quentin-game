@@ -89,7 +89,7 @@ class GameTest {
 
     @Test
     void playerPlays() {
-        GameBoard board = new GameBoard();
+        Board board = new Board();
         board.placeStone(BoardPoint.BLACK, 0, 0);
         game.place(new Cell(0, 0));
         assertEquals(board, game.getBoard());

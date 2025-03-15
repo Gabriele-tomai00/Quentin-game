@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
+import quentin.game.OnlineGame;
 import quentin.game.Player;
 
 class NetworkHandlerTest {

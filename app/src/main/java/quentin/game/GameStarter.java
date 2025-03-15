@@ -7,10 +7,14 @@ public abstract class GameStarter implements Runnable {
     private Scanner scanner;
     private boolean continueGame;
 
-    public GameStarter() {
+    protected GameStarter() {
         scanner = new Scanner(System.in);
         continueGame = true;
     }
+
+    public abstract Game getGame();
+
+    public abstract void processCannotPlay();
 
     @Override
     public void run() {
@@ -35,8 +39,6 @@ public abstract class GameStarter implements Runnable {
             }
         }
     }
-
-    public abstract void processCannotPlay();
 
     public boolean processInput(String command) {
         try {
@@ -86,8 +88,6 @@ public abstract class GameStarter implements Runnable {
     public boolean hasWon() {
         return getGame().hasWon(getGame().getCurrentPlayer());
     }
-
-    public abstract Game getGame();
 
     public void setContinueGame(boolean wantToContinue) {
         continueGame = wantToContinue;

@@ -17,10 +17,6 @@ public class CacheHandler {
                 "CacheHandler is a utility class and cannot be instantiated.");
     }
 
-    public static Cache<GameLog> initialize() {
-        return initialize(new File(CACHE_FILE));
-    }
-
     @SuppressWarnings("unchecked")
     public static Cache<GameLog> initialize(File file) {
         Cache<GameLog> cache = new Cache<>();
@@ -32,10 +28,6 @@ public class CacheHandler {
             }
         }
         return cache;
-    }
-
-    public static void saveCache(Cache<GameLog> cache) {
-        saveCache(new File(CACHE_FILE), cache);
     }
 
     public static void saveCache(File file, Cache<GameLog> cache) {

@@ -1,27 +1,21 @@
-package quentin.network;
+package quentin.game;
 
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
-import quentin.game.BoardPoint;
-import quentin.game.Cell;
-import quentin.game.Game;
-import quentin.game.GameBoard;
-import quentin.game.Player;
 
-public class OnlineGame implements Game {
+public class OnlineGame extends Game {
 
     @Serial private static final long serialVersionUID = 5269244630137536200L;
     private Player currentPlayer;
-    private final GameBoard board;
     private final List<Cell> lastMoves = new ArrayList<>();
 
     public OnlineGame(Player currentPlayer) {
+        super();
         this.currentPlayer = currentPlayer;
-        board = new GameBoard();
     }
 
-    public void updateLastMoves(GameBoard newBoard) {
+    public void updateLastMoves(Board newBoard) {
         lastMoves.clear();
         BoardPoint[][] points = newBoard.getBoard();
         for (int row = 0; row < getBoard().size(); row++) {
@@ -40,11 +34,6 @@ public class OnlineGame implements Game {
     @Override
     public Player getCurrentPlayer() {
         return currentPlayer;
-    }
-
-    @Override
-    public GameBoard getBoard() {
-        return board;
     }
 
     public void applyPieRule() {
