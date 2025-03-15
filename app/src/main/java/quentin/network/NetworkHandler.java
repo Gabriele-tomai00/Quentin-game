@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+
 import quentin.game.BoardPoint;
+import quentin.game.Cell;
+import quentin.game.MoveParser;
 import quentin.game.OnlineGame;
 
 public class NetworkHandler implements Runnable {
@@ -40,12 +43,14 @@ public class NetworkHandler implements Runnable {
                                             + game.getCurrentPlayer());
                         }
                         default -> {
-                            game.getBoard().fromCompactString(received);
+       Cell cell = new MoveParser(received).parse();
+                            game.place(cell);
+                            game.coverTerritories(cell);
                             System.out.println(game.getBoard());
                         }
                     }
+                    waiting = false;
                 }
-                waiting = false;
             }
         } catch (IOException e) {
             e.printStackTrace();
