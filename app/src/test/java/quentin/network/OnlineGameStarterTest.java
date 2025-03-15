@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import quentin.StreamUtility;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
+import quentin.game.OnlineGame;
+import quentin.game.OnlineGameStarter;
 import quentin.game.Player;
 
 class OnlineGameStarterTest {

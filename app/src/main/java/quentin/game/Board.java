@@ -8,32 +8,32 @@ import java.io.Serializable;
 import java.util.Arrays;
 import quentin.exceptions.IllegalBoardException;
 
-public class GameBoard implements Serializable {
+public class Board implements Serializable {
 
     @Serial private static final long serialVersionUID = 8169137628862217460L;
     private static final int SIZE = 13;
-    private BoardPoint[][] board = new BoardPoint[SIZE][SIZE];
+    private BoardPoint[][] gameBoard = new BoardPoint[SIZE][SIZE];
 
-    public GameBoard() {
-        for (BoardPoint[] row : board) {
+    public Board() {
+        for (BoardPoint[] row : gameBoard) {
             Arrays.fill(row, BoardPoint.EMPTY);
         }
     }
 
-    public GameBoard(String compactBoard) {
+    public Board(String compactBoard) {
         fromCompactString(compactBoard);
     }
 
     public BoardPoint[][] getBoard() {
-        return Arrays.copyOf(board, SIZE);
+        return Arrays.copyOf(gameBoard, SIZE);
     }
 
     public BoardPoint getPoint(Cell cell) {
-        return board[cell.row()][cell.col()];
+        return gameBoard[cell.row()][cell.col()];
     }
 
     public void placeStone(BoardPoint stone, int row, int col) {
-        board[row][col] = stone;
+        gameBoard[row][col] = stone;
     }
 
     @Override
@@ -67,9 +67,9 @@ public class GameBoard implements Serializable {
 
     public void appendBoardPoint(int i, int j, StringBuilder toReturn) {
         toReturn.append("│");
-        if (board[i][j].equals(BoardPoint.WHITE)) toReturn.append(" ██ ");
-        else if (board[i][j].equals(BoardPoint.BLACK)) toReturn.append(" XX ");
-        else if (board[i][j].equals(BoardPoint.EMPTY)) toReturn.append("    ");
+        if (gameBoard[i][j].equals(BoardPoint.WHITE)) toReturn.append(" ██ ");
+        else if (gameBoard[i][j].equals(BoardPoint.BLACK)) toReturn.append(" XX ");
+        else if (gameBoard[i][j].equals(BoardPoint.EMPTY)) toReturn.append("    ");
         if (j == SIZE - 1) toReturn.append("│█");
     }
 
@@ -77,7 +77,7 @@ public class GameBoard implements Serializable {
         StringBuilder result = new StringBuilder();
         int dotCount = 0;
 
-        for (BoardPoint[] row : board) {
+        for (BoardPoint[] row : gameBoard) {
             for (BoardPoint point : row) {
                 String str = point.toString();
                 if (".".equals(str)) {
@@ -113,7 +113,7 @@ public class GameBoard implements Serializable {
                 if (flattenedIndex >= SIZE * SIZE) {
                     throw new IllegalBoardException("Compact string exceeds board size");
                 }
-                this.board[flattenedIndex / SIZE][flattenedIndex % SIZE] =
+                this.gameBoard[flattenedIndex / SIZE][flattenedIndex % SIZE] =
                         BoardPoint.fromString(String.valueOf(ch));
                 flattenedIndex++;
                 i++;
@@ -130,7 +130,7 @@ public class GameBoard implements Serializable {
             if (flattenedIndex >= SIZE * SIZE) {
                 throw new IllegalBoardException("Compact string exceeds board size");
             }
-            this.board[flattenedIndex / SIZE][flattenedIndex % SIZE] = BoardPoint.EMPTY;
+            this.gameBoard[flattenedIndex / SIZE][flattenedIndex % SIZE] = BoardPoint.EMPTY;
             flattenedIndex++;
         }
         return flattenedIndex;
@@ -148,15 +148,15 @@ public class GameBoard implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (obj instanceof GameBoard bd) {
-            return Arrays.deepEquals(this.board, bd.board);
+        if (obj instanceof Board bd) {
+            return Arrays.deepEquals(this.gameBoard, bd.gameBoard);
         }
         return false;
     }
 
-    public void setBoard(GameBoard board) {
+    public void setBoard(Board board) {
         for (int row = 0; row < SIZE; row++) {
-            System.arraycopy(board.getBoard()[row], 0, this.board[row], 0, SIZE);
+            System.arraycopy(board.getBoard()[row], 0, this.gameBoard[row], 0, SIZE);
         }
     }
 
@@ -173,7 +173,7 @@ public class GameBoard implements Serializable {
     @Serial
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
         String compactString = (String) ois.readObject();
-        board = new BoardPoint[SIZE][SIZE];
+        gameBoard = new BoardPoint[SIZE][SIZE];
         this.fromCompactString(compactString);
     }
 }

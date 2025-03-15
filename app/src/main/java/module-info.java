@@ -3,8 +3,13 @@ module quentin.app {
     requires javafx.fxml;
     requires transitive javafx.graphics;
 
+    exports quentin;
+
     opens quentin.gui to
             javafx.fxml;
 
-    exports quentin;
+    exports quentin.gui;
+    exports quentin.game;
+    exports quentin.cache;
+    exports quentin.network;
 }

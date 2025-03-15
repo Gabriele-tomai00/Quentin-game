@@ -7,6 +7,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import quentin.SettingHandler;
 import quentin.game.BoardPoint;
+import quentin.game.OnlineGame;
+import quentin.game.OnlineGameStarter;
 import quentin.game.Player;
 
 public class NetworkStarter {

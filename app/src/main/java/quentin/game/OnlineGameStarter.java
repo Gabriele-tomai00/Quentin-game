@@ -1,8 +1,6 @@
-package quentin.network;
+package quentin.game;
 
-import quentin.game.BoardPoint;
-import quentin.game.Game;
-import quentin.game.GameStarter;
+import quentin.network.NetworkHandler;
 
 public class OnlineGameStarter extends GameStarter {
 
@@ -37,6 +35,12 @@ public class OnlineGameStarter extends GameStarter {
             }
             default -> super.processInput(command);
         };
+    }
+
+    @Override
+    public void showHelper() {
+        System.out.printf("  %-25s: %-40s%n", "pie", "Applies pie rule");
+        super.showHelper();
     }
 
     @Override

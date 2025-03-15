@@ -1,9 +1,8 @@
-package quentin.cache;
+package quentin.game;
 
 import java.time.LocalDateTime;
-import quentin.game.Game;
-import quentin.game.GameStarter;
-import quentin.game.LocalGame;
+import quentin.cache.Cache;
+import quentin.cache.GameLog;
 
 public class CachedGameStarter extends GameStarter {
 

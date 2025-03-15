@@ -29,8 +29,8 @@ class TcpClientTest {
 
     @Test
     void testTcpClient() {
-        StreamUtility.provideInput("11111\n33333\n");
         TcpClient client = new TcpClient(socket);
+        StreamUtility.provideInput("11111\n33333\n");
         Socket clientSocket = client.start();
         assertFalse(clientSocket.isClosed());
     }
