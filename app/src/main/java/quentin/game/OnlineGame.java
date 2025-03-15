@@ -42,4 +42,12 @@ public class OnlineGame extends Game {
                         ? new Player(BoardPoint.WHITE)
                         : new Player(BoardPoint.BLACK);
     }
+
+
+    public void opponentPlaces(Cell cell) {
+      BoardPoint color = getCurrentPlayer().color() == BoardPoint.BLACK ? BoardPoint.WHITE : BoardPoint.BLACK;
+      int row = cell.row();
+      int col = cell.col();
+      getBoard().placeStone(color, row, col);
+    }
 }

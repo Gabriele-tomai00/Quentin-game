@@ -5,11 +5,12 @@ module quentin.app {
 
     exports quentin;
 
-    opens quentin.gui to
+    opens quentin.network to
             javafx.fxml;
+    opens quentin.gui to javafx.fxml;
 
-    exports quentin.gui;
+    exports quentin.network;
     exports quentin.game;
     exports quentin.cache;
-    exports quentin.network;
+    exports quentin.gui;
 }

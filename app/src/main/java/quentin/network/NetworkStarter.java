@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import quentin.SettingHandler;
 import quentin.game.BoardPoint;
 import quentin.game.OnlineGame;
