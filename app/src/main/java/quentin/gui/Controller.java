@@ -99,11 +99,11 @@ public class Controller implements Initializable {
         try {
             game.place(cell);
             game.coverTerritories(cell);
-            if (game.hasWon(game.getCurrentPlayer())) {
+            if (game.hasWon(game.getCurrentPlayer().color())) {
                 displayWinner();
             }
             game.changeCurrentPlayer();
-            if (game.hasWon(game.getCurrentPlayer())) {
+            if (game.hasWon(game.getCurrentPlayer().color())) {
                 displayWinner();
             }
             cache.saveLog(new GameLog(LocalDateTime.now(), new GuiGame(game)));
