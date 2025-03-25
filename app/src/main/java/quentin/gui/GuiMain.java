@@ -1,7 +1,6 @@
 package quentin.gui;
 
 import java.io.File;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,7 +13,6 @@ import quentin.cache.GameLog;
 public class GuiMain extends Application {
     private Cache<GameLog> cache;
     private static final File CACHE_FILE = new File(".last_match_cache");
-
 
     public static void main(String... args) {
         launch();
