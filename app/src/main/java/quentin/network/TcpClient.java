@@ -6,43 +6,39 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.concurrent.Callable;
+import quentin.exceptions.PasswordRejectedException;
 
-public class TcpClient {
-    private boolean authenticating;
+public class TcpClient implements Callable<Socket> {
     private Socket socket;
     Scanner scanner;
 
     public TcpClient(Socket socket) {
         this.socket = socket;
-        authenticating = true;
         scanner = new Scanner(System.in);
     }
 
-    public Socket start() {
-        try {
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            while (authenticating) {
-                System.out.println("password > ");
-                String password = scanner.nextLine().trim();
-                if ((password.equals("exit"))) {
-                    return null;
-                }
-                if ((password.length() != 5 || !password.matches("\\d{5}"))) {
-                    System.out.println("Invalid password, retry");
-                }
-                out.println(password);
-                String message = in.readLine();
-                if (message.equals("SERVER OK")) {
-                    authenticating = false;
-                } else if (message.equals("SERVER ERR")) {
-                    throw new RuntimeException("Password was inputted incorrectly");
-                }
+    @Override
+    public Socket call() throws IOException {
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        while (true) {
+            System.out.println("password > ");
+            String password = scanner.nextLine();
+            if (password.equals("exit")) {
+                return null;
             }
-            return socket;
-        } catch (IOException e) {
-            e.printStackTrace();
+            out.println(password);
+
+            CommunicationProtocol message = CommunicationProtocol.fromString(in.readLine());
+
+            if (message.equals(CommunicationProtocol.passOk())) {
+                return socket;
+            } else if (message.equals(CommunicationProtocol.serverErr())) {
+                throw new PasswordRejectedException();
+            } else {
+                System.out.println(message);
+            }
         }
-        return null;
     }
 }
