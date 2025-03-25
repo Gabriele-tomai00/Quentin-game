@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
 import quentin.game.MoveParser;
@@ -27,26 +26,28 @@ public class NetworkHandler implements Runnable {
     public void run() {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String received;
-            while ((received = br.readLine()) != null) {
+            CommunicationProtocol received;
+            while ((received = CommunicationProtocol.fromString(br.readLine())) != null) {
                 System.out.println("Please make your move");
                 synchronized (game) {
-                    switch (received) {
-                        case "exit" -> {
+                    switch (received.getType()) {
+                        case EXIT -> {
                             System.out.println("The other player left the game!");
                             return;
                         }
-                        case "pie" -> {
+                        case PIE -> {
                             game.applyPieRule();
                             System.out.println(
                                     "The other played used the pie rule\nYou are now: "
                                             + game.getCurrentPlayer());
                         }
                         default -> {
-       Cell cell = new MoveParser(received).parse();
-                            game.opponentPlaces(cell);
-                            game.coverTerritories(cell);
-                            System.out.println(game.getBoard());
+                            if (received.getType() == MessageType.MOVE) {
+                                Cell cell = new MoveParser(received.getData()).parse();
+                                game.opponentPlaces(cell);
+                                game.opponentCoversTerritories(cell);
+                                System.out.println(game.getBoard());
+                            }
                         }
                     }
                     waiting = false;
@@ -61,7 +62,7 @@ public class NetworkHandler implements Runnable {
         return waiting;
     }
 
-    public synchronized void sendCommands(String command) {
+    public synchronized void sendCommands(CommunicationProtocol command) {
         if (!isWaiting()) {
             try {
                 PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
