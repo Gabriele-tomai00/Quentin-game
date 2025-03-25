@@ -1,61 +1,48 @@
 package quentin.network;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 class UdpServerTest {
-    //  private static UdpServer server;
-    //  private static final int PORT = 9876;
+    private static FakeDatagramSocket socket;
+    private static UdpServer server;
+    private static final int PORT = 9876;
+    private static final String SERVER_NAME = "test";
 
-    //  @BeforeAll
-    //  static void startServer() {
-    //    server = new UdpServer("default", PORT);
-    //    new Thread(server::run).start();
-    //  }
-    //
-    //  @AfterAll
-    //  static void stopServer() {
-    //    server.stop();
-    //  }
+    @BeforeAll
+    static void startServer() throws IOException {
+        socket = new FakeDatagramSocket();
+        server =
+                new UdpServer(SERVER_NAME, PORT) {
+                    @Override
+                    protected DatagramSocket createSocket() throws SocketException {
+                        return socket;
+                    }
+                };
+    }
 
-    //  @Test
-    //  void testServer() throws IOException {
-    //    try (DatagramSocket datagramSocket = new DatagramSocket()) {
-    //      byte[] buff = "mess".getBytes();
-    //      DatagramPacket packet = new DatagramPacket(buff, buff.length,
-    // InetAddress.getByName("localhost"), PORT);
-    //      datagramSocket.send(packet);
-    //      buff = new byte[1024];
-    //      packet = new DatagramPacket(buff, buff.length);
-    //      datagramSocket.receive(packet);
-    //      String data = new String(packet.getData(), 0, packet.getLength());
-    //      assertEquals(InetAddress.getLocalHost()
-    //                              .getHostAddress()
-    //          + " - default", data);
-    //    }
-    //    DatagramSocket clientSocket = new DatagramSocket();
-    //    DatagramSocket serverSocket = new DatagramSocket(PORT);
-    //    new Thread(() -> {
-    //      try {
-    //        byte[] buffer = new byte[1024];
-    //        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-    //        serverSocket.receive(packet);
-    //        buffer = "received".getBytes();
-    //        packet = new DatagramPacket(buffer, buffer.length, packet.getAddress(),
-    // packet.getPort());
-    //        serverSocket.send(packet);
-    //      } catch (Exception e) {
-    //
-    //        // TODO: handle exception
-    //      }
-    //    }).start();
-    //    byte[] buffer = "ciao".getBytes();
-    //    DatagramPacket packet = new DatagramPacket(buffer, buffer.length,
-    // InetAddress.getByName("localhost"), PORT);
-    //    clientSocket.send(packet);
-    //    buffer = new byte[1024];
-    //    packet = new DatagramPacket(buffer, buffer.length);
-    //    clientSocket.receive(packet);
-    //    String response = new String(packet.getData(), 0, packet.getLength());
-    //    assertEquals("received", response);
-    //    clientSocket.close();
-    //    serverSocket.close();
-    //  }
+    @Test
+    void testServer() throws IOException {
+        NetworkInfo info =
+                new NetworkInfo(InetAddress.getLoopbackAddress().getHostAddress(), "serverTest");
+        byte[] buffer = info.getBytes();
+        DatagramPacket packet =
+                new DatagramPacket(buffer, buffer.length, InetAddress.ofLiteral("127.0.0.1"), PORT);
+        socket.send(packet);
+
+        server.call();
+
+        buffer = new byte[1024];
+        packet = new DatagramPacket(buffer, buffer.length);
+        socket.receive(packet);
+        String received = new String(packet.getData(), 0, packet.getLength()).trim();
+        assertTrue(received.contains(SERVER_NAME));
+    }
 }
