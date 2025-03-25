@@ -11,7 +11,7 @@ class ServerInfoTest {
     @Test
     void testToString() throws UnknownHostException {
         InetAddress host = InetAddress.getLocalHost();
-        NetworkInfo info = new NetworkInfo(host, "aleq");
+        NetworkInfo info = new NetworkInfo(host.getHostAddress(), "aleq");
         String expectedString = InetAddress.getLocalHost().getHostAddress() + " - aleq";
         assertTrue(info.toString().contains(expectedString));
     }
