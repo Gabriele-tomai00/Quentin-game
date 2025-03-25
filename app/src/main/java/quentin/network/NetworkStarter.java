@@ -5,26 +5,25 @@ import java.net.Socket;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import quentin.SettingHandler;
 import quentin.game.BoardPoint;
 import quentin.game.OnlineGame;
 import quentin.game.OnlineGameStarter;
-import quentin.game.Player;
 
-public class NetworkStarter {
+public class NetworkStarter implements Runnable {
 
-    private SettingHandler settingHandler = new SettingHandler();
+    private SettingHandler handler = new SettingHandler();
     private BoardPoint color;
     private ExecutorService executor;
+    private final Scanner scanner = new Scanner(System.in);
+    private boolean started = true;
 
+    @Override
     public void run() {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Enter commands (type 'exit' to quit):\n");
         System.out.println(
                 "Type 'startserver' if you want to host a match. Type 'startclient' if you want to"
                         + " join a match\n");
-        while (true) {
+        while (started) {
             try {
                 printGamePrompt();
                 if (!scanner.hasNextLine()) {
@@ -39,36 +38,34 @@ public class NetworkStarter {
                     case "exit" -> {
                         return;
                     }
-                    case "getusername", "getu" -> System.out.println(settingHandler.getUsername());
-                    case "getport", "getp" -> System.out.println(settingHandler.getPort());
-                    case "setusername", "setu" -> setUsername(scanner);
-                    case "setport", "setp" -> setTCPport(scanner);
+                    case "getusername", "getu" -> System.out.println(handler.getUsername());
+                    case "getport", "getp" -> System.out.println(handler.getPort());
+                    case "setusername", "setu" -> setUsername();
+                    case "setport", "setp" -> setport();
                     case "ss", "startserver" -> startServer();
                     case "stop" -> stop();
                     case "sc", "startclient" -> startClient();
                     default -> System.err.println("Unkown command: " + command);
                 }
             } catch (RuntimeException e) {
-                System.out.println(e.getMessage());
-                return;
+                System.err.println(e.getMessage());
             }
         }
     }
 
-    private void setTCPport(Scanner scanner) {
-        System.out.println(
-                "Enter new TCP port (IMPORTANT: the other player must know the new port): ");
+    private void setport() {
+        System.out.println("Enter new port: ");
         int port = Integer.parseInt(scanner.nextLine());
-        settingHandler.setPort(port);
+        handler.setPort(port);
     }
 
-    private void setUsername(Scanner scanner) {
+    private void setUsername() {
         System.out.println("Enter username: ");
         String username = scanner.nextLine();
-        settingHandler.setUsername(username);
+        handler.setUsername(username);
     }
 
-    public void showHelper() {
+    private void showHelper() {
         System.out.println("Available commands:\n");
         String[][] commands = {
             {"exit", "Quits the game and exits the program"},
@@ -76,7 +73,7 @@ public class NetworkStarter {
             {"setusername", "Set a username to be recognized by other players when playing online"},
             {
                 "setport",
-                "Set a different TCP port, in case it is already used (IMPORTANT: the other player"
+                "Set a new port, in case it is already used (IMPORTANT: the other player"
                         + " must know the new port)"
             },
             {"getusername or getu", "Prints you current username"},
@@ -93,42 +90,58 @@ public class NetworkStarter {
     }
 
     private void printGamePrompt() {
-        System.out.println("QuentinGame - online mode > ");
+        System.out.print("QuentinGame - online mode > ");
     }
 
     private void startServer() {
-        color = BoardPoint.BLACK;
-        Server server = new Server(new SettingHandler());
-        Socket socket = server.call();
-        start(socket);
+        try {
+            color = BoardPoint.BLACK;
+            Server server = new Server(handler);
+            Socket socket = server.call();
+            start(socket);
+        } catch (IOException e) {
+            //            System.err.println(e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void startClient() {
         try {
             color = BoardPoint.WHITE;
-            Client client = new Client();
+            Client client = new Client(handler);
             Socket socket = client.call();
             start(socket);
         } catch (IOException e) {
+            // System.err.println(e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private void start(Socket socket) {
-        OnlineGame game = new OnlineGame(new Player(color));
-        NetworkHandler handler = new NetworkHandler(socket, game);
-        OnlineGameStarter starter = new OnlineGameStarter(handler, game);
+    protected void start(Socket socket) {
+        OnlineGame game = new OnlineGame(color);
+        NetworkHandler networkHandler = new NetworkHandler(socket, game);
+        OnlineGameStarter starter = new OnlineGameStarter(networkHandler, game);
         executor = Executors.newSingleThreadExecutor();
-        executor.submit(handler);
+        executor.submit(networkHandler);
         starter.run();
+        stop();
     }
 
     private void stop() {
         if (executor != null) {
             executor.shutdownNow();
         }
-        if (executor != null) {
-            executor.shutdown();
-        }
+    }
+
+    public SettingHandler getHandler() {
+        return handler;
+    }
+
+    public void alreadyStarted() {
+        started = false;
+    }
+
+    public BoardPoint getColor() {
+        return color;
     }
 }
