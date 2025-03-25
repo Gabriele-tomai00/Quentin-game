@@ -7,7 +7,8 @@ module quentin.app {
 
     opens quentin.network to
             javafx.fxml;
-    opens quentin.gui to javafx.fxml;
+    opens quentin.gui to
+            javafx.fxml;
 
     exports quentin.network;
     exports quentin.game;

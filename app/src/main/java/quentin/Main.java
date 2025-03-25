@@ -2,7 +2,6 @@ package quentin;
 
 import java.io.File;
 import java.util.Scanner;
-
 import javafx.application.Application;
 import quentin.cache.CacheHandler;
 import quentin.game.CachedGameStarter;
