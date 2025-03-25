@@ -20,7 +20,7 @@ public abstract class GameStarter implements Runnable {
     public void run() {
         display();
         while (continueGame) {
-            if (hasWon()) {
+            if (hasWon() != null) {
                 displayWinner();
                 break;
             }
@@ -31,10 +31,6 @@ public abstract class GameStarter implements Runnable {
                     displayMessage(String.format("%s > %n", getGame().getCurrentPlayer()));
                 } while (!processInput(scanner.nextLine()));
                 display();
-                if (hasWon()) {
-                    displayWinner();
-                    break;
-                }
                 processCannotPlay();
             }
         }
@@ -85,8 +81,14 @@ public abstract class GameStarter implements Runnable {
         }
     }
 
-    public boolean hasWon() {
-        return getGame().hasWon(getGame().getCurrentPlayer());
+    public BoardPoint hasWon() {
+        if (getGame().hasWon(BoardPoint.WHITE)) {
+            return BoardPoint.WHITE;
+        }
+        if (getGame().hasWon(BoardPoint.BLACK)) {
+            return BoardPoint.BLACK;
+        }
+        return null;
     }
 
     public void setContinueGame(boolean wantToContinue) {
@@ -98,8 +100,7 @@ public abstract class GameStarter implements Runnable {
     }
 
     public void displayWinner() {
-        System.out.println(
-                CLEAR + String.format("%s has won", getGame().getCurrentPlayer()).toUpperCase());
+        System.out.println(CLEAR + String.format("%s has won", new Player(hasWon())).toUpperCase());
     }
 
     public void display() {

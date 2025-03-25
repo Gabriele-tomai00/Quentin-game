@@ -16,14 +16,18 @@ public abstract class Game implements Serializable {
     private static final long serialVersionUID = 2946018924798852043L;
     private Board board;
 
-    public Game() {
+    protected Game() {
         board = new Board();
     }
 
     public abstract Player getCurrentPlayer();
 
-    public boolean hasWon(Player player) {
-        if (player.color() == BoardPoint.WHITE) {
+    public boolean hasWon() {
+        return hasWon(getCurrentPlayer().color());
+    }
+
+    public boolean hasWon(BoardPoint color) {
+        if (color == BoardPoint.WHITE) {
             for (int row = 0; row < boardSize(); row++) {
                 Cell cell = new Cell(row, 0);
                 if (getBoard().getPoint(cell) == BoardPoint.WHITE
@@ -66,6 +70,10 @@ public abstract class Game implements Serializable {
     }
 
     public void coverTerritories(Cell cell) {
+        coverTerritories(cell, getCurrentPlayer().color());
+    }
+
+    public void coverTerritories(Cell cell, BoardPoint color) {
         Set<Cell> neighbors = getNeighbors(cell);
         for (Cell neighbor : neighbors) {
             if (getBoard().getPoint(neighbor) != BoardPoint.EMPTY) {
@@ -83,11 +91,9 @@ public abstract class Game implements Serializable {
             } else if (whites < blacks) {
                 territory.forEach(a -> getBoard().placeStone(BoardPoint.BLACK, a.row(), a.col()));
             } else {
-                BoardPoint color =
-                        getCurrentPlayer().color() == BoardPoint.BLACK
-                                ? BoardPoint.WHITE
-                                : BoardPoint.BLACK;
-                territory.forEach(a -> getBoard().placeStone(color, a.row(), a.col()));
+                BoardPoint otherColor =
+                        color == BoardPoint.BLACK ? BoardPoint.WHITE : BoardPoint.BLACK;
+                territory.forEach(a -> getBoard().placeStone(otherColor, a.row(), a.col()));
             }
         }
     }
@@ -182,10 +188,14 @@ public abstract class Game implements Serializable {
     }
 
     public void place(Cell cell) {
-        if (!isMoveValid(getCurrentPlayer().color(), cell)) {
+        place(cell, getCurrentPlayer().color());
+    }
+
+    public void place(Cell cell, BoardPoint color) {
+        if (!isMoveValid(color, cell)) {
             throw new IllegalMoveException(cell);
         }
-        getBoard().placeStone(getCurrentPlayer().color(), cell.row(), cell.col());
+        getBoard().placeStone(color, cell.row(), cell.col());
     }
 
     public boolean canPlayerPlay() {

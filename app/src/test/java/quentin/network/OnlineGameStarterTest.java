@@ -13,16 +13,14 @@ import quentin.game.BoardPoint;
 import quentin.game.Cell;
 import quentin.game.OnlineGame;
 import quentin.game.OnlineGameStarter;
-import quentin.game.Player;
 
 class OnlineGameStarterTest {
 
     private ByteArrayOutputStream outputErr = new ByteArrayOutputStream();
-    private ByteArrayOutputStream output = new ByteArrayOutputStream();
     private NetworkHandler fakeHandler =
-            new NetworkHandler(null, new OnlineGame(new Player(BoardPoint.BLACK))) {
+            new NetworkHandler(null, new OnlineGame(BoardPoint.BLACK)) {
                 @Override
-                public synchronized void sendCommands(String command) {
+                public synchronized void sendCommands(CommunicationProtocol command) {
                     // do nothing
                 }
             };
@@ -30,7 +28,6 @@ class OnlineGameStarterTest {
     @BeforeEach
     void setOutput() {
         System.setErr(new PrintStream(outputErr));
-        System.setOut(new PrintStream(output));
     }
 
     @Test
@@ -38,7 +35,7 @@ class OnlineGameStarterTest {
         String commands = "pie\nexit\n";
         StreamUtility.provideInput(commands);
         OnlineGameStarter starter =
-                new OnlineGameStarter(fakeHandler, new OnlineGame(new Player(BoardPoint.WHITE)));
+                new OnlineGameStarter(fakeHandler, new OnlineGame(BoardPoint.WHITE));
         starter.run();
         BoardPoint color = starter.getGame().getCurrentPlayer().color();
         assertEquals(BoardPoint.BLACK, color);
@@ -49,13 +46,13 @@ class OnlineGameStarterTest {
         String commands = "pie\nexit\n";
         StreamUtility.provideInput(commands);
         OnlineGameStarter starter =
-                new OnlineGameStarter(fakeHandler, new OnlineGame(new Player(BoardPoint.BLACK)));
+                new OnlineGameStarter(fakeHandler, new OnlineGame(BoardPoint.BLACK));
         starter.run();
         BoardPoint color = starter.getGame().getCurrentPlayer().color();
-        String errorMessage = "Cannot apply pie rule!";
+        String errorMessage = outputErr.toString();
         assertAll(
                 () -> assertEquals(BoardPoint.BLACK, color),
-                () -> assertTrue(outputErr.toString().contains(errorMessage)));
+                () -> assertTrue(errorMessage.contains("Cannot apply pie rule!")));
     }
 
     @Test
@@ -63,7 +60,7 @@ class OnlineGameStarterTest {
         String commands = "a1\nexit\n";
         StreamUtility.provideInput(commands);
         OnlineGameStarter starter =
-                new OnlineGameStarter(fakeHandler, new OnlineGame(new Player(BoardPoint.BLACK)));
+                new OnlineGameStarter(fakeHandler, new OnlineGame(BoardPoint.BLACK));
         starter.run();
         BoardPoint cell = BoardPoint.BLACK;
         assertEquals(cell, starter.getGame().getBoard().getPoint(new Cell(0, 0)));

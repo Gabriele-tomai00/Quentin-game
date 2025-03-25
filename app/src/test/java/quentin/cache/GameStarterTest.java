@@ -42,7 +42,7 @@ class GameStarterTest {
                         assertEquals(
                                 BoardPoint.BLACK,
                                 starter.getGame().getBoard().getPoint(new Cell(12, 0))),
-                () -> assertTrue(starter.hasWon()));
+                () -> assertEquals(BoardPoint.BLACK, starter.hasWon()));
     }
 
     @Test
@@ -67,35 +67,30 @@ class GameStarterTest {
     void testHelper() {
         CachedGameStarter starter = new CachedGameStarter();
         starter.showHelper();
+        String helperMessage = output.toString();
         assertAll(
                 () ->
                         assertTrue(
-                                output.toString()
-                                        .contains("back or b                : go back one move")),
+                                helperMessage.contains(
+                                        "back or b                : go back one move")),
                 () ->
                         assertTrue(
-                                output.toString()
-                                        .contains(
-                                                "forward or f             : go forward one move")),
-                () -> assertTrue(output.toString().contains("Available commands:\n")),
+                                helperMessage.contains(
+                                        "forward or f             : go forward one move")),
+                () -> assertTrue(helperMessage.contains("Available commands:\n")),
                 () ->
                         assertTrue(
-                                output.toString()
-                                        .contains(
-                                                "  exit                     : Quits the game and"
-                                                        + " exits the program    \n")),
+                                helperMessage.contains(
+                                        "  exit                     : Quits the game and exits the"
+                                                + " program    \n")),
                 () ->
                         assertTrue(
-                                output.toString()
-                                        .contains(
-                                                "  help                     : Shows this help      "
-                                                        + "                   \n")),
+                                helperMessage.contains(
+                                        "  help                     : Shows this help")),
                 () ->
                         assertTrue(
-                                output.toString()
-                                        .contains(
-                                                "  <coordinates>            : Makes a move."
-                                                        + " Examples: A1 b2 C5 (wrong examples: 5A,"
-                                                        + " 24)")));
+                                helperMessage.contains(
+                                        "  <coordinates>            : Makes a move. Examples: A1 b2"
+                                                + " C5 (wrong examples: 5A, 24)")));
     }
 }

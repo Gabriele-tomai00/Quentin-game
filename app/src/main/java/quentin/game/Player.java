@@ -5,7 +5,7 @@ import java.io.Serializable;
 public record Player(BoardPoint color) implements Serializable {
     @Override
     public String toString() {
-        if (color.equals(BoardPoint.BLACK)) return "Black";
+        if (color == BoardPoint.BLACK) return "Black";
         return "White";
     }
 
