@@ -9,11 +9,17 @@ import java.net.Socket;
 
 public class FakeSocket extends Socket {
 
-    private final PipedOutputStream out = new PipedOutputStream();
-    private final PipedInputStream in = new PipedInputStream();
+    private final PipedOutputStream out;
+    private final PipedInputStream in;
 
     public FakeSocket() throws IOException {
-        out.connect(in);
+        in = new PipedInputStream();
+        out = new PipedOutputStream(in);
+    }
+
+    public FakeSocket(PipedInputStream in, PipedOutputStream out) {
+        this.in = in;
+        this.out = out;
     }
 
     @Override

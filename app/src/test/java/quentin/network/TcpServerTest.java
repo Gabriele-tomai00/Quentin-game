@@ -12,7 +12,7 @@ import java.util.concurrent.Future;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class TCPServerTest {
+class TcpServerTest {
 
     private TcpServer tcpServer;
     private Future<Socket> submit;
@@ -29,7 +29,7 @@ class TCPServerTest {
                     }
                 };
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        submit = executor.submit(tcpServer::start);
+        submit = executor.submit(tcpServer);
     }
 
     @Test
