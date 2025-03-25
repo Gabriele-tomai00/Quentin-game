@@ -6,8 +6,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.Callable;
 
-public class TcpServer {
+public class TcpServer implements Callable<Socket> {
     private final String password;
     private final int port;
 
@@ -16,31 +17,23 @@ public class TcpServer {
         this.password = password;
     }
 
-    public Socket start() {
-        try {
-            Socket socket = getConnection();
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            System.out.println("CODE: " + password);
-            String message;
-            for (int attempt = 0; attempt < 3; attempt++) {
-                message = in.readLine();
-                if (message != null) {
-                    if (!message.contains(password)) {
-                        // System.out.println("Invalid password, retry (attempt " +
-                        // (attempt + 1) + "/3)");
-                        out.println("ACCESS DENIED");
-                    } else {
-                        System.out.println("PASS OK");
-                        out.println("SERVER OK");
-                        return socket;
-                    }
-                }
+    @Override
+    public Socket call() throws IOException {
+        Socket socket = getConnection();
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        System.out.println("CODE: " + password);
+        String message;
+        for (int attempt = 0; attempt < 3; attempt++) {
+            message = in.readLine();
+
+            if (message != null && message.contains(password)) {
+                out.println(CommunicationProtocol.passOk());
+                return socket;
             }
-            out.println("SERVER ERR");
-        } catch (IOException e) {
-            e.printStackTrace();
+            out.println(CommunicationProtocol.wrongPass());
         }
+        out.println(CommunicationProtocol.serverErr());
         return null;
     }
 
