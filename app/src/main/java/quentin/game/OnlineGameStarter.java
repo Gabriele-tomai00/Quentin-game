@@ -1,5 +1,6 @@
 package quentin.game;
 
+import quentin.network.CommunicationProtocol;
 import quentin.network.NetworkHandler;
 
 public class OnlineGameStarter extends GameStarter {
@@ -21,7 +22,7 @@ public class OnlineGameStarter extends GameStarter {
             case "pie" -> {
                 if (canPlayPie) {
                     game.applyPieRule();
-                    handler.sendCommands(command);
+                    handler.sendCommands(CommunicationProtocol.pie());
                     canPlayPie = false;
                 } else {
                     System.err.println("Cannot apply pie rule!");
@@ -29,7 +30,7 @@ public class OnlineGameStarter extends GameStarter {
                 yield true;
             }
             case "exit" -> {
-                handler.sendCommands(command);
+                handler.sendCommands(CommunicationProtocol.exit());
                 setContinueGame(false);
                 yield true;
             }
@@ -50,7 +51,7 @@ public class OnlineGameStarter extends GameStarter {
                 canPlayPie = false;
             }
             super.makeMove(position);
-            handler.sendCommands(game.getBoard().toCompactString());
+            handler.sendCommands(CommunicationProtocol.move(position));
         } else {
             System.err.println("Waiting for opponents move");
         }
@@ -58,7 +59,7 @@ public class OnlineGameStarter extends GameStarter {
 
     @Override
     public void processCannotPlay() {
-        handler.sendCommands("change");
+        handler.sendCommands(CommunicationProtocol.change());
     }
 
     @Override

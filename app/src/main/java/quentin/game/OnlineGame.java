@@ -1,34 +1,17 @@
 package quentin.game;
 
 import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
 
 public class OnlineGame extends Game {
 
     @Serial private static final long serialVersionUID = 5269244630137536200L;
     private Player currentPlayer;
-    private final List<Cell> lastMoves = new ArrayList<>();
+    private BoardPoint opponentColor;
 
-    public OnlineGame(Player currentPlayer) {
+    public OnlineGame(BoardPoint color) {
         super();
-        this.currentPlayer = currentPlayer;
-    }
-
-    public void updateLastMoves(Board newBoard) {
-        lastMoves.clear();
-        BoardPoint[][] points = newBoard.getBoard();
-        for (int row = 0; row < getBoard().size(); row++) {
-            for (int col = 0; col < getBoard().size(); col++) {
-                if (points[row][col] != getBoard().getBoard()[row][col]) {
-                    lastMoves.add(new Cell(row, col));
-                }
-            }
-        }
-    }
-
-    public List<Cell> getLastMoves() {
-        return lastMoves;
+        this.currentPlayer = new Player(color);
+        opponentColor = color == BoardPoint.BLACK ? BoardPoint.WHITE : BoardPoint.BLACK;
     }
 
     @Override
@@ -37,17 +20,18 @@ public class OnlineGame extends Game {
     }
 
     public void applyPieRule() {
+        opponentColor = getCurrentPlayer().color();
         currentPlayer =
                 currentPlayer.color() == BoardPoint.BLACK
                         ? new Player(BoardPoint.WHITE)
                         : new Player(BoardPoint.BLACK);
     }
 
-
     public void opponentPlaces(Cell cell) {
-      BoardPoint color = getCurrentPlayer().color() == BoardPoint.BLACK ? BoardPoint.WHITE : BoardPoint.BLACK;
-      int row = cell.row();
-      int col = cell.col();
-      getBoard().placeStone(color, row, col);
+        place(cell, opponentColor);
+    }
+
+    public void opponentCoversTerritories(Cell cell) {
+        coverTerritories(cell, opponentColor);
     }
 }

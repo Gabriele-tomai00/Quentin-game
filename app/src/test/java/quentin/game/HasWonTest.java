@@ -12,7 +12,7 @@ class HasWonTest {
 
     @Test
     void hasWonException() {
-        assertFalse(game.hasWon(game.getCurrentPlayer()));
+        assertFalse(game.hasWon(BoardPoint.BLACK));
     }
 
     @Test
@@ -24,7 +24,7 @@ class HasWonTest {
             Cell cell = new Cell(0, col);
             game.place(cell);
         }
-        assertTrue(game.hasWon(game.getCurrentPlayer()));
+        assertTrue(game.hasWon(BoardPoint.WHITE));
     }
 
     @Test
@@ -55,7 +55,7 @@ class HasWonTest {
             Cell cell = new Cell(7, col);
             game.place(cell);
         }
-        assertTrue(game.hasWon(game.getCurrentPlayer()));
+        assertTrue(game.hasWon(BoardPoint.WHITE));
     }
 
     @Test
@@ -70,7 +70,7 @@ class HasWonTest {
         }
         game.place(new Cell(3, 6));
         game.place(new Cell(3, 8));
-        assertTrue(game.hasWon(game.getCurrentPlayer()));
+        assertTrue(game.hasWon(BoardPoint.WHITE));
     }
 
     @Test
@@ -105,7 +105,7 @@ class HasWonTest {
         game.place(new Cell(3, 6));
         assertTrue(game.findWinnerPath(game.getCurrentPlayer().color(), new Cell(0, 0)));
         assertTrue(game.findWinnerPath(game.getCurrentPlayer().color(), new Cell(4, 0)));
-        assertTrue(game.hasWon(game.getCurrentPlayer()));
+        assertTrue(game.hasWon(BoardPoint.WHITE));
     }
 
     @Test
@@ -150,7 +150,7 @@ class HasWonTest {
         game.place(new Cell(3, 6));
 
         assertEquals(BoardPoint.WHITE, game.getCurrentPlayer().color());
-        assertTrue(game.hasWon(game.getCurrentPlayer()));
+        assertTrue(game.hasWon(BoardPoint.WHITE));
     }
 
     @Test
@@ -160,7 +160,7 @@ class HasWonTest {
             game.place(cell);
         }
         assertEquals(BoardPoint.BLACK, game.getCurrentPlayer().color());
-        assertTrue(game.hasWon(game.getCurrentPlayer()));
+        assertTrue(game.hasWon(BoardPoint.BLACK));
     }
 
     @Test
@@ -189,7 +189,7 @@ class HasWonTest {
             game.place(cell);
         }
         assertEquals(BoardPoint.BLACK, game.getCurrentPlayer().color());
-        assertTrue(game.hasWon(game.getCurrentPlayer()));
+        assertTrue(game.hasWon(BoardPoint.BLACK));
     }
 
     @Test
@@ -205,7 +205,7 @@ class HasWonTest {
             game.place(cell);
         }
         assertEquals(BoardPoint.BLACK, game.getCurrentPlayer().color());
-        assertTrue(game.hasWon(game.getCurrentPlayer()));
+        assertTrue(game.hasWon(BoardPoint.BLACK));
     }
 
     @Test
@@ -239,13 +239,13 @@ class HasWonTest {
             game.place(new Cell(row, game.boardSize() - 1));
         }
         assertEquals(BoardPoint.BLACK, game.getCurrentPlayer().color());
-        assertTrue(game.hasWon(game.getCurrentPlayer()));
+        assertTrue(game.hasWon(BoardPoint.BLACK));
         assertTrue(game.findWinnerPath(BoardPoint.BLACK, new Cell(0, 0)));
         assertTrue(game.findWinnerPath(BoardPoint.BLACK, new Cell(0, 2)));
     }
 
     @Test
     void noWinnerTest() {
-        assertFalse(game.hasWon(game.getCurrentPlayer()));
+        assertFalse(game.hasWon(BoardPoint.BLACK));
     }
 }
