@@ -41,6 +41,11 @@ public class NetworkHandler implements Runnable {
                                     "The other played used the pie rule\nYou are now: "
                                             + game.getCurrentPlayer());
                         }
+                        case WINNER -> {
+                            System.out.println(game.getBoard());
+                            System.out.println("YOU " + received.getData() + " THE MATCH!!!!!");
+                            return;
+                        }
                         default -> {
                             if (received.getType() == MessageType.MOVE) {
                                 Cell cell = new MoveParser(received.getData()).parse();
@@ -56,6 +61,10 @@ public class NetworkHandler implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setWaiting(boolean waiting) {
+        this.waiting = waiting;
     }
 
     public synchronized boolean isWaiting() {

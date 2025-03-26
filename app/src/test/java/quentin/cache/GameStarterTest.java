@@ -33,6 +33,7 @@ class GameStarterTest {
         StreamUtility.provideInput(builder.toString());
         CachedGameStarter starter = new CachedGameStarter();
         starter.run();
+        boolean blackWon = starter.getGame().hasWon(BoardPoint.BLACK);
         assertAll(
                 () ->
                         assertEquals(
@@ -42,7 +43,7 @@ class GameStarterTest {
                         assertEquals(
                                 BoardPoint.BLACK,
                                 starter.getGame().getBoard().getPoint(new Cell(12, 0))),
-                () -> assertEquals(BoardPoint.BLACK, starter.hasWon()));
+                () -> assertTrue(blackWon));
     }
 
     @Test

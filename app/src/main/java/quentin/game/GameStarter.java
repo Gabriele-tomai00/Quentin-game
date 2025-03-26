@@ -18,19 +18,14 @@ public abstract class GameStarter implements Runnable {
 
     @Override
     public void run() {
-        display();
         while (continueGame) {
-            if (hasWon() != null) {
-                displayWinner();
-                break;
-            }
+            display();
             if (!getGame().canPlayerPlay()) {
                 processCannotPlay();
             } else {
                 do {
-                    displayMessage(String.format("%s > %n", getGame().getCurrentPlayer()));
+                    System.out.printf("%s > %n", getGame().getCurrentPlayer());
                 } while (!processInput(scanner.nextLine()));
-                display();
                 processCannotPlay();
             }
         }
@@ -54,19 +49,16 @@ public abstract class GameStarter implements Runnable {
                 }
             };
         } catch (RuntimeException e) {
-            displayError(e.getMessage());
+            System.err.println(e.getMessage());
         }
         return false;
-    }
-
-    private void displayError(String message) {
-        System.err.println(message);
     }
 
     public void makeMove(String position) {
         Cell cell = new MoveParser(position).parse();
         getGame().place(cell);
         getGame().coverTerritories(cell);
+        hasWon();
     }
 
     public void showHelper() {
@@ -81,26 +73,23 @@ public abstract class GameStarter implements Runnable {
         }
     }
 
-    public BoardPoint hasWon() {
+    public void hasWon() {
+        BoardPoint winner = null;
         if (getGame().hasWon(BoardPoint.WHITE)) {
-            return BoardPoint.WHITE;
+            winner = BoardPoint.WHITE;
         }
         if (getGame().hasWon(BoardPoint.BLACK)) {
-            return BoardPoint.BLACK;
+            winner = BoardPoint.BLACK;
         }
-        return null;
+        if (winner != null) {
+            System.out.println(
+                    CLEAR + String.format("%s has won", new Player(winner)).toUpperCase());
+            continueGame = false;
+        }
     }
 
     public void setContinueGame(boolean wantToContinue) {
         continueGame = wantToContinue;
-    }
-
-    public void displayMessage(String format) {
-        System.out.print(format);
-    }
-
-    public void displayWinner() {
-        System.out.println(CLEAR + String.format("%s has won", new Player(hasWon())).toUpperCase());
     }
 
     public void display() {

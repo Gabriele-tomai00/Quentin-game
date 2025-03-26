@@ -58,6 +58,25 @@ public class OnlineGameStarter extends GameStarter {
     }
 
     @Override
+    public void hasWon() {
+        BoardPoint winner = null;
+        if (getGame().hasWon(BoardPoint.BLACK)) {
+            winner = BoardPoint.BLACK;
+        } else if (getGame().hasWon(BoardPoint.WHITE)) {
+            winner = BoardPoint.WHITE;
+        }
+        if (winner != null) {
+            handler.sendCommands(
+                    CommunicationProtocol.winner(
+                            winner == getGame().getCurrentPlayer().color() ? "LOST" : "WON"));
+            setContinueGame(false);
+            display();
+            String message = winner == getGame().getCurrentPlayer().color() ? "WON" : "LOST";
+            System.out.println("YOU " + message + "!!!!!!");
+        }
+    }
+
+    @Override
     public void processCannotPlay() {
         handler.sendCommands(CommunicationProtocol.change());
     }
