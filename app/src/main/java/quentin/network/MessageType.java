@@ -6,6 +6,7 @@ public enum MessageType {
     MOVE("MOVE"),
     PIE("PIE"),
     SERVER("SERVER"),
+    WINNER("WINNER"),
     CHANGE("CHANGE");
 
     MessageType(String value) {

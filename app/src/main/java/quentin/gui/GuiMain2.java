@@ -1,19 +1,27 @@
 package quentin.gui;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import quentin.game.Cell;
+import quentin.game.MoveParser;
+import quentin.network.CommunicationProtocol;
+import quentin.network.MessageType;
 import quentin.network.NetworkHandler;
 import quentin.network.NetworkStarter;
 
 public class GuiMain2 extends Application {
     private Parent root;
+    private ExecutorService executor;
 
     public static void main(String... args) {
         launch();
@@ -32,12 +40,55 @@ public class GuiMain2 extends Application {
     public void init() {
         NetworkStarter starter =
                 new NetworkStarter() {
+
                     @Override
                     protected void start(Socket socket) {
                         OnlineGuiGame game = new OnlineGuiGame(getColor());
-                        NetworkHandler handler = new NetworkHandler(socket, game);
+                        NetworkHandler handler =
+                                new NetworkHandler(socket, game) {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            BufferedReader br =
+                                                    new BufferedReader(
+                                                            new InputStreamReader(
+                                                                    socket.getInputStream()));
+                                            CommunicationProtocol received;
+                                            while ((received =
+                                                            CommunicationProtocol.fromString(
+                                                                    br.readLine()))
+                                                    != null) {
+                                                synchronized (game) {
+                                                    switch (received.getType()) {
+                                                        case EXIT -> {
+                                                            return;
+                                                        }
+                                                        case PIE -> game.applyPieRule();
+                                                        case WINNER -> game.setSomeoneWon();
+                                                        default -> {
+                                                            if (received.getType()
+                                                                    == MessageType.MOVE) {
+                                                                Cell cell =
+                                                                        new MoveParser(
+                                                                                        received
+                                                                                                .getData())
+                                                                                .parse();
+                                                                game.opponentPlaces(cell);
+                                                                game.opponentCoversTerritories(
+                                                                        cell);
+                                                            }
+                                                        }
+                                                    }
+                                                    setWaiting(false);
+                                                }
+                                            }
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                };
                         try {
-                            ExecutorService executor = Executors.newSingleThreadExecutor();
+                            executor = Executors.newSingleThreadExecutor();
                             executor.submit(handler);
                             FXMLLoader loader =
                                     new FXMLLoader(getClass().getResource("Main2.fxml"));
@@ -50,5 +101,10 @@ public class GuiMain2 extends Application {
                     }
                 };
         starter.run();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        executor.shutdownNow();
     }
 }
