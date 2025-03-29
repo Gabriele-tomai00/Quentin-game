@@ -7,6 +7,7 @@
 
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
+    id 'eclipse'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.1.0'
     id 'org.beryx.jlink' version '2.26.0'
@@ -28,8 +29,9 @@ dependencies {
     implementation libs.guava
     implementation 'org.openjfx:javafx-controls:20'
     implementation 'org.openjfx:javafx-fxml:20'
-
-
+    testImplementation 'org.testfx:testfx-core:4.0.16-alpha'
+    testImplementation 'org.testfx:testfx-junit5:4.0.16-alpha'
+    testImplementation 'org.testfx:openjfx-monocle:21.0.2'
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -56,9 +58,17 @@ jlink {
     }
 }
 
-tasks.named('test') {
+test {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+    systemProperty 'prism.order', 'sw'
+    systemProperty 'prism.text', 't2k'
+    systemProperty 'headless', 'true'
+    systemProperty 'java.awt.headless', 'true'
+    systemProperty 'testfx.robot', 'glass'
+    systemProperty 'testfx.headless', 'true'
+    systemProperty 'glass.platform', 'Monocle'
+    systemProperty 'monocle.platform', 'Headless'
 }
 
 spotless {

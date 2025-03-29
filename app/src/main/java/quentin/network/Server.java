@@ -1,73 +1,39 @@
 package quentin.network;
 
+import java.io.IOException;
+import java.net.Socket;
+import java.net.SocketException;
 import java.util.Random;
-import quentin.SettingHandler;
+import java.util.concurrent.Callable;
 
-public class Server {
+public class Server implements Callable<Socket> {
 
-    private UDPServer udpServer;
-    private TCPServer tcpServer;
-    private String codeForClientAuth;
-    private String username;
-    private int tcpPort;
+    private final SettingHandler handler;
 
-    public Server() {
-        generateRandomCode();
-        setNetworkInfo();
+    public Server(SettingHandler handler) {
+        this.handler = handler;
     }
 
-    public void setNetworkInfo() {
-        SettingHandler settingHandler = new SettingHandler();
-        username = settingHandler.getUsername();
-        tcpPort = settingHandler.getPort();
-    }
-
-    public void start() {
-        udpServer = new UDPServer(username, tcpPort);
-        udpServer.startServer();
-        tcpServer = new TCPServer(tcpPort, codeForClientAuth);
-        tcpServer.start();
-    }
-
-    public void stop() {
-        if (udpServer == null) {
-            System.out.println("UDP server not running");
-            return;
+    @Override
+    public Socket call() throws IOException {
+        UdpServer udpServer = new UdpServer(handler.getUsername(), handler.getPort());
+        udpServer.call();
+        TcpServer tcpServer =
+                new TcpServer(handler.getPort(), generateRandomCode(System.currentTimeMillis()));
+        Socket socket;
+        if ((socket = tcpServer.call()) == null) {
+            throw new SocketException("Socket is null!");
         }
-        udpServer.stopServer();
-        tcpServer.stop();
+        return socket;
     }
 
-    public void generateRandomCode() {
-        long seed = System.currentTimeMillis();
+    public static String generateRandomCode(long seed) {
         Random random = new Random(seed);
         StringBuilder randomNumbers = new StringBuilder();
         for (int i = 0; i < 5; i++) {
             int randomNumber = random.nextInt(10);
             randomNumbers.append(randomNumber);
         }
-        codeForClientAuth = randomNumbers.toString();
-    }
-
-    public void sendMessage(String message) {
-        tcpServer.sendMessage(message);
-    }
-
-    public String getCodeForClientAuth() {
-        return codeForClientAuth;
-    }
-
-    public Boolean isClientAuth() {
-        if (tcpServer == null) {
-            return false;
-        }
-        return tcpServer.getClientAuth();
-    }
-
-    public String getBoardReceived() {
-        if (tcpServer == null) {
-            return null;
-        }
-        return tcpServer.getMessageReceived();
+        return randomNumbers.toString();
     }
 }

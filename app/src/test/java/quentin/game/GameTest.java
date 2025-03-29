@@ -20,22 +20,6 @@ class GameTest {
     @Test
     void initializationTest() {
         assertEquals(BoardPoint.BLACK, game.getCurrentPlayer().color());
-        assertEquals(BoardPoint.BLACK, game.getCurrentPlayer().color());
-    }
-
-    @Test
-    void testMoveIsValid() {
-        assertTrue(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(0, 0)));
-        game.place(new Cell(0, 0));
-        assertTrue(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(12, 12)));
-        assertFalse(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(1, 1)));
-        game.place(new Cell(0, 1));
-        assertTrue(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(1, 1)));
-        game.changeCurrentPlayer();
-        game.place(new Cell(1, 1));
-        game.changeCurrentPlayer();
-        assertTrue(game.isMoveValid(game.getCurrentPlayer().color(), new Cell(2, 1)));
-        game.place(new Cell(2, 1));
     }
 
     @Test
@@ -70,7 +54,7 @@ class GameTest {
     }
 
     @Test
-    void exceptionsTest() {
+    void testCellAlreadyTaken() {
         game.place(new Cell(0, 0));
         Cell cell = new Cell(0, 0);
         BoardPoint color = game.getCurrentPlayer().color();
@@ -79,11 +63,15 @@ class GameTest {
         String expectedMessage = "Cell (a, 1) is not empty!";
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
-        Cell cell2 = new Cell(1, 1);
-        MoveException exception2 =
-                assertThrows(IllegalMoveException.class, () -> game.place(cell2));
-        expectedMessage = "Cell (b, 2), is not connected to other cells of the same color!";
-        actualMessage = exception2.getMessage();
+    }
+
+    @Test
+    void testIllegalMove() {
+        game.place(new Cell(0, 0));
+        Cell cell = new Cell(1, 1);
+        MoveException exception = assertThrows(IllegalMoveException.class, () -> game.place(cell));
+        String expectedMessage = "Cell (b, 2), is not connected to other cells of the same color!";
+        String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
@@ -101,7 +89,7 @@ class GameTest {
 
     @Test
     void playerPlays() {
-        GameBoard board = new GameBoard();
+        Board board = new Board();
         board.placeStone(BoardPoint.BLACK, 0, 0);
         game.place(new Cell(0, 0));
         assertEquals(board, game.getBoard());
@@ -121,16 +109,13 @@ class GameTest {
     @Test
     void findNoTerritory() {
         Cell cell = new Cell(0, 0);
-
         game.place(cell);
-
         assertEquals(Collections.<Cell>emptySet(), game.findTerritories(cell));
         assertEquals(Collections.emptySet(), game.findTerritories(new Cell(0, 1)));
     }
 
     @Test
     void findOneCellTerritory() {
-
         game.place(new Cell(0, 0));
         game.place(new Cell(0, 1));
         game.place(new Cell(1, 1));
@@ -147,7 +132,6 @@ class GameTest {
     @Test
     void findLargeTerritory() {
         for (int i = 0; i < game.boardSize(); i++) {
-
             game.place(new Cell(i, 10));
             game.changeCurrentPlayer();
             game.place(new Cell(i, 8));

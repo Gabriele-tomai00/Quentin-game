@@ -1,61 +1,29 @@
 package quentin.network;
 
-public class Client {
-    private UDPClient udpClient;
-    private TCPClient tcpClient;
-    private boolean serverFound;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.concurrent.Callable;
 
-    public void startDiscovery() {
-        udpClient = new UDPClient();
-        udpClient.setOnDiscoveredCallback(this::linkWithTCPServer);
-        udpClient.startDiscovery(); // non-blocking
+public class Client implements Callable<Socket> {
+
+    private final SettingHandler handler;
+
+    public Client(SettingHandler handler) {
+        this.handler = handler;
     }
 
-    public void stop() {
-        if (udpClient != null) {
-            udpClient.stopDiscovery();
+    public Socket call() throws IOException {
+        UdpClient udpClient = new UdpClient(handler.getUsername(), handler.getPort());
+        NetworkInfo info = udpClient.call();
+        if (info == null) {
+            throw new IOException("No UDP server reached!");
         }
-        if (tcpClient != null) {
-            tcpClient.stop();
+        TcpClient tcpClient = new TcpClient(new Socket(info.address(), handler.getPort()));
+        Socket socket;
+        if ((socket = tcpClient.call()) == null) {
+            throw new SocketException("Unable to create socket");
         }
-    }
-
-    public void linkWithTCPServer() {
-        serverFound = true;
-        System.out.println("Linking with TCP server...");
-        ServerInfo tcpServerInfo = udpClient.getTcpServerInfo();
-        if (tcpServerInfo != null) {
-            tcpClient = new TCPClient(tcpServerInfo);
-            tcpClient.start();
-            tcpClient.listenForMessages();
-        } else {
-            System.out.println("No TCP server information got");
-        }
-    }
-
-    public void sendAuthentication(String code) {
-        tcpClient.sendMessage(code);
-        System.out.println("Password sent to server: " + code);
-    }
-
-    public void sendMessage(String message) {
-        tcpClient.sendMessage(message);
-    }
-
-    public String getBoardReceived() {
-        if (tcpClient == null) return null;
-        return tcpClient.getBoardReceived();
-    }
-
-    public ClientAuthState getStateAuthentication() {
-        return tcpClient.getState();
-    }
-
-    public Boolean isAuthenticated() {
-        return tcpClient.getState() == ClientAuthState.AUTHENTICATED;
-    }
-
-    public boolean isServerFound() {
-        return serverFound;
+        return socket;
     }
 }

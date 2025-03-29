@@ -20,16 +20,13 @@ import javafx.util.Duration;
 import quentin.cache.Cache;
 import quentin.cache.GameLog;
 import quentin.exceptions.MoveException;
-import quentin.game.BoardPoint;
 import quentin.game.Cell;
 import quentin.game.Game;
-import quentin.game.GameStarter;
-import quentin.game.LocalGame;
 
-public class Controller implements Initializable, GameStarter {
+public class Controller implements Initializable {
 
     private final Pane[][] panes;
-    private LocalGame game;
+    private GuiGame game;
     @FXML private GridPane board;
     @FXML private GridPane base;
     @FXML private Label textField;
@@ -38,14 +35,12 @@ public class Controller implements Initializable, GameStarter {
     @FXML private Button goBackButton;
     @FXML private Button goForwardButton;
     @FXML private Button exitButton;
-    private final Background black = Background.fill(Color.BLACK);
-    private final Background white = Background.fill(Color.WHITE);
     private final Cache<GameLog> cache;
 
     public Controller() {
         super();
         this.panes = new Pane[13][13];
-        this.game = new LocalGame();
+        this.game = new GuiGame();
         cache = new Cache<>();
     }
 
@@ -53,9 +48,9 @@ public class Controller implements Initializable, GameStarter {
         super();
         panes = new Pane[13][13];
         if (cache.getMemorySize() > 0) {
-            game = cache.getLog().game();
+            //            game = cache.getLog().game();
         } else {
-            game = new LocalGame();
+            game = new GuiGame();
         }
         this.cache = cache;
     }
@@ -67,54 +62,26 @@ public class Controller implements Initializable, GameStarter {
                 panes[i][j] = new Pane();
                 panes[i][j].addEventHandler(MouseEvent.MOUSE_CLICKED, this::placeCell);
                 panes[i][j].setStyle("-fx-border-color: grey");
+                panes[i][j].backgroundProperty().bind(game.getBoard().getProperties()[i][j]);
                 board.add(panes[i][j], j, i);
             }
         }
+        textField.textProperty().bind(game.getCurrentPlayerProperty());
         messageField.addEventHandler(MouseEvent.MOUSE_PRESSED, this::startWithMouseClick);
     }
 
-    @Override
-    public void displayMessage(String message) {
-        textField.setText(message);
-    }
-
-    @Override
-    public void display() {
-        BoardPoint[][] gameBoard = game.getBoard().getBoard();
-        for (int i = 0; i < 13; i++) {
-            for (int j = 0; j < 13; j++) {
-                panes[i][j].setStyle("-fx-border-color: grey");
-                if (gameBoard[i][j] == BoardPoint.BLACK) {
-                    panes[i][j].setBackground(black);
-                } else if (gameBoard[i][j] == BoardPoint.WHITE) {
-                    panes[i][j].setBackground(white);
-                } else {
-                    panes[i][j].setBackground(Background.EMPTY);
-                }
-            }
-        }
-    }
-
-    @Override
     public void start() {
-        displayMessage(displayPlayerName());
         messageField.toBack();
         messageField.setText(null);
         base.setEffect(null);
         base.setOpacity(1);
         base.toFront();
-        display();
-    }
-
-    private String displayPlayerName() {
-        return game.getCurrentPlayer() + "'s turn!";
     }
 
     public void startWithMouseClick(MouseEvent e) {
         start();
     }
 
-    @Override
     public void displayWinner() {
         messageField.setText((game.getCurrentPlayer() + " wins").toUpperCase());
         messageField.addEventHandler(MouseEvent.MOUSE_PRESSED, this::resetWithMouseClicked);
@@ -132,18 +99,14 @@ public class Controller implements Initializable, GameStarter {
         try {
             game.place(cell);
             game.coverTerritories(cell);
-
-            display();
-            source.setStyle("-fx-border-color: red; -fx-border-width: 3px;");
-            if (game.hasWon(game.getCurrentPlayer())) {
+            if (game.hasWon(game.getCurrentPlayer().color())) {
                 displayWinner();
             }
             game.changeCurrentPlayer();
-            if (game.hasWon(game.getCurrentPlayer())) {
+            if (game.hasWon(game.getCurrentPlayer().color())) {
                 displayWinner();
             }
-            cache.saveLog(new GameLog(LocalDateTime.now(), new LocalGame(game)));
-            displayMessage(displayPlayerName());
+            cache.saveLog(new GameLog(LocalDateTime.now(), new GuiGame(game)));
         } catch (MoveException e1) {
             errorMessage("Invalid move!");
         }
@@ -154,7 +117,7 @@ public class Controller implements Initializable, GameStarter {
         messageField.setTextFill(Color.RED);
         messageField.toFront();
         messageField.setFont(Font.font("Menlo bold", 20));
-        messageField.setBackground(white);
+        messageField.setBackground(Background.fill(Color.WHITE));
         messageField.setOpacity(.8);
         PauseTransition transition = new PauseTransition(Duration.millis(1000));
         transition.setOnFinished(
@@ -170,14 +133,13 @@ public class Controller implements Initializable, GameStarter {
     }
 
     public void reset() {
-        game = new LocalGame();
+        game = new GuiGame();
         cache.clear();
         messageField.toFront();
         messageField.setText("Click anywhere to start");
         messageField.addEventHandler(MouseEvent.MOUSE_PRESSED, this::startWithMouseClick);
         base.setOpacity(.4);
         base.setEffect(new BoxBlur());
-        textField.setText(null);
     }
 
     public void resetWithMouseClicked(MouseEvent e) {
@@ -190,22 +152,18 @@ public class Controller implements Initializable, GameStarter {
 
     public void goBack() {
         try {
-            game = new LocalGame(cache.goBack().game());
-            displayMessage(displayPlayerName());
+            game = new GuiGame(cache.goBack().game());
         } catch (RuntimeException ex) {
             errorMessage("No more memory left!");
         }
-        display();
     }
 
     public void goForward() {
         try {
-            game = new LocalGame(cache.goForward().game());
-            displayMessage(displayPlayerName());
+            game = new GuiGame(cache.goForward().game());
         } catch (RuntimeException ex) {
             errorMessage("Cannot go forward!");
         }
-        display();
     }
 
     public void exitGame() {
@@ -216,7 +174,6 @@ public class Controller implements Initializable, GameStarter {
         return cache;
     }
 
-    @Override
     public Game getGame() {
         return game;
     }

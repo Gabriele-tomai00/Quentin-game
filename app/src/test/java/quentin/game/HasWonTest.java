@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import quentin.exceptions.MoveException;
 
 class HasWonTest {
 
@@ -13,11 +12,11 @@ class HasWonTest {
 
     @Test
     void hasWonException() {
-        assertFalse(game.hasWon(game.getCurrentPlayer()));
+        assertFalse(game.hasWon(BoardPoint.BLACK));
     }
 
     @Test
-    void findWhiteLine() throws MoveException {
+    void findWhiteLine() {
         game.changeCurrentPlayer();
         assertEquals(BoardPoint.WHITE, game.getCurrentPlayer().color());
 
@@ -25,11 +24,11 @@ class HasWonTest {
             Cell cell = new Cell(0, col);
             game.place(cell);
         }
-        assertTrue(game.hasWon(game.getCurrentPlayer()));
+        assertTrue(game.hasWon(BoardPoint.WHITE));
     }
 
     @Test
-    void findWhite2Lines() throws MoveException {
+    void findWhite2Lines() {
         game.changeCurrentPlayer();
         for (int col = 0; col < game.boardSize(); col++) {
             Cell first = new Cell(3, col);
@@ -43,7 +42,7 @@ class HasWonTest {
     }
 
     @Test
-    void findWhiteOrthogonalDownLines() throws MoveException {
+    void findWhiteOrthogonalDownLines() {
         game.changeCurrentPlayer();
         assertEquals(BoardPoint.WHITE, game.getCurrentPlayer().color());
         for (int col = 0; col < 7; col++) {
@@ -56,11 +55,11 @@ class HasWonTest {
             Cell cell = new Cell(7, col);
             game.place(cell);
         }
-        assertTrue(game.hasWon(game.getCurrentPlayer()));
+        assertTrue(game.hasWon(BoardPoint.WHITE));
     }
 
     @Test
-    void findWhiteLinesWithLoops() throws MoveException {
+    void findWhiteLinesWithLoops() {
         game.changeCurrentPlayer();
         assertEquals(BoardPoint.WHITE, game.getCurrentPlayer().color());
         for (int i = 0; i < 9; i++) {
@@ -71,11 +70,11 @@ class HasWonTest {
         }
         game.place(new Cell(3, 6));
         game.place(new Cell(3, 8));
-        assertTrue(game.hasWon(game.getCurrentPlayer()));
+        assertTrue(game.hasWon(BoardPoint.WHITE));
     }
 
     @Test
-    void findWhiteDifficultPath() throws MoveException {
+    void findWhiteDifficultPath() {
         game.changeCurrentPlayer();
         assertEquals(BoardPoint.WHITE, game.getCurrentPlayer().color());
         for (int j = 1; j < 9; j++) {
@@ -106,11 +105,11 @@ class HasWonTest {
         game.place(new Cell(3, 6));
         assertTrue(game.findWinnerPath(game.getCurrentPlayer().color(), new Cell(0, 0)));
         assertTrue(game.findWinnerPath(game.getCurrentPlayer().color(), new Cell(4, 0)));
-        assertTrue(game.hasWon(game.getCurrentPlayer()));
+        assertTrue(game.hasWon(BoardPoint.WHITE));
     }
 
     @Test
-    void findWhitePathInNormalSituation() throws MoveException {
+    void findWhitePathInNormalSituation() {
         for (int i = 1; i < 4; i++) {
             game.place(new Cell(i, 4));
         }
@@ -151,21 +150,21 @@ class HasWonTest {
         game.place(new Cell(3, 6));
 
         assertEquals(BoardPoint.WHITE, game.getCurrentPlayer().color());
-        assertTrue(game.hasWon(game.getCurrentPlayer()));
+        assertTrue(game.hasWon(BoardPoint.WHITE));
     }
 
     @Test
-    void findBlackLine() throws MoveException {
+    void findBlackLine() {
         for (int row = 0; row < game.boardSize(); row++) {
             Cell cell = new Cell(row, 4);
             game.place(cell);
         }
         assertEquals(BoardPoint.BLACK, game.getCurrentPlayer().color());
-        assertTrue(game.hasWon(game.getCurrentPlayer()));
+        assertTrue(game.hasWon(BoardPoint.BLACK));
     }
 
     @Test
-    void findBlack2Lines() throws MoveException {
+    void findBlack2Lines() {
         for (int row = 0; row < game.boardSize(); row++) {
             Cell first = new Cell(row, 3);
             Cell second = new Cell(row, 6);
@@ -178,7 +177,7 @@ class HasWonTest {
     }
 
     @Test
-    void findDarkOrthogonalLeftLines() throws MoveException {
+    void findDarkOrthogonalLeftLines() {
         for (int row = 0; row < 6; row++) {
             Cell cell = new Cell(row, 4);
             game.place(cell);
@@ -190,11 +189,11 @@ class HasWonTest {
             game.place(cell);
         }
         assertEquals(BoardPoint.BLACK, game.getCurrentPlayer().color());
-        assertTrue(game.hasWon(game.getCurrentPlayer()));
+        assertTrue(game.hasWon(BoardPoint.BLACK));
     }
 
     @Test
-    void findDarkOrthogonalRightLines() throws MoveException {
+    void findDarkOrthogonalRightLines() {
         for (int row = 0; row < 6; row++) {
             Cell cell = new Cell(row, 2);
             game.place(cell);
@@ -206,11 +205,11 @@ class HasWonTest {
             game.place(cell);
         }
         assertEquals(BoardPoint.BLACK, game.getCurrentPlayer().color());
-        assertTrue(game.hasWon(game.getCurrentPlayer()));
+        assertTrue(game.hasWon(BoardPoint.BLACK));
     }
 
     @Test
-    void findDarkOrthogonalDifficultLines() throws MoveException {
+    void findDarkOrthogonalDifficultLines() {
         for (int i = 0; i < 10; i++) {
             if (i == 6) {
                 continue;
@@ -240,13 +239,13 @@ class HasWonTest {
             game.place(new Cell(row, game.boardSize() - 1));
         }
         assertEquals(BoardPoint.BLACK, game.getCurrentPlayer().color());
-        assertTrue(game.hasWon(game.getCurrentPlayer()));
+        assertTrue(game.hasWon(BoardPoint.BLACK));
         assertTrue(game.findWinnerPath(BoardPoint.BLACK, new Cell(0, 0)));
         assertTrue(game.findWinnerPath(BoardPoint.BLACK, new Cell(0, 2)));
     }
 
     @Test
     void noWinnerTest() {
-        assertFalse(game.hasWon(game.getCurrentPlayer()));
+        assertFalse(game.hasWon(BoardPoint.BLACK));
     }
 }

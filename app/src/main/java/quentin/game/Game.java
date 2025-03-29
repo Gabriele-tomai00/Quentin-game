@@ -11,9 +11,23 @@ import quentin.exceptions.CellAlreadyTakenException;
 import quentin.exceptions.IllegalMoveException;
 import quentin.exceptions.MoveException;
 
-public interface Game extends Serializable {
-    default boolean hasWon(Player player) {
-        if (player.color() == BoardPoint.WHITE) {
+public abstract class Game implements Serializable {
+
+    private static final long serialVersionUID = 2946018924798852043L;
+    private Board board;
+
+    protected Game() {
+        board = new Board();
+    }
+
+    public abstract Player getCurrentPlayer();
+
+    public boolean hasWon() {
+        return hasWon(getCurrentPlayer().color());
+    }
+
+    public boolean hasWon(BoardPoint color) {
+        if (color == BoardPoint.WHITE) {
             for (int row = 0; row < boardSize(); row++) {
                 Cell cell = new Cell(row, 0);
                 if (getBoard().getPoint(cell) == BoardPoint.WHITE
@@ -33,7 +47,7 @@ public interface Game extends Serializable {
         return false;
     }
 
-    default boolean findWinnerPath(BoardPoint color, Cell startPoint) {
+    public boolean findWinnerPath(BoardPoint color, Cell startPoint) {
         Set<Cell> visited = new HashSet<>();
         Deque<Cell> toVisit = new LinkedList<>();
 
@@ -55,7 +69,11 @@ public interface Game extends Serializable {
         return false;
     }
 
-    default void coverTerritories(Cell cell) {
+    public void coverTerritories(Cell cell) {
+        coverTerritories(cell, getCurrentPlayer().color());
+    }
+
+    public void coverTerritories(Cell cell, BoardPoint color) {
         Set<Cell> neighbors = getNeighbors(cell);
         for (Cell neighbor : neighbors) {
             if (getBoard().getPoint(neighbor) != BoardPoint.EMPTY) {
@@ -73,20 +91,18 @@ public interface Game extends Serializable {
             } else if (whites < blacks) {
                 territory.forEach(a -> getBoard().placeStone(BoardPoint.BLACK, a.row(), a.col()));
             } else {
-                BoardPoint color =
-                        getCurrentPlayer().color() == BoardPoint.BLACK
-                                ? BoardPoint.WHITE
-                                : BoardPoint.BLACK;
-                territory.forEach(a -> getBoard().placeStone(color, a.row(), a.col()));
+                BoardPoint otherColor =
+                        color == BoardPoint.BLACK ? BoardPoint.WHITE : BoardPoint.BLACK;
+                territory.forEach(a -> getBoard().placeStone(otherColor, a.row(), a.col()));
             }
         }
     }
 
-    default int countCells(Set<Cell> frontier, BoardPoint color) {
+    public int countCells(Set<Cell> frontier, BoardPoint color) {
         return (int) frontier.stream().map(getBoard()::getPoint).filter(a -> a == color).count();
     }
 
-    default Set<Cell> findTerritories(Cell startingCell) {
+    public Set<Cell> findTerritories(Cell startingCell) {
         Set<Cell> territory = new HashSet<>();
         Deque<Cell> visiting = new LinkedList<>();
         visiting.add(startingCell);
@@ -113,7 +129,7 @@ public interface Game extends Serializable {
         return territory;
     }
 
-    default Set<Cell> getNeighbors(Cell pos) {
+    public Set<Cell> getNeighbors(Cell pos) {
         int row = pos.row();
         int col = pos.col();
         Set<Cell> neighbors = new HashSet<>();
@@ -132,7 +148,7 @@ public interface Game extends Serializable {
         return neighbors;
     }
 
-    default boolean isMoveValid(BoardPoint color, Cell cell) {
+    public boolean isMoveValid(BoardPoint color, Cell cell) {
         if (getBoard().getPoint(cell) != BoardPoint.EMPTY) {
             throw new CellAlreadyTakenException(cell);
         }
@@ -171,16 +187,18 @@ public interface Game extends Serializable {
         return true;
     }
 
-    default void place(Cell cell) {
-        if (!isMoveValid(getCurrentPlayer().color(), cell)) {
-            throw new IllegalMoveException(cell);
-        }
-        getBoard().placeStone(getCurrentPlayer().color(), cell.row(), cell.col());
+    public void place(Cell cell) {
+        place(cell, getCurrentPlayer().color());
     }
 
-    Player getCurrentPlayer();
+    public void place(Cell cell, BoardPoint color) {
+        if (!isMoveValid(color, cell)) {
+            throw new IllegalMoveException(cell);
+        }
+        getBoard().placeStone(color, cell.row(), cell.col());
+    }
 
-    default boolean canPlayerPlay() {
+    public boolean canPlayerPlay() {
         for (int row = 0; row < boardSize(); row++) {
             for (int col = 0; col < boardSize(); col++) {
                 try {
@@ -195,9 +213,11 @@ public interface Game extends Serializable {
         return false;
     }
 
-    default int boardSize() {
+    public int boardSize() {
         return getBoard().size();
     }
 
-    GameBoard getBoard();
+    public Board getBoard() {
+        return board;
+    }
 }

@@ -3,22 +3,20 @@ package quentin.game;
 import java.io.Serial;
 import java.util.Objects;
 
-public class LocalGame implements Game {
+public class LocalGame extends Game {
 
     @Serial private static final long serialVersionUID = -8782140056307981297L;
     private static final Player white = new Player(BoardPoint.WHITE);
     private static final Player black = new Player(BoardPoint.BLACK);
     private Player currentPlayer;
-    private final GameBoard board;
 
     public LocalGame() {
+        super();
         currentPlayer = black;
-        board = new GameBoard();
     }
 
     public LocalGame(LocalGame game) {
-        this.board = new GameBoard();
-        board.setBoard(game.getBoard());
+        getBoard().setBoard(game.getBoard());
         this.currentPlayer = new Player(game.getCurrentPlayer().color());
     }
 
@@ -33,11 +31,6 @@ public class LocalGame implements Game {
     @Override
     public Player getCurrentPlayer() {
         return currentPlayer;
-    }
-
-    @Override
-    public GameBoard getBoard() {
-        return board;
     }
 
     @Override
