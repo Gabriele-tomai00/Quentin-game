@@ -102,7 +102,7 @@
       </AnchorPane>
       <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="100.0" spacing="10.0" GridPane.halignment="RIGHT" GridPane.hgrow="NEVER" GridPane.rowIndex="1">
          <children>
-            <Button fx:id="pieButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-radius: 5;" text="Forward">
+            <Button fx:id="pieButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#playPie" style="-fx-background-radius: 5;" text="Pie">
                <font>
                   <Font name="Menlo Bold" size="13.0" />
                </font>

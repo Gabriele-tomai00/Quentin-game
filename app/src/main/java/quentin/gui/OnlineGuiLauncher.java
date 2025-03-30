@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,13 +18,9 @@ import quentin.network.MessageType;
 import quentin.network.NetworkHandler;
 import quentin.network.NetworkStarter;
 
-public class GuiMain2 extends Application {
+public class OnlineGuiLauncher extends Application {
     private Parent root;
     private ExecutorService executor;
-
-    public static void main(String... args) {
-        launch();
-    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {

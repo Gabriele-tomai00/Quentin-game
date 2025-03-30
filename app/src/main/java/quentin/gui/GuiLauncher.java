@@ -10,13 +10,9 @@ import quentin.cache.Cache;
 import quentin.cache.CacheHandler;
 import quentin.cache.GameLog;
 
-public class GuiMain extends Application {
+public class GuiLauncher extends Application {
     private Cache<GameLog> cache;
     private static final File CACHE_FILE = new File(".last_match_cache");
-
-    public static void main(String... args) {
-        launch();
-    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
