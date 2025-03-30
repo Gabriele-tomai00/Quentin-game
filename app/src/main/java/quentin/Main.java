@@ -5,7 +5,8 @@ import java.util.Scanner;
 import javafx.application.Application;
 import quentin.cache.CacheHandler;
 import quentin.game.CachedGameStarter;
-import quentin.gui.GuiMain2;
+import quentin.gui.GuiLauncher;
+import quentin.gui.OnlineGuiLauncher;
 import quentin.network.NetworkStarter;
 
 public class Main {
@@ -38,9 +39,10 @@ public class Main {
             String command = scanner.nextLine().trim().toLowerCase();
 
             switch (command) {
-                case "slg", "startlocalgame" -> startLocalGame();
-                case "og", "onlinegame" -> startOnlineGame();
-                case "sg", "startgui" -> startGui();
+                case "startlocalgame" -> startLocalGame();
+                case "onlinegame" -> startOnlineGame();
+                case "sog", "startgui" -> startOnlineGui();
+                case "slg", "startlocalgui" -> startLocalGui();
                 case "" -> {
                     continue;
                 }
@@ -96,7 +98,11 @@ public class Main {
         starter.run();
     }
 
-    public static void startGui(String... args) {
-        Application.launch(GuiMain2.class);
+    public static void startOnlineGui() {
+        Application.launch(OnlineGuiLauncher.class);
+    }
+
+    public static void startLocalGui() {
+        Application.launch(GuiLauncher.class);
     }
 }
