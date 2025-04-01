@@ -32,6 +32,7 @@ public class NetworkHandler implements Runnable {
                 synchronized (game) {
                     switch (received.getType()) {
                         case EXIT -> {
+                            exit();
                             System.out.println("The other player left the game!");
                             return;
                         }
@@ -63,7 +64,7 @@ public class NetworkHandler implements Runnable {
         }
     }
 
-    public void setWaiting(boolean waiting) {
+    public synchronized void setWaiting(boolean waiting) {
         this.waiting = waiting;
     }
 
@@ -80,6 +81,16 @@ public class NetworkHandler implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public synchronized void exit() {
+        try {
+            PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
+            pw.println(CommunicationProtocol.exit());
+            waiting = true;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

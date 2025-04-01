@@ -170,6 +170,7 @@ public class OnlineController implements Initializable {
     }
 
     public void exitGame() {
+        handler.exit();
         Platform.exit();
     }
 
