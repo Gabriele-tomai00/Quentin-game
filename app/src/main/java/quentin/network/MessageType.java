@@ -19,7 +19,7 @@ public enum MessageType {
                 return type;
             }
         }
-        throw new IllegalArgumentException("Unkown message type: " + message);
+        throw new IllegalArgumentException("Unknown message type: " + message);
     }
 
     private final String value;

@@ -1,41 +1,45 @@
 package quentin.gui;
 
+import java.io.Serial;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import quentin.game.LocalGame;
 
 public class GuiGame extends LocalGame {
-    private static final long serialVersionUID = -7843572523653926167L;
-    private final transient StringProperty currentPlayerProperty;
 
-    private final GuiBoard board;
+  @Serial private static final long serialVersionUID = -7843572523653926167L;
+  private final transient StringProperty currentPlayerProperty;
 
-    public GuiGame() {
-        super();
-        board = new GuiBoard();
-        currentPlayerProperty = new SimpleStringProperty("Black's turn");
-    }
+  private final GuiBoard board;
 
-    public GuiGame(LocalGame game) {
-        super(game);
-        board = new GuiBoard();
-        board.setBoard(game.getBoard());
-        currentPlayerProperty =
-                new SimpleStringProperty(game.getCurrentPlayer().toString() + "s turn");
-    }
+  public GuiGame() {
+    super();
+    board = new GuiBoard();
+    currentPlayerProperty = new SimpleStringProperty("Black's turn");
+  }
 
-    @Override
-    public void changeCurrentPlayer() {
-        super.changeCurrentPlayer();
-        currentPlayerProperty.set(getCurrentPlayer().toString() + "'s turn");
-    }
+  public GuiGame(LocalGame game) {
+    super(game);
+    board = new GuiBoard();
+    board.setBoard(game.getBoard());
+    currentPlayerProperty = new SimpleStringProperty(game.getCurrentPlayer()
+                                                         .toString()
+        + "s turn");
+  }
 
-    @Override
-    public GuiBoard getBoard() {
-        return board;
-    }
+  @Override
+  public void changeCurrentPlayer() {
+    super.changeCurrentPlayer();
+    currentPlayerProperty.set(getCurrentPlayer().toString() + "'s turn");
+  }
 
-    public StringProperty getCurrentPlayerProperty() {
-        return currentPlayerProperty;
-    }
+  @Override
+  public GuiBoard getBoard() {
+    return board;
+  }
+
+  public StringProperty getCurrentPlayerProperty() {
+    return currentPlayerProperty;
+  }
 }

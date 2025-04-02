@@ -1,5 +1,7 @@
 package quentin.gui;
 
+import java.io.Serial;
+
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -10,10 +12,10 @@ import quentin.game.OnlineGame;
 
 public class OnlineGuiGame extends OnlineGame {
 
-    private static final long serialVersionUID = 5942138526532573138L;
-    private GuiBoard board;
-    private transient BooleanProperty someoneWon;
-    private transient StringProperty playerColor;
+   @Serial private static final long serialVersionUID = 5942138526532573138L;
+    private final GuiBoard board;
+    private final transient BooleanProperty someoneWon;
+    private final transient StringProperty playerColor;
 
     public OnlineGuiGame(BoardPoint color) {
         super(color);

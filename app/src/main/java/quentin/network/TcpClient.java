@@ -7,11 +7,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
+
 import quentin.exceptions.PasswordRejectedException;
 
 public class TcpClient implements Callable<Socket> {
-    private Socket socket;
-    Scanner scanner;
+    private final Socket socket;
+    private final Scanner scanner;
 
     public TcpClient(Socket socket) {
         this.socket = socket;

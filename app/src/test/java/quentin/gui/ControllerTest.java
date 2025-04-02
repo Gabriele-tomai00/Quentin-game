@@ -1,10 +1,11 @@
 package quentin.gui;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.ApplicationTest;
+
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 
 @ExtendWith(ApplicationExtension.class)
 class ControllerTest extends ApplicationTest {
@@ -46,17 +47,17 @@ class ControllerTest extends ApplicationTest {
     //    //        release(new KeyCode[] {});
     //    //        release(new MouseButton[] {});
     //    //    }
-    //
-    //    @Test
-    //    void shouldUpdateLabelWhenButtonClicked() {
-    //        messageField = lookup("#messageField").query();
-    //        // Ensure initial state
-    //        verifyThat(messageField, hasText("Hello, World!"));
-    //
-    //        // Simulate button click
-    //        clickOn(clickButton);
-    //
-    //        // Check if the text updated correctly
-    //        verifyThat(messageField, hasText("Button Clicked!"));
-    //    }
+//    
+//        @Test
+//        void shouldUpdateLabelWhenButtonClicked() {
+//            messageField = lookup("#messageField").query();
+//            // Ensure initial state
+//            verifyThat(messageField, hasText("Hello, World!"));
+//    
+//            // Simulate button click
+//            clickOn(clickButton);
+//    
+//            // Check if the text updated correctly
+//            verifyThat(messageField, hasText("Button Clicked!"));
+//        }
 }

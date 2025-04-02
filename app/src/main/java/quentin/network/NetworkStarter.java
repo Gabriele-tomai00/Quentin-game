@@ -5,13 +5,14 @@ import java.net.Socket;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import quentin.game.BoardPoint;
 import quentin.game.OnlineGame;
 import quentin.game.OnlineGameStarter;
 
 public class NetworkStarter implements Runnable {
 
-    private SettingHandler handler = new SettingHandler();
+    private final SettingHandler handler = new SettingHandler();
     private BoardPoint color;
     private ExecutorService executor;
     private final Scanner scanner = new Scanner(System.in);
@@ -45,7 +46,7 @@ public class NetworkStarter implements Runnable {
                     case "ss", "startserver" -> startServer();
                     case "stop" -> stop();
                     case "sc", "startclient" -> startClient();
-                    default -> System.err.println("Unkown command: " + command);
+                    default -> System.err.println("Unknown command: " + command);
                 }
             } catch (RuntimeException e) {
                 System.err.println(e.getMessage());
@@ -100,8 +101,7 @@ public class NetworkStarter implements Runnable {
             Socket socket = server.call();
             start(socket);
         } catch (IOException e) {
-            //            System.err.println(e.getMessage());
-            e.printStackTrace();
+          System.err.println(e.getMessage());
         }
     }
 
@@ -112,8 +112,7 @@ public class NetworkStarter implements Runnable {
             Socket socket = client.call();
             start(socket);
         } catch (IOException e) {
-            // System.err.println(e.getMessage());
-            e.printStackTrace();
+          System.err.println(e.getMessage());
         }
     }
 

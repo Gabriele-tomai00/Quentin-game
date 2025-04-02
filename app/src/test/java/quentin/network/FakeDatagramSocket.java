@@ -31,12 +31,4 @@ public class FakeDatagramSocket extends DatagramSocket {
     public void receive(DatagramPacket p) throws IOException {
         in.read(p.getData());
     }
-
-    public PipedInputStream getInputStream() {
-        return in;
-    }
-
-    public PipedOutputStream getOutputStream() {
-        return out;
-    }
 }

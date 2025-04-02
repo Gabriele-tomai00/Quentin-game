@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+
 import quentin.game.BoardPoint;
 import quentin.game.Cell;
 import quentin.game.MoveParser;
@@ -27,6 +28,7 @@ public class NetworkHandler implements Runnable {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             CommunicationProtocol received;
+            //TODO while true
             while ((received = CommunicationProtocol.fromString(br.readLine())) != null) {
                 System.out.println("Please make your move");
                 synchronized (game) {
@@ -47,14 +49,15 @@ public class NetworkHandler implements Runnable {
                             System.out.println("YOU " + received.getData() + " THE MATCH!!!!!");
                             return;
                         }
-                        default -> {
-                            if (received.getType() == MessageType.MOVE) {
+                        case MOVE -> {
                                 Cell cell = new MoveParser(received.getData()).parse();
                                 game.opponentPlaces(cell);
                                 game.opponentCoversTerritories(cell);
                                 System.out.println(game.getBoard());
-                            }
                         }
+                        case CHANGE -> {}
+                        default -> {//qualcosa è andato storto
+                          }
                     }
                     waiting = false;
                 }

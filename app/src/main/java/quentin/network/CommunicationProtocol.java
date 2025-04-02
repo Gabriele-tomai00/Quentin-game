@@ -29,6 +29,7 @@ public class CommunicationProtocol {
         return new CommunicationProtocol(MessageType.fromString(parts[0]), parts[1]);
     }
 
+    @Override
     public String toString() {
         return String.format("%s:%s", type.getValue(), data);
     }

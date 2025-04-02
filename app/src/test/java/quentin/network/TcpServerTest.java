@@ -9,22 +9,23 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class TcpServerTest {
 
-    private TcpServer tcpServer;
     private Future<Socket> submit;
     private FakeSocket fakeSocket;
+    private static final String RIGHT_PASS = "pass";
 
     @BeforeEach
     void startServer() throws IOException {
         fakeSocket = new FakeSocket();
-        tcpServer =
-                new TcpServer(2000, "pass") {
+        TcpServer tcpServer =
+                new TcpServer(2000, RIGHT_PASS) {
                     @Override
-                    public Socket getConnection() throws IOException {
+                    public Socket getConnection() {
                         return fakeSocket;
                     }
                 };
@@ -37,7 +38,7 @@ class TcpServerTest {
         PrintWriter writer = new PrintWriter(fakeSocket.getOutputStream(), true);
         writer.println("1");
         writer.println("2");
-        writer.println("pass");
+        writer.println(RIGHT_PASS);
         Socket serverSocket = submit.get();
         assertFalse(serverSocket.isClosed());
     }

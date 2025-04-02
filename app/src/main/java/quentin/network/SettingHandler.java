@@ -8,12 +8,12 @@ public class SettingHandler {
 
     public static final String USERNAME = "username";
     public static final String DEFAULT = "default";
-    public static final String TCP_PORT = "tcpPort";
+    public static final String PORT = "port";
 
     public SettingHandler() {
         settings = new Properties();
         settings.setProperty(USERNAME, DEFAULT);
-        settings.setProperty(TCP_PORT, "6789");
+        settings.setProperty(PORT, "6789");
     }
 
     public String getUsername() {
@@ -29,11 +29,11 @@ public class SettingHandler {
     }
 
     public int getPort() {
-        return Integer.parseInt(settings.getProperty(TCP_PORT, "8080"));
+        return Integer.parseInt(settings.getProperty(PORT));
     }
 
     public void setPort(int port) {
-        settings.setProperty(TCP_PORT, String.valueOf(port));
+        settings.setProperty(PORT, String.valueOf(port));
     }
 
     public void validateUsername() {

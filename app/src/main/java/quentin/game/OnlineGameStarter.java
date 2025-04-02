@@ -20,7 +20,7 @@ public class OnlineGameStarter extends GameStarter {
     public synchronized boolean processInput(String command) {
         return switch (command) {
             case "pie" -> {
-                if (canPlayPie) {
+                if (canPlayPie && !handler.isWaiting()) {
                     game.applyPieRule();
                     handler.sendCommands(CommunicationProtocol.pie());
                     canPlayPie = false;
