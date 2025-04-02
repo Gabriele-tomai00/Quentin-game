@@ -3,6 +3,7 @@ package quentin.network;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
+
 import quentin.exceptions.MoveException;
 import quentin.game.BoardPoint;
 import quentin.game.Cell;

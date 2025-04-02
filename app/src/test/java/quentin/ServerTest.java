@@ -7,42 +7,44 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test; // Test of JUnit 5
-
 import quentin.network.Server;
 
 class ServerTest {
 
-  private Server server;
+    private Server server;
 
-  @BeforeEach
-  public void setUp() {
-    server = new Server();
-  }
+    @BeforeEach
+    public void setUp() {
+        server = new Server();
+    }
 
-  @Test
-  void testCodeLength() {
-    server.generateRandomCode();
-    String code = server.getCodeForClientAuth();
-    assertEquals(5, code.length(), "The code length should be 5 characters.");
-  }
+    @Test
+    void testCodeLength() {
+        server.generateRandomCode();
+        String code = server.getCodeForClientAuth();
+        assertEquals(5, code.length(), "The code length should be 5 characters.");
+    }
 
-  @Test
-  void testCodeContainsOnlyDigits() {
-    server.generateRandomCode();
-    String code = server.getCodeForClientAuth();
-    assertTrue(code.matches("\\d{5}"), "The code should contain only digits (0-9).");
-  }
+    @Test
+    void testCodeContainsOnlyDigits() {
+        server.generateRandomCode();
+        String code = server.getCodeForClientAuth();
+        assertTrue(code.matches("\\d{5}"), "The code should contain only digits (0-9).");
+    }
 
-  @Test
-  void testCodeIsDifferentOnEachCall() throws InterruptedException {
-    server.generateRandomCode();
-    String code1 = server.getCodeForClientAuth();
+    @Test
+    void testCodeIsDifferentOnEachCall() throws InterruptedException {
+        server.generateRandomCode();
+        String code1 = server.getCodeForClientAuth();
 
-    Thread.sleep(10);
+        Thread.sleep(10);
 
-    server.generateRandomCode();
-    String code2 = server.getCodeForClientAuth();
+        server.generateRandomCode();
+        String code2 = server.getCodeForClientAuth();
 
-    assertNotEquals(code1, code2, "Each call to generateRandomCode() should produce a different result.");
-  }
+        assertNotEquals(
+                code1,
+                code2,
+                "Each call to generateRandomCode() should produce a different result.");
+    }
 }

@@ -1,23 +1,106 @@
 package quentin.game;
 
-public interface GameStarter {
+import java.util.Scanner;
 
-    String CLEAR = "\033[H\033[2J";
+public class GameStarter implements Runnable {
+    protected String CLEAR = "\033[H\033[2J";
+    protected LocalGame game;
+    private Scanner scanner;
+    private boolean continueGame = true;
 
-    default void displayMessage(String format) {
+    public GameStarter() {
+        game = new LocalGame();
+        scanner = new Scanner(System.in);
+    }
+
+    @Override
+    public void run() {
+        display();
+        while (continueGame) {
+            if (game.hasWon(game.getCurrentPlayer())) {
+                displayWinner();
+                break;
+            }
+            if (!game.canPlayerPlay()) {
+                game.changeCurrentPlayer();
+            } else {
+                do {
+                    displayMessage(String.format("%s > %n", game.getCurrentPlayer()));
+                } while (!processInput(scanner.nextLine()));
+                display();
+                if (game.hasWon(game.getCurrentPlayer())) {
+                    displayWinner();
+                    break;
+                }
+                game.changeCurrentPlayer();
+            }
+        }
+    }
+
+    public boolean processInput(String command) {
+        try {
+            switch (command) {
+                case "" -> {}
+                case "exit" -> {
+                    continueGame = false;
+                    return true;
+                }
+                case "help" -> showHelper();
+                default -> {
+                    makeMove(command);
+                    return true;
+                }
+            }
+        } catch (RuntimeException e) {
+            displayError(e.getMessage());
+        }
+        return false;
+    }
+
+    private void displayError(String message) {
+        System.err.println(message);
+    }
+
+    public void makeMove(String position) {
+        Cell cell = new MoveParser(position).parse();
+        game.place(cell);
+        game.coverTerritories(cell);
+    }
+
+    public void showHelper() {
+        System.out.println("Available commands:");
+        String[][] commands = {
+            {"exit", "Quits the game and exits the program"},
+            {"help", "Shows this help"},
+            {"<coordinates>", "Makes a move. Examples: A1 b2 C5 (wrong examples: 5A, 24)"}
+        };
+        for (String[] strings : commands) {
+            System.out.printf("  %-25s: %-40s%n", strings[0], strings[1]);
+        }
+    }
+
+    public boolean hasWon() {
+        return game.hasWon(game.getCurrentPlayer());
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setContinueGame(boolean wantToContinue) {
+        continueGame = wantToContinue;
+    }
+
+    public void displayMessage(String format) {
         System.out.print(format);
     }
 
-    default void displayWinner() {
+    public void displayWinner() {
         System.out.println(
                 CLEAR + String.format("%s has won", getGame().getCurrentPlayer()).toUpperCase());
     }
 
-    default void display() {
+    public void display() {
         System.out.println(CLEAR + getGame().getBoard());
     }
-
-    void start();
-
-    Game getGame();
 }
