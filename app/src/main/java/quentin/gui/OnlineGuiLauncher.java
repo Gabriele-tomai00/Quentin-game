@@ -59,7 +59,9 @@ public class OnlineGuiLauncher extends Application {
                                                             return;
                                                         }
                                                         case PIE -> game.applyPieRule();
-                                                        case WINNER -> game.setSomeoneWon();
+                                                        case WINNER ->
+                                                                game.setSomeoneWon(
+                                                                        received.getData());
                                                         default -> {
                                                             if (received.getType()
                                                                     == MessageType.MOVE) {

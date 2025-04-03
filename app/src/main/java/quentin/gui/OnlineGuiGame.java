@@ -1,7 +1,6 @@
 package quentin.gui;
 
 import java.io.Serial;
-
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -12,10 +11,11 @@ import quentin.game.OnlineGame;
 
 public class OnlineGuiGame extends OnlineGame {
 
-   @Serial private static final long serialVersionUID = 5942138526532573138L;
+    @Serial private static final long serialVersionUID = 5942138526532573138L;
     private final GuiBoard board;
     private final transient BooleanProperty someoneWon;
     private final transient StringProperty playerColor;
+    private transient String winnerMessage;
 
     public OnlineGuiGame(BoardPoint color) {
         super(color);
@@ -39,11 +39,25 @@ public class OnlineGuiGame extends OnlineGame {
         return board;
     }
 
-    public void setSomeoneWon() {
-        someoneWon.set(true);
+    public void setSomeoneWon(String message) {
+        winnerMessage = "YOU " + message + "!!!!";
+        Platform.runLater(() -> someoneWon.set(true));
     }
 
     public BooleanProperty getSomeoneWon() {
         return someoneWon;
+    }
+
+    public String getWinnerMessage() {
+        return winnerMessage;
+    }
+
+    @Override
+    public boolean hasWon(BoardPoint color) {
+        if (super.hasWon(color)) {
+            setSomeoneWon(color == getCurrentPlayer().color() ? "won" : "lost");
+            return true;
+        }
+        return false;
     }
 }
