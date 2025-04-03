@@ -32,39 +32,32 @@ public class Main {
 
         while (true) {
             System.out.print("QuentinGame > ");
-            if (!scanner.hasNextLine()) {
-                System.out.println("No input available. Please try again.");
-                continue;
-            }
             String command = scanner.nextLine().trim().toLowerCase();
 
             switch (command) {
-                case "startlocalgame" -> startLocalGame();
-                case "onlinegame" -> startOnlineGame();
-                case "sog", "startgui" -> startOnlineGui();
+                case "localgame", "lg" -> startLocalGame();
+                case "onlinegame", "og" -> startOnlineGame();
+                case "sog", "startonlinegui" -> startOnlineGui();
                 case "slg", "startlocalgui" -> startLocalGui();
                 case "" -> {
-                    continue;
+                    break;
                 }
-                case "help" -> {
-                    showHelper();
-                    continue;
+                case "help" -> showHelper();
+                case "exit" -> {
+                    System.out.println("Exiting the game...");
+                    return;
                 }
-                case "exit" -> System.out.println("Exiting the game...");
-                default -> {
-                    System.out.println("Unknown command: " + command);
-                    continue;
-                }
+                default -> System.out.println("Unknown command: " + command);
             }
-            break;
         }
     }
 
     public static void showHelper() {
         String[][] commands = {
-            {"startlocalgame or slg", "Start a match in local mode (only one computer needed)"},
-            {"onlinegame or og", "Start a match in LAN mode (two computer needed)"},
-            {"startgui or sg", "Start a match in a graphical interface (only one computer needed)"},
+            {"startlocalgui or slg", "Start a match in local mode with gui"},
+            {"startonlinegui or sog", "Start a match on the local network with gui"},
+            {"onlinegame or og", "Start a match in the local network with terminal"},
+            {"localgame or lg", "Start a match in local mode with terminal"},
             {"exit", "Quits the game and exits the program"},
             {"help", "Shows this help"}
         };
