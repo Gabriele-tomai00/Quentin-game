@@ -47,9 +47,7 @@ public class OnlineGameStarter extends GameStarter {
     @Override
     public void makeMove(String position) {
         if (!handler.isWaiting()) {
-            if (canPlayPie) {
-                canPlayPie = false;
-            }
+            canPlayPie = false;
             super.makeMove(position);
             handler.sendCommands(CommunicationProtocol.move(position));
         } else {
@@ -66,9 +64,7 @@ public class OnlineGameStarter extends GameStarter {
             winner = BoardPoint.WHITE;
         }
         if (winner != null) {
-            handler.sendCommands(
-                    CommunicationProtocol.winner(
-                            winner == getGame().getCurrentPlayer().color() ? "LOST" : "WON"));
+            handler.winner(winner == getGame().getCurrentPlayer().color() ? "LOST" : "WON");
             setContinueGame(false);
             display();
             String message = winner == getGame().getCurrentPlayer().color() ? "WON" : "LOST";

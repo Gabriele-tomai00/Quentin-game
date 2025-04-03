@@ -34,4 +34,8 @@ public class OnlineGame extends Game {
     public void opponentCoversTerritories(Cell cell) {
         coverTerritories(cell, opponentColor);
     }
+
+    public BoardPoint getOpponentColor() {
+        return opponentColor;
+    }
 }

@@ -16,8 +16,9 @@ public class LocalGame extends Game {
     }
 
     public LocalGame(LocalGame game) {
+        super();
         getBoard().setBoard(game.getBoard());
-        this.currentPlayer = new Player(game.getCurrentPlayer().color());
+        currentPlayer = new Player(game.getCurrentPlayer().color());
     }
 
     public void changeCurrentPlayer() {

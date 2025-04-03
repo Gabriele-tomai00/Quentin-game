@@ -25,37 +25,37 @@ class BoardTest {
                 () -> assertEquals(BoardPoint.WHITE, board.getPoint(new Cell(3, 4))));
     }
 
-    @Test
-    void testEmptyBoardCompactString() {
-        String expectedResult = "169";
-        assertEquals(expectedResult, board.toCompactString());
-    }
-
-    @Test
-    void testCompactString2Tiles() {
-        board.placeStone(BoardPoint.BLACK, 2, 3);
-        board.placeStone(BoardPoint.BLACK, 4, 5);
-        String expectedResult = "29B27B111";
-        Board newBoard = new Board();
-        newBoard.fromCompactString(expectedResult);
-        assertAll(
-                () -> assertEquals(expectedResult, board.toCompactString()),
-                () -> assertEquals(expectedResult, board.toCompactString()),
-                () -> assertEquals(newBoard, board));
-    }
-
-    @Test
-    void testToAndFromCompactString() {
-        for (int i = 0; i < board.size(); i++) {
-            board.placeStone(BoardPoint.BLACK, i, 4);
-        }
-        String expectedResult = board.toCompactString();
-        assertEquals("4B12B12B12B12B12B12B12B12B12B12B12B12B8", expectedResult);
-
-        board = new Board();
-        board.fromCompactString(expectedResult);
-        assertEquals("4B12B12B12B12B12B12B12B12B12B12B12B12B8", expectedResult);
-    }
+    //    @Test
+    //    void testEmptyBoardCompactString() {
+    //        String expectedResult = "169";
+    //        assertEquals(expectedResult, board.toCompactString());
+    //    }
+    //
+    //    @Test
+    //    void testCompactString2Tiles() {
+    //        board.placeStone(BoardPoint.BLACK, 2, 3);
+    //        board.placeStone(BoardPoint.BLACK, 4, 5);
+    //        String expectedResult = "29B27B111";
+    //        Board newBoard = new Board();
+    //        newBoard.fromCompactString(expectedResult);
+    //        assertAll(
+    //                () -> assertEquals(expectedResult, board.toCompactString()),
+    //                () -> assertEquals(expectedResult, board.toCompactString()),
+    //                () -> assertEquals(newBoard, board));
+    //    }
+    //
+    //    @Test
+    //    void testToAndFromCompactString() {
+    //        for (int i = 0; i < board.size(); i++) {
+    //            board.placeStone(BoardPoint.BLACK, i, 4);
+    //        }
+    //        String expectedResult = board.toCompactString();
+    //        assertEquals("4B12B12B12B12B12B12B12B12B12B12B12B12B8", expectedResult);
+    //
+    //        board = new Board();
+    //        board.fromCompactString(expectedResult);
+    //        assertEquals("4B12B12B12B12B12B12B12B12B12B12B12B12B8", expectedResult);
+    //    }
 
     @Test
     void gameCopyIsEqual() {

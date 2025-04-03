@@ -1,12 +1,8 @@
 package quentin.game;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
-import quentin.exceptions.IllegalBoardException;
 
 public class Board implements Serializable {
 
@@ -18,10 +14,6 @@ public class Board implements Serializable {
         for (BoardPoint[] row : gameBoard) {
             Arrays.fill(row, BoardPoint.EMPTY);
         }
-    }
-
-    public Board(String compactBoard) {
-        fromCompactString(compactBoard);
     }
 
     public BoardPoint[][] getBoard() {
@@ -73,69 +65,6 @@ public class Board implements Serializable {
         if (j == SIZE - 1) toReturn.append("│█");
     }
 
-    public String toCompactString() {
-        StringBuilder result = new StringBuilder();
-        int dotCount = 0;
-
-        for (BoardPoint[] row : gameBoard) {
-            for (BoardPoint point : row) {
-                String str = point.toString();
-                if (".".equals(str)) {
-                    dotCount++;
-                } else {
-                    if (dotCount > 0) {
-                        result.append(dotCount);
-                        dotCount = 0;
-                    }
-                    result.append(str);
-                }
-            }
-        }
-        if (dotCount > 0) {
-            result.append(dotCount);
-        }
-        return result.toString();
-    }
-
-    public void fromCompactString(String compactString) {
-        int i = 0;
-        int flattenedIndex = 0;
-        while (i < compactString.length()) {
-            char ch = compactString.charAt(i);
-            if (Character.isDigit(ch)) {
-                int start = i;
-                while (i < compactString.length() && Character.isDigit(compactString.charAt(i))) {
-                    i++;
-                }
-                flattenedIndex = fillBoardWithEmptyCells(compactString, flattenedIndex, start, i);
-
-            } else {
-                if (flattenedIndex >= SIZE * SIZE) {
-                    throw new IllegalBoardException("Compact string exceeds board size");
-                }
-                this.gameBoard[flattenedIndex / SIZE][flattenedIndex % SIZE] =
-                        BoardPoint.fromString(String.valueOf(ch));
-                flattenedIndex++;
-                i++;
-            }
-        }
-        if (flattenedIndex != SIZE * SIZE) {
-            throw new IllegalBoardException("Compact string does not match the board size.");
-        }
-    }
-
-    public int fillBoardWithEmptyCells(String compactString, int flattenedIndex, int start, int i) {
-        int count = Integer.parseInt(compactString.substring(start, i));
-        for (int j = 0; j < count; j++) {
-            if (flattenedIndex >= SIZE * SIZE) {
-                throw new IllegalBoardException("Compact string exceeds board size");
-            }
-            this.gameBoard[flattenedIndex / SIZE][flattenedIndex % SIZE] = BoardPoint.EMPTY;
-            flattenedIndex++;
-        }
-        return flattenedIndex;
-    }
-
     public int size() {
         return SIZE;
     }
@@ -163,17 +92,5 @@ public class Board implements Serializable {
     @Override
     public int hashCode() {
         return Arrays.deepHashCode(getBoard());
-    }
-
-    @Serial
-    private void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.writeObject(this.toCompactString());
-    }
-
-    @Serial
-    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        String compactString = (String) ois.readObject();
-        gameBoard = new BoardPoint[SIZE][SIZE];
-        this.fromCompactString(compactString);
     }
 }

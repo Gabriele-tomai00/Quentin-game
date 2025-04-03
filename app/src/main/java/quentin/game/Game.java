@@ -14,7 +14,7 @@ import quentin.exceptions.MoveException;
 public abstract class Game implements Serializable {
 
     private static final long serialVersionUID = 2946018924798852043L;
-    private Board board;
+    private final Board board;
 
     protected Game() {
         board = new Board();
