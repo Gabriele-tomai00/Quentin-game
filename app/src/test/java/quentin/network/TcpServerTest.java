@@ -9,7 +9,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +33,7 @@ class TcpServerTest {
     }
 
     @Test
-    void testTcpServer() throws InterruptedException, ExecutionException, IOException {
+    void testTcpServer() throws InterruptedException, ExecutionException {
         PrintWriter writer = new PrintWriter(fakeSocket.getOutputStream(), true);
         writer.println("1");
         writer.println("2");

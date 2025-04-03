@@ -73,17 +73,4 @@ public class CommunicationProtocol {
     public static CommunicationProtocol winner(String message) {
         return new CommunicationProtocol(MessageType.WINNER, message);
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        return obj instanceof CommunicationProtocol mess
-                && getType() == mess.getType()
-                && getData().equals(mess.getData());
-    }
 }

@@ -102,11 +102,4 @@ class NetworkStarterTest {
                                         "startclient or sc        : Starts a client to play with"
                                                 + " other players")));
     }
-
-    //  @Test void startTest() throws IOException {
-    //    StreamUtility.provideInput("exit\n");
-    //    NetworkStarter starter = new NetworkStarter();
-    //    starter.start(new FakeSocket());
-    //
-    //  }
 }

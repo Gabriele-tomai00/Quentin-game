@@ -31,6 +31,11 @@ class ServerTest {
                 code2,
                 "Each call to generateRandomCode() should produce a different result.");
     }
-    
-    //TODO testCodeIsSameWithSameSeed
+
+    @Test
+    void testCodeIsSameWithSameSeed() {
+        String code = Server.generateRandomCode(0);
+        String code2 = Server.generateRandomCode(0);
+        assertEquals(code, code2);
+    }
 }

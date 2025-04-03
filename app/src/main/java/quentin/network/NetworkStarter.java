@@ -5,7 +5,6 @@ import java.net.Socket;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import quentin.game.BoardPoint;
 import quentin.game.OnlineGame;
 import quentin.game.OnlineGameStarter;
@@ -101,7 +100,7 @@ public class NetworkStarter implements Runnable {
             Socket socket = server.call();
             start(socket);
         } catch (IOException e) {
-          System.err.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 
@@ -112,7 +111,7 @@ public class NetworkStarter implements Runnable {
             Socket socket = client.call();
             start(socket);
         } catch (IOException e) {
-          System.err.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 

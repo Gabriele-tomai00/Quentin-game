@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
-
 import quentin.exceptions.PasswordRejectedException;
 
 public class TcpClient implements Callable<Socket> {
@@ -33,9 +32,11 @@ public class TcpClient implements Callable<Socket> {
 
             CommunicationProtocol message = CommunicationProtocol.fromString(in.readLine());
 
-            if (message.equals(CommunicationProtocol.passOk())) {
+            if (message.getType() == MessageType.PASSWORD
+                    && message.getData().equals(CommunicationProtocol.passOk().getData())) {
                 return socket;
-            } else if (message.equals(CommunicationProtocol.serverErr())) {
+            } else if (message.getType() == MessageType.SERVER
+                    && message.getData().equals(CommunicationProtocol.serverErr().getData())) {
                 throw new PasswordRejectedException();
             } else {
                 System.out.println(message);
