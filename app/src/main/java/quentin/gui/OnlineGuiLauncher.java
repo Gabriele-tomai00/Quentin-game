@@ -48,11 +48,10 @@ public class OnlineGuiLauncher extends Application {
                                                     new BufferedReader(
                                                             new InputStreamReader(
                                                                     socket.getInputStream()));
-                                            CommunicationProtocol received;
-                                            while ((received =
-                                                            CommunicationProtocol.fromString(
-                                                                    br.readLine()))
-                                                    != null) {
+                                            while (true) {
+                                                CommunicationProtocol received =
+                                                        CommunicationProtocol.fromString(
+                                                                br.readLine());
                                                 synchronized (game) {
                                                     switch (received.getType()) {
                                                         case EXIT -> {
@@ -80,7 +79,7 @@ public class OnlineGuiLauncher extends Application {
                                                 }
                                             }
                                         } catch (IOException e) {
-                                            e.printStackTrace();
+                                            System.err.println(e.getMessage());
                                         }
                                     }
                                 };
@@ -93,7 +92,7 @@ public class OnlineGuiLauncher extends Application {
                             root = loader.load();
                             alreadyStarted();
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            System.err.println(e.getMessage());
                         }
                     }
                 };
@@ -101,7 +100,7 @@ public class OnlineGuiLauncher extends Application {
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         executor.shutdownNow();
     }
 }

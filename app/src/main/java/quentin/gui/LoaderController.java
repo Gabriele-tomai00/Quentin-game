@@ -18,13 +18,14 @@ import javafx.stage.Stage;
 import quentin.cache.Cache;
 import quentin.cache.GameLog;
 
+@SuppressWarnings("unused")
 public class LoaderController implements Initializable {
 
     @FXML private ButtonBar bar;
     @FXML private Label label;
     private Controller controller;
     private Parent root;
-    private Cache<GameLog> cache;
+    private final Cache<GameLog> cache;
 
     public LoaderController(Cache<GameLog> cache) {
         this.cache = cache;
@@ -49,7 +50,7 @@ public class LoaderController implements Initializable {
             root = loader.load();
             controller = loader.getController();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("error during initialize: " + e.getMessage());
         }
     }
 

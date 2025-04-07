@@ -28,6 +28,7 @@ import quentin.game.BoardPoint;
 import quentin.game.Cell;
 import quentin.game.LocalGame;
 
+@SuppressWarnings("unused")
 public class Controller implements Initializable {
 
     private final List<List<Pane>> panes;
@@ -91,7 +92,7 @@ public class Controller implements Initializable {
         Pane source = (Pane) e.getSource();
         Integer columnIndex = GridPane.getColumnIndex(source);
         Integer rowIndex = GridPane.getRowIndex(source);
-        Cell cell = new Cell(rowIndex.intValue(), columnIndex.intValue());
+        Cell cell = new Cell(rowIndex, columnIndex);
         try {
             game.place(cell);
             game.coverTerritories(cell);
