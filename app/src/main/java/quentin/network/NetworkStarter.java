@@ -32,7 +32,7 @@ public class NetworkStarter implements Runnable {
                 String command = scanner.nextLine().trim().toLowerCase();
                 switch (command) {
                     case "" -> {
-                        break;
+                        /* no action for empty command*/
                     }
                     case "help" -> showHelper();
                     case "exit" -> {
@@ -100,7 +100,7 @@ public class NetworkStarter implements Runnable {
             Socket socket = server.call();
             start(socket);
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            System.err.println("error during server startup: " + e.getMessage());
         }
     }
 
@@ -111,7 +111,7 @@ public class NetworkStarter implements Runnable {
             Socket socket = client.call();
             start(socket);
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            System.err.println("error during client startup: " + e.getMessage());
         }
     }
 

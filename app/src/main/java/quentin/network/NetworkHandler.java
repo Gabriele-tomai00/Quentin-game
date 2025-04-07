@@ -54,14 +54,14 @@ public class NetworkHandler implements Runnable {
                             System.out.println(game.getBoard());
                         }
                         case CHANGE -> System.out.println("The opponent cannot make a move!!!");
-                        default -> { // qualcosa è andato storto
+                        default -> { // something wrong
                         }
                     }
                     waiting = false;
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
     }
 
@@ -80,7 +80,7 @@ public class NetworkHandler implements Runnable {
                 pw.println(command);
                 waiting = true;
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("error while sending the message: " + e.getMessage());
             }
         }
     }
@@ -91,7 +91,7 @@ public class NetworkHandler implements Runnable {
             pw.println(CommunicationProtocol.exit());
             waiting = true;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("error during exit: " + e.getMessage());
         }
     }
 

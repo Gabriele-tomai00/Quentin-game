@@ -1,5 +1,6 @@
 package quentin.network;
 
+import java.util.Objects;
 import quentin.game.Cell;
 
 public class CommunicationProtocol {
@@ -72,5 +73,23 @@ public class CommunicationProtocol {
 
     public static CommunicationProtocol winner(String message) {
         return new CommunicationProtocol(MessageType.WINNER, message);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        return obj instanceof CommunicationProtocol mess
+                && getType() == mess.getType()
+                && getData().equals(mess.getData());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getType(), getData());
     }
 }

@@ -11,7 +11,7 @@ import quentin.exceptions.PasswordRejectedException;
 
 public class TcpClient implements Callable<Socket> {
     private final Socket socket;
-    private final Scanner scanner;
+    Scanner scanner;
 
     public TcpClient(Socket socket) {
         this.socket = socket;
