@@ -24,7 +24,7 @@ public class CacheHandler {
             try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(file))) {
                 cache = (Cache<GameLog>) input.readObject();
             } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+                System.err.println("Unable to initialize cache: " + e.getMessage());
             }
         }
         return cache;
@@ -37,7 +37,7 @@ public class CacheHandler {
         try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(file))) {
             output.writeObject(cache);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Unable to save cache: " + e.getMessage());
         }
     }
 
@@ -46,7 +46,7 @@ public class CacheHandler {
             writer.write("");
             writer.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Unable to clear cache: " + e.getMessage());
         }
     }
 }
