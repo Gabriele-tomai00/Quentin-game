@@ -33,8 +33,8 @@ For detailed instructions on how to play Quentin, refer to the [Instructions Fil
 ### **Steps**
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/quentin.git
-   cd quentin
+   git clone https://github.com/Gabriele-tomai00/Quentin-game
+   cd Quentin-game
    ```
 
 2. Build the project:
@@ -47,9 +47,10 @@ If you already have Gradle installed you might need to run `gradle wrapper` befo
 
 ## **Execution**
 
-Run the application using Gradle:
+Run the application using Gradle: `./gradlew run`  
+But for a better visualization I suggest you a different version with an "easy" output:
    ```bash
-   ./gradlew run
+./gradlew run --console=plain
    ```
 
 ### Help
@@ -61,7 +62,7 @@ You can choose between 3 game modes:
 - **Local mode:** with `startlocalgame` or `lg`
 
 once a mode has been chosen the program will prompt for further configuration or the game will simply start.
-
+You can use the `help` command also during a match, to understand how to play.
 ---
 
 ## **Uninstalling**
