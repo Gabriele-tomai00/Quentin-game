@@ -61,19 +61,7 @@ public class OnlineGuiLauncher extends Application {
                                                         case WINNER ->
                                                                 game.setSomeoneWon(
                                                                         received.getData());
-                                                        default -> {
-                                                            if (received.getType()
-                                                                    == MessageType.MOVE) {
-                                                                Cell cell =
-                                                                        new MoveParser(
-                                                                                        received
-                                                                                                .getData())
-                                                                                .parse();
-                                                                game.opponentPlaces(cell);
-                                                                game.opponentCoversTerritories(
-                                                                        cell);
-                                                            }
-                                                        }
+                                                        default -> ifMove(game, received);
                                                     }
                                                     setWaiting(false);
                                                 }
@@ -97,6 +85,14 @@ public class OnlineGuiLauncher extends Application {
                     }
                 };
         starter.run();
+    }
+
+    public void ifMove(OnlineGuiGame game, CommunicationProtocol received) {
+        if (received.getType() == MessageType.MOVE) {
+            Cell cell = new MoveParser(received.getData()).parse();
+            game.opponentPlaces(cell);
+            game.opponentCoversTerritories(cell);
+        }
     }
 
     @Override
