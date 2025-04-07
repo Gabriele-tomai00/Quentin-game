@@ -1,5 +1,6 @@
 package quentin.game;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Deque;
@@ -13,7 +14,7 @@ import quentin.exceptions.MoveException;
 
 public abstract class Game implements Serializable {
 
-    private static final long serialVersionUID = 2946018924798852043L;
+    @Serial private static final long serialVersionUID = 2946018924798852043L;
     private final Board board;
 
     protected Game() {
@@ -21,10 +22,6 @@ public abstract class Game implements Serializable {
     }
 
     public abstract Player getCurrentPlayer();
-
-    public boolean hasWon() {
-        return hasWon(getCurrentPlayer().color());
-    }
 
     public boolean hasWon(BoardPoint color) {
         if (color == BoardPoint.WHITE) {

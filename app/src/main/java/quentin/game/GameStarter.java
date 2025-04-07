@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public abstract class GameStarter implements Runnable {
     protected static final String CLEAR = "\033[H\033[2J";
-    private Scanner scanner;
+    private final Scanner scanner;
     private boolean continueGame;
 
     protected GameStarter() {
