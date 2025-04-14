@@ -32,6 +32,10 @@ dependencies {
     testImplementation 'org.testfx:testfx-core:4.0.16-alpha'
     testImplementation 'org.testfx:testfx-junit5:4.0.16-alpha'
     testImplementation 'org.testfx:openjfx-monocle:21.0.2'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    testImplementation 'org.testfx:testfx-junit5:4.0.16-alpha'
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

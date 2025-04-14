@@ -48,11 +48,10 @@ public class OnlineGuiLauncher extends Application {
                                                     new BufferedReader(
                                                             new InputStreamReader(
                                                                     socket.getInputStream()));
-                                            CommunicationProtocol received;
-                                            while ((received =
-                                                            CommunicationProtocol.fromString(
-                                                                    br.readLine()))
-                                                    != null) {
+                                            while (true) {
+                                                CommunicationProtocol received =
+                                                        CommunicationProtocol.fromString(
+                                                                br.readLine());
                                                 synchronized (game) {
                                                     switch (received.getType()) {
                                                         case EXIT -> {
@@ -62,25 +61,13 @@ public class OnlineGuiLauncher extends Application {
                                                         case WINNER ->
                                                                 game.setSomeoneWon(
                                                                         received.getData());
-                                                        default -> {
-                                                            if (received.getType()
-                                                                    == MessageType.MOVE) {
-                                                                Cell cell =
-                                                                        new MoveParser(
-                                                                                        received
-                                                                                                .getData())
-                                                                                .parse();
-                                                                game.opponentPlaces(cell);
-                                                                game.opponentCoversTerritories(
-                                                                        cell);
-                                                            }
-                                                        }
+                                                        default -> ifMove(game, received);
                                                     }
                                                     setWaiting(false);
                                                 }
                                             }
                                         } catch (IOException e) {
-                                            e.printStackTrace();
+                                            System.err.println(e.getMessage());
                                         }
                                     }
                                 };
@@ -93,15 +80,23 @@ public class OnlineGuiLauncher extends Application {
                             root = loader.load();
                             alreadyStarted();
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            System.err.println(e.getMessage());
                         }
                     }
                 };
         starter.run();
     }
 
+    public void ifMove(OnlineGuiGame game, CommunicationProtocol received) {
+        if (received.getType() == MessageType.MOVE) {
+            Cell cell = new MoveParser(received.getData()).parse();
+            game.opponentPlaces(cell);
+            game.opponentCoversTerritories(cell);
+        }
+    }
+
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         executor.shutdownNow();
     }
 }

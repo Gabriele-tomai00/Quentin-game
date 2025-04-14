@@ -8,7 +8,7 @@ public class Board implements Serializable {
 
     @Serial private static final long serialVersionUID = 8169137628862217460L;
     private static final int SIZE = 13;
-    private BoardPoint[][] gameBoard = new BoardPoint[SIZE][SIZE];
+    private final BoardPoint[][] gameBoard = new BoardPoint[SIZE][SIZE];
 
     public Board() {
         for (BoardPoint[] row : gameBoard) {

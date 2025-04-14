@@ -1,8 +1,10 @@
 package quentin.exceptions;
 
+import java.io.Serial;
+
 public class PasswordRejectedException extends RuntimeException {
 
-    private static final long serialVersionUID = -1120747489107356171L;
+    @Serial private static final long serialVersionUID = -1120747489107356171L;
 
     @Override
     public String getMessage() {

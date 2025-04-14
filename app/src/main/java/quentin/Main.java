@@ -12,7 +12,7 @@ import quentin.network.NetworkStarter;
 public class Main {
 
     private static final File CACHE_FILE = new File(".last_match_cache");
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
         System.out.println(
@@ -40,7 +40,7 @@ public class Main {
                 case "sog", "startonlinegui" -> startOnlineGui();
                 case "slg", "startlocalgui" -> startLocalGui();
                 case "" -> {
-                    break;
+                    /* nothing to do */
                 }
                 case "help" -> showHelper();
                 case "exit" -> {

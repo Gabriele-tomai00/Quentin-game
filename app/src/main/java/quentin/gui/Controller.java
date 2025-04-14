@@ -28,13 +28,14 @@ import quentin.game.BoardPoint;
 import quentin.game.Cell;
 import quentin.game.LocalGame;
 
+@SuppressWarnings("unused")
 public class Controller implements Initializable {
 
     private final List<List<Pane>> panes;
     private LocalGame game;
-    @FXML private GridPane board;
+    @FXML GridPane board;
     @FXML private GridPane base;
-    @FXML private Label textField;
+    @FXML Label textField;
     @FXML private Button resetButton;
     @FXML private Label messageField;
     @FXML private Button goBackButton;
@@ -43,6 +44,7 @@ public class Controller implements Initializable {
     private final Cache<GameLog> cache;
     EventHandler<MouseEvent> startHandler = this::startWithMouseClick;
     EventHandler<MouseEvent> resetHandler = this::resetWithMouseClicked;
+    ExitHandler exitHandler = Platform::exit;
 
     public Controller() {
         super();
@@ -91,7 +93,7 @@ public class Controller implements Initializable {
         Pane source = (Pane) e.getSource();
         Integer columnIndex = GridPane.getColumnIndex(source);
         Integer rowIndex = GridPane.getRowIndex(source);
-        Cell cell = new Cell(rowIndex.intValue(), columnIndex.intValue());
+        Cell cell = new Cell(rowIndex, columnIndex);
         try {
             game.place(cell);
             game.coverTerritories(cell);
@@ -201,6 +203,6 @@ public class Controller implements Initializable {
     }
 
     public void exitGame() {
-        Platform.exit();
+        exitHandler.exit();
     }
 }

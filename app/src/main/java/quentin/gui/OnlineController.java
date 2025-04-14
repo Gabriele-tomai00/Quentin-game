@@ -25,10 +25,11 @@ import quentin.game.Cell;
 import quentin.network.CommunicationProtocol;
 import quentin.network.NetworkHandler;
 
+@SuppressWarnings("unused")
 public class OnlineController implements Initializable {
 
     private final List<List<Pane>> panes;
-    private OnlineGuiGame game;
+    private final OnlineGuiGame game;
     private final NetworkHandler handler;
     @FXML private GridPane board;
     @FXML private GridPane base;
@@ -80,14 +81,14 @@ public class OnlineController implements Initializable {
             Pane source = (Pane) e.getSource();
             Integer columnIndex = GridPane.getColumnIndex(source);
             Integer rowIndex = GridPane.getRowIndex(source);
-            Cell cell = new Cell(rowIndex.intValue(), columnIndex.intValue());
+            Cell cell = new Cell(rowIndex, columnIndex);
             try {
                 canPlayPie = false;
                 game.place(cell);
                 game.coverTerritories(cell);
                 CommunicationProtocol command = new CommunicationProtocol(cell);
                 handler.sendCommands(command);
-                BoardPoint winner = null;
+                BoardPoint winner;
                 if ((winner = someoneWon()) != null) {
                     handler.winner(winner == game.getCurrentPlayer().color() ? "lost" : "won");
                 }
