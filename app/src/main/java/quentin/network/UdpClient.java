@@ -1,7 +1,13 @@
 package quentin.network;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.Enumeration;
 import java.util.concurrent.Callable;
 
@@ -20,8 +26,8 @@ public class UdpClient implements Callable<NetworkInfo> {
             try (DatagramSocket clientSocket = createSocket()) {
 
                 clientSocket.setBroadcast(true);
-                String message = getLocalAddress() + " - " + username;
-                byte[] buffer = message.getBytes();
+                NetworkInfo clientInfo = new NetworkInfo(getLocalAddress(), username);
+                byte[] buffer = clientInfo.getBytes();
                 InetAddress broadcastAddress = InetAddress.getByName("255.255.255.255");
                 DatagramPacket packet =
                         new DatagramPacket(buffer, buffer.length, broadcastAddress, port);
@@ -39,7 +45,7 @@ public class UdpClient implements Callable<NetworkInfo> {
                                                 recPacket.getOffset(),
                                                 recPacket.getLength())
                                         .trim());
-                System.out.println("Server found: " + info.username());
+                System.out.println("Server found: " + info);
                 return info;
             } catch (SocketTimeoutException e) {
                 // do nothing

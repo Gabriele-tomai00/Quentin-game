@@ -16,6 +16,8 @@ public abstract class GameStarter implements Runnable {
 
     public abstract void processCannotPlay();
 
+    public abstract void performEndTurnOperations();
+
     @Override
     public void run() {
         while (continueGame) {
@@ -26,32 +28,34 @@ public abstract class GameStarter implements Runnable {
                 do {
                     System.out.printf("%s > %n", getGame().getCurrentPlayer());
                 } while (!processInput(scanner.nextLine()));
-                processCannotPlay();
+                performEndTurnOperations();
             }
         }
     }
 
     public boolean processInput(String command) {
+        boolean inputIsValid = false;
         try {
-            return switch (command) {
-                case "" -> false;
-                case "exit" -> {
-                    continueGame = false;
-                    yield true;
-                }
-                case "help" -> {
-                    showHelper();
-                    yield false;
-                }
-                default -> {
-                    makeMove(command);
-                    yield true;
-                }
-            };
+            inputIsValid =
+                    switch (command) {
+                        case "" -> false;
+                        case "exit" -> {
+                            continueGame = false;
+                            yield true;
+                        }
+                        case "help" -> {
+                            showHelper();
+                            yield false;
+                        }
+                        default -> {
+                            makeMove(command);
+                            yield true;
+                        }
+                    };
         } catch (RuntimeException e) {
             System.err.println(e.getMessage());
         }
-        return false;
+        return inputIsValid;
     }
 
     public void makeMove(String position) {

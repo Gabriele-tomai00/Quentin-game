@@ -20,13 +20,6 @@ class NetworkHandlerTest {
     private NetworkHandler handler;
     private PrintWriter pw;
 
-    @BeforeEach
-    void createHandler() throws IOException {
-        FakeSocket fakeSocket = new FakeSocket();
-        handler = new NetworkHandler(fakeSocket, game);
-        pw = new PrintWriter(fakeSocket.getOutputStream(), true);
-    }
-
     @Test
     void testPieRule() throws InterruptedException {
         CommunicationProtocol pie = CommunicationProtocol.pie();
@@ -84,5 +77,12 @@ class NetworkHandlerTest {
         assertAll(
                 () -> assertTrue(handler.isWaiting()),
                 () -> assertTrue(await, "Handler did not complete in time"));
+    }
+
+    @BeforeEach
+    void createHandler() throws IOException {
+        FakeSocket fakeSocket = new FakeSocket();
+        handler = new NetworkHandler(fakeSocket, game);
+        pw = new PrintWriter(fakeSocket.getOutputStream(), true);
     }
 }

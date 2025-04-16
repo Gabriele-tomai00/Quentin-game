@@ -17,6 +17,12 @@ class UdpClientTest {
     private static UdpClient client;
     private static final String SERVER_NAME = "testServer";
 
+    @Test
+    void testClient() throws IOException {
+        NetworkInfo infoReceived = client.call();
+        assertTrue(infoReceived.username().contains(SERVER_NAME));
+    }
+
     @BeforeAll
     static void startClient() throws IOException {
         PipedInputStream clientIn = new PipedInputStream();
@@ -41,11 +47,5 @@ class UdpClientTest {
                         return clientSocket;
                     }
                 };
-    }
-
-    @Test
-    void testClient() throws IOException {
-        NetworkInfo infoReceived = client.call();
-        assertTrue(infoReceived.username().contains(SERVER_NAME));
     }
 }

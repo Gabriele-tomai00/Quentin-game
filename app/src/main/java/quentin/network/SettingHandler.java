@@ -35,11 +35,4 @@ public class SettingHandler {
     public void setPort(int port) {
         settings.setProperty(PORT, String.valueOf(port));
     }
-
-    public void validateUsername() {
-        if (DEFAULT.equalsIgnoreCase(getUsername())) {
-            throw new IllegalStateException(
-                    "Username cannot be 'default'. Please set a valid username.");
-        }
-    }
 }

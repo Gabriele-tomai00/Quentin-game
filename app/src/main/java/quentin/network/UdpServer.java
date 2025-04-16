@@ -30,7 +30,6 @@ public class UdpServer implements Callable<Void> {
                 System.out.println("Connection from: " + message);
                 NetworkInfo serverInfo =
                         new NetworkInfo(InetAddress.getLocalHost().getHostAddress(), username);
-                System.out.println(serverInfo.address());
                 buffer = serverInfo.getBytes();
                 DatagramPacket sendPacket =
                         new DatagramPacket(

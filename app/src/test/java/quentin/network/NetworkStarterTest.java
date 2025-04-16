@@ -14,12 +14,6 @@ class NetworkStarterTest {
     private ByteArrayOutputStream outputErr = new ByteArrayOutputStream();
     private ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-    @BeforeEach
-    void setOutput() {
-        System.setErr(new PrintStream(outputErr));
-        System.setOut(new PrintStream(output));
-    }
-
     @Test
     void testRun() {
         String input = "getu\ngetp\nexit\n";
@@ -101,5 +95,11 @@ class NetworkStarterTest {
                                 helperMessage.contains(
                                         "startclient or sc        : Starts a client to play with"
                                                 + " other players")));
+    }
+
+    @BeforeEach
+    void setOutput() {
+        System.setErr(new PrintStream(outputErr));
+        System.setOut(new PrintStream(output));
     }
 }

@@ -19,7 +19,7 @@ class CellTest {
     @Test
     void cellsHashAreTheSameTest() {
         assertAll(
-                () -> assertEquals(new Cell(0, 0), new Cell(0, 0)),
-                () -> assertEquals(new Cell(10, 3), new Cell(10, 3)));
+                () -> assertEquals(new Cell(0, 0).hashCode(), new Cell(0, 0).hashCode()),
+                () -> assertEquals(new Cell(10, 3).hashCode(), new Cell(10, 3).hashCode()));
     }
 }

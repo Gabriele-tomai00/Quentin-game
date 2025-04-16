@@ -18,6 +18,16 @@ class TcpServerTest {
     private FakeSocket fakeSocket;
     private static final String RIGHT_PASS = "pass";
 
+    @Test
+    void testTcpServer() throws InterruptedException, ExecutionException {
+        PrintWriter writer = new PrintWriter(fakeSocket.getOutputStream(), true);
+        writer.println("1");
+        writer.println("2");
+        writer.println(RIGHT_PASS);
+        Socket serverSocket = submit.get();
+        assertFalse(serverSocket.isClosed());
+    }
+
     @BeforeEach
     void startServer() throws IOException {
         fakeSocket = new FakeSocket();
@@ -30,15 +40,5 @@ class TcpServerTest {
                 };
         ExecutorService executor = Executors.newSingleThreadExecutor();
         submit = executor.submit(tcpServer);
-    }
-
-    @Test
-    void testTcpServer() throws InterruptedException, ExecutionException {
-        PrintWriter writer = new PrintWriter(fakeSocket.getOutputStream(), true);
-        writer.println("1");
-        writer.println("2");
-        writer.println(RIGHT_PASS);
-        Socket serverSocket = submit.get();
-        assertFalse(serverSocket.isClosed());
     }
 }

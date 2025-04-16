@@ -13,12 +13,4 @@ public enum BoardPoint {
             default -> ".";
         };
     }
-
-    public static BoardPoint fromString(String symbol) {
-        return switch (symbol) {
-            case "B", "Black" -> BoardPoint.BLACK;
-            case "W", "White" -> BoardPoint.WHITE;
-            default -> BoardPoint.EMPTY;
-        };
-    }
 }

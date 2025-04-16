@@ -81,4 +81,9 @@ public class OnlineGameStarter extends GameStarter {
     public Game getGame() {
         return game;
     }
+
+    @Override
+    public void performEndTurnOperations() {
+        /* nothing to do */
+    }
 }

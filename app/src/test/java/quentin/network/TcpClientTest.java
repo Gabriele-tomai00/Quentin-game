@@ -17,6 +17,14 @@ class TcpClientTest {
     private static final int PORT = 3000;
     private FakeSocket clientSocket;
 
+    @Test
+    void testTcpClient() throws IOException {
+        StreamUtility.provideInput("11111\n33333\n");
+        TcpClient client = new TcpClient(clientSocket);
+        Socket returnedSocket = client.call();
+        assertFalse(returnedSocket.isClosed());
+    }
+
     @BeforeEach
     void setOutput() throws IOException {
         PipedInputStream clientIn = new PipedInputStream();
@@ -35,13 +43,5 @@ class TcpClientTest {
                 };
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(server);
-    }
-
-    @Test
-    void testTcpClient() throws IOException {
-        StreamUtility.provideInput("11111\n33333\n");
-        TcpClient client = new TcpClient(clientSocket);
-        Socket returnedSocket = client.call();
-        assertFalse(returnedSocket.isClosed());
     }
 }

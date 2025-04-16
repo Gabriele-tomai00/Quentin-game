@@ -1,21 +1,24 @@
 package quentin.game;
 
-// JUnit 5
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.junit.jupiter.api.Test;
 
 class PlayerTest {
 
     @Test
-    void testBlack() {
-        Player playerBlack = new Player(BoardPoint.BLACK);
-        assertEquals(BoardPoint.BLACK, playerBlack.color());
+    void testEquals() {
+        Player black1 = new Player(BoardPoint.BLACK);
+        Player black2 = new Player(BoardPoint.BLACK);
+        Player white = new Player(BoardPoint.WHITE);
+        assertAll(() -> assertEquals(black1, black2), () -> assertNotEquals(black1, white));
     }
 
     @Test
-    void testWhite() {
-        Player playerWhite = new Player(BoardPoint.WHITE);
-        assertEquals(BoardPoint.WHITE, playerWhite.color());
+    void testToString() {
+        Player white = new Player(BoardPoint.WHITE);
+        assertEquals("White", white.toString());
     }
 }

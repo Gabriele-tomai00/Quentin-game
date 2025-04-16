@@ -25,11 +25,12 @@ public class NetworkHandler implements Runnable {
     @Override
     public void run() {
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            BufferedReader br =
+                    new BufferedReader(new InputStreamReader(getSocket().getInputStream()));
             while (true) {
                 CommunicationProtocol received = CommunicationProtocol.fromString(br.readLine());
                 System.out.println("Please make your move");
-                synchronized (game) {
+                synchronized (getGame()) {
                     switch (received.getType()) {
                         case EXIT -> {
                             exit();
@@ -37,24 +38,24 @@ public class NetworkHandler implements Runnable {
                             return;
                         }
                         case PIE -> {
-                            game.applyPieRule();
+                            getGame().applyPieRule();
                             System.out.println(
                                     "The other played used the pie rule\nYou are now: "
-                                            + game.getCurrentPlayer());
+                                            + getGame().getCurrentPlayer());
                         }
                         case WINNER -> {
-                            System.out.println(game.getBoard());
+                            System.out.println(getGame().getBoard());
                             System.out.println("YOU " + received.getData() + " THE MATCH!!!!!");
                             return;
                         }
                         case MOVE -> {
                             Cell cell = new MoveParser(received.getData()).parse();
-                            game.opponentPlaces(cell);
-                            game.opponentCoversTerritories(cell);
-                            System.out.println(game.getBoard());
+                            getGame().opponentPlaces(cell);
+                            getGame().opponentCoversTerritories(cell);
+                            System.out.println(getGame().getBoard());
                         }
                         case CHANGE -> System.out.println("The opponent cannot make a move!!!");
-                        default -> { // something wrong
+                        default -> { // something wrong happened
                         }
                     }
                     waiting = false;
@@ -76,7 +77,7 @@ public class NetworkHandler implements Runnable {
     public synchronized void sendCommands(CommunicationProtocol command) {
         if (!isWaiting()) {
             try {
-                PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
+                PrintWriter pw = new PrintWriter(getSocket().getOutputStream(), true);
                 pw.println(command);
                 waiting = true;
             } catch (IOException e) {
@@ -87,7 +88,7 @@ public class NetworkHandler implements Runnable {
 
     public synchronized void exit() {
         try {
-            PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
+            PrintWriter pw = new PrintWriter(getSocket().getOutputStream(), true);
             pw.println(CommunicationProtocol.exit());
             waiting = true;
         } catch (IOException e) {
@@ -97,11 +98,19 @@ public class NetworkHandler implements Runnable {
 
     public synchronized void winner(String message) {
         try {
-            PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
+            PrintWriter pw = new PrintWriter(getSocket().getOutputStream(), true);
             pw.println(CommunicationProtocol.winner(message));
             waiting = true;
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public OnlineGame getGame() {
+        return game;
     }
 }

@@ -12,8 +12,6 @@ import quentin.game.OnlineGameStarter;
 public class NetworkStarter implements Runnable {
 
     private final SettingHandler handler = new SettingHandler();
-    private BoardPoint color;
-    private ExecutorService executor;
     private final Scanner scanner = new Scanner(System.in);
     private boolean started = true;
 
@@ -32,7 +30,7 @@ public class NetworkStarter implements Runnable {
                 String command = scanner.nextLine().trim().toLowerCase();
                 switch (command) {
                     case "" -> {
-                        /* no action for empty command*/
+                        /* no action for empty command */
                     }
                     case "help" -> showHelper();
                     case "exit" -> {
@@ -43,7 +41,6 @@ public class NetworkStarter implements Runnable {
                     case "setusername", "setu" -> setUsername();
                     case "setport", "setp" -> setport();
                     case "ss", "startserver" -> startServer();
-                    case "stop" -> stop();
                     case "sc", "startclient" -> startClient();
                     default -> System.err.println("Unknown command: " + command);
                 }
@@ -95,10 +92,9 @@ public class NetworkStarter implements Runnable {
 
     private void startServer() {
         try {
-            color = BoardPoint.BLACK;
             Server server = new Server(handler);
             Socket socket = server.call();
-            start(socket);
+            start(socket, BoardPoint.BLACK);
         } catch (IOException e) {
             System.err.println("error during server startup: " + e.getMessage());
         }
@@ -106,28 +102,21 @@ public class NetworkStarter implements Runnable {
 
     private void startClient() {
         try {
-            color = BoardPoint.WHITE;
             Client client = new Client(handler);
             Socket socket = client.call();
-            start(socket);
+            start(socket, BoardPoint.WHITE);
         } catch (IOException e) {
             System.err.println("error during client startup: " + e.getMessage());
         }
     }
 
-    protected void start(Socket socket) {
+    protected void start(Socket socket, BoardPoint color) {
         OnlineGame game = new OnlineGame(color);
         NetworkHandler networkHandler = new NetworkHandler(socket, game);
         OnlineGameStarter starter = new OnlineGameStarter(networkHandler, game);
-        executor = Executors.newSingleThreadExecutor();
-        executor.submit(networkHandler);
-        starter.run();
-        stop();
-    }
-
-    private void stop() {
-        if (executor != null) {
-            executor.shutdownNow();
+        try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
+            executor.submit(networkHandler);
+            starter.run();
         }
     }
 
@@ -137,9 +126,5 @@ public class NetworkStarter implements Runnable {
 
     public void alreadyStarted() {
         started = false;
-    }
-
-    public BoardPoint getColor() {
-        return color;
     }
 }

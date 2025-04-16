@@ -29,19 +29,29 @@ public class CachedGameStarter extends GameStarter {
 
     @Override
     public boolean processInput(String command) {
-        switch (command) {
-            case "back", "b" -> game = new LocalGame(cache.goBack().game());
-            case "forward", "f" -> game = new LocalGame(cache.goForward().game());
-            case "exit" -> {
-                setContinueGame(false);
-                gameFinished = false;
-                return true;
-            }
-            default -> {
-                return super.processInput(command);
-            }
+        boolean isInputValid = false;
+        try {
+            isInputValid =
+                    switch (command) {
+                        case "back", "b" -> {
+                            game = new LocalGame(cache.goBack().game());
+                            yield true;
+                        }
+                        case "forward", "f" -> {
+                            game = new LocalGame(cache.goForward().game());
+                            yield true;
+                        }
+                        case "exit" -> {
+                            setContinueGame(false);
+                            gameFinished = false;
+                            yield true;
+                        }
+                        default -> super.processInput(command);
+                    };
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println(e.getMessage());
         }
-        return true;
+        return isInputValid;
     }
 
     @Override
@@ -71,6 +81,11 @@ public class CachedGameStarter extends GameStarter {
 
     @Override
     public void processCannotPlay() {
+        game.changeCurrentPlayer();
+    }
+
+    @Override
+    public void performEndTurnOperations() {
         game.changeCurrentPlayer();
     }
 

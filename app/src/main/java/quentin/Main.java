@@ -77,7 +77,7 @@ public class Main {
             String answer = scanner.nextLine().trim().toLowerCase();
             if (answer.equals("n") || answer.equals("no")) {
                 gameStarter = new CachedGameStarter();
-                CacheHandler.clearCache();
+                CacheHandler.clearCache(CACHE_FILE);
             }
         }
         gameStarter.run();

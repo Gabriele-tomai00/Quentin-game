@@ -25,11 +25,6 @@ class OnlineGameStarterTest {
                 }
             };
 
-    @BeforeEach
-    void setOutput() {
-        System.setErr(new PrintStream(outputErr));
-    }
-
     @Test
     void testPieRule() {
         String commands = "pie\nexit\n";
@@ -64,5 +59,10 @@ class OnlineGameStarterTest {
         starter.run();
         BoardPoint cell = BoardPoint.BLACK;
         assertEquals(cell, starter.getGame().getBoard().getPoint(new Cell(0, 0)));
+    }
+
+    @BeforeEach
+    void setOutput() {
+        System.setErr(new PrintStream(outputErr));
     }
 }

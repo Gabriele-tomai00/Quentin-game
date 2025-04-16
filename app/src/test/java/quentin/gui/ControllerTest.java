@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
@@ -23,6 +24,9 @@ class ControllerTest extends ApplicationTest {
 
     private Controller controller;
     private Label messageField;
+    private Button resetButton;
+    private Button goBackButton;
+    private Button goForwardButton;
 
     @BeforeAll
     static void setupHeadless() {
@@ -45,6 +49,9 @@ class ControllerTest extends ApplicationTest {
         stage.show();
         controller = loader.getController();
         messageField = lookup("#messageField").query();
+        resetButton = lookup("#resetButton").query();
+        goBackButton = lookup("#goBackButton").query();
+        goForwardButton = lookup("#goForwardButton").query();
     }
 
     @Test
@@ -54,27 +61,27 @@ class ControllerTest extends ApplicationTest {
 
     @Test
     void testFirstTurn() {
-        clickOn("#messageField");
+        clickOn(messageField);
         assertEquals("Black's turn!!!", controller.textField.getText());
     }
 
     @Test
     void testSecondTurn() {
-        clickOn("#messageField");
+        clickOn(messageField);
         clickOn(controller.board.getChildren().get(1));
         assertEquals("White's turn!!!", controller.textField.getText());
     }
 
     @Test
     void testBlackColorFilling() {
-        clickOn("#messageField");
+        clickOn(messageField);
         clickOn(controller.board.getChildren().get(2));
         assertEquals(Color.BLACK, getColorOfCell(2));
     }
 
     @Test
     void testWhiteColorFilling() {
-        clickOn("#messageField");
+        clickOn(messageField);
         clickOn(controller.board.getChildren().get(2));
         clickOn(controller.board.getChildren().get(4));
         assertEquals(Color.WHITE, getColorOfCell(4));
@@ -82,18 +89,18 @@ class ControllerTest extends ApplicationTest {
 
     @Test
     void testResetButton() {
-        clickOn("#messageField");
+        clickOn(messageField);
         clickOn(controller.board.getChildren().get(2));
-        clickOn("#resetButton");
+        clickOn(resetButton);
         assertEquals("Click anywhere to start", messageField.getText());
     }
 
     @Test
     void testBackButton() {
-        clickOn("#messageField");
+        clickOn(messageField);
         clickOn(controller.board.getChildren().get(0));
         clickOn(controller.board.getChildren().get(2));
-        clickOn("#goBackButton");
+        clickOn(goBackButton);
         Background backgroundAfterBack =
                 ((Pane) controller.board.getChildren().get(2)).getBackground();
         assertTrue(backgroundAfterBack == null || backgroundAfterBack.getFills().isEmpty());
@@ -101,41 +108,41 @@ class ControllerTest extends ApplicationTest {
 
     @Test
     void testBackButtonAfterNoMove() {
-        clickOn("#messageField");
-        clickOn("#goBackButton");
+        clickOn(messageField);
+        clickOn(goBackButton);
         assertEquals("No more memory left!", messageField.getText());
     }
 
     @Test
     void testBackButtonAfterOneMove() {
-        clickOn("#messageField");
+        clickOn(messageField);
         clickOn(controller.board.getChildren().get(2));
-        clickOn("#goBackButton");
+        clickOn(goBackButton);
         assertEquals("No more memory left!", messageField.getText());
     }
 
     @Test
     void testForwardButton() {
-        clickOn("#messageField");
+        clickOn(messageField);
         clickOn(controller.board.getChildren().get(0));
         clickOn(controller.board.getChildren().get(2)); // white 0xffffffff
-        clickOn("#goBackButton");
-        clickOn("#goForwardButton");
+        clickOn(goBackButton);
+        clickOn(goForwardButton);
         assertEquals(Color.WHITE, getColorOfCell(2));
     }
 
     @Test
     void testInvalidForwardButtonAfterNoMove() {
-        clickOn("#messageField");
-        clickOn("#goForwardButton");
+        clickOn(messageField);
+        clickOn(goForwardButton);
         assertEquals("Cannot go forward!", messageField.getText());
     }
 
     @Test
     void testInvalidForwardButtonAfterOneMove() {
-        clickOn("#messageField");
+        clickOn(messageField);
         clickOn(controller.board.getChildren().get(2));
-        clickOn("#goForwardButton");
+        clickOn(goForwardButton);
         assertEquals("Cannot go forward!", messageField.getText());
     }
 
@@ -149,7 +156,7 @@ class ControllerTest extends ApplicationTest {
 
     @Test
     void testInvalidMove() {
-        clickOn("#messageField");
+        clickOn(messageField);
         clickOn(controller.board.getChildren().get(0));
         clickOn(controller.board.getChildren().get(4)); // casual, It's the white player
         clickOn(controller.board.getChildren().get(14));
@@ -158,7 +165,7 @@ class ControllerTest extends ApplicationTest {
 
     @Test
     void testBlackWin() {
-        clickOn("#messageField");
+        clickOn(messageField);
         for (int row = 0; row < 13; row++) {
             // 2 and 4 are casual indexes
             int index1 = row * 13 + 2;
@@ -171,7 +178,7 @@ class ControllerTest extends ApplicationTest {
 
     @Test
     void testWhiteWin() {
-        clickOn("#messageField");
+        clickOn(messageField);
         for (int col = 0; col < 13; col++) {
             int index1 = 2 * 13 + col;
             int index2 = 4 * 13 + col;
@@ -183,7 +190,7 @@ class ControllerTest extends ApplicationTest {
 
     @Test
     void testTerritoryFilling() {
-        clickOn("#messageField");
+        clickOn(messageField);
         for (int i = 14; i < 22; i++) clickOn(controller.board.getChildren().get(i));
         for (int i = 40; i < 48; i++) clickOn(controller.board.getChildren().get(i));
         clickOn(controller.board.getChildren().get(27));
@@ -193,7 +200,7 @@ class ControllerTest extends ApplicationTest {
 
     @Test
     void testOnlyTerritoryFilling() {
-        clickOn("#messageField");
+        clickOn(messageField);
         for (int i = 14; i < 22; i++) clickOn(controller.board.getChildren().get(i));
         for (int i = 40; i < 48; i++) clickOn(controller.board.getChildren().get(i));
         clickOn(controller.board.getChildren().get(27));
@@ -219,7 +226,7 @@ class ControllerTest extends ApplicationTest {
     void testBlackTerritoryFilling() {
         // we are creating a border with 5 black stone (indexes 14, 15...) and 5 white stones
         // (indexes 40, 41...),
-        clickOn("#messageField");
+        clickOn(messageField);
         for (int i = 14; i <= 18; i++) {
             clickOn(controller.board.getChildren().get(i));
             clickOn(
@@ -245,7 +252,7 @@ class ControllerTest extends ApplicationTest {
     void testWhiteTerritoryFilling() {
         // we are creating a border with 4 black stone (indexes 14, 15...) s and 4 white stones
         // (indexes 40, 41...),
-        clickOn("#messageField");
+        clickOn(messageField);
         for (int i = 14; i <= 17; i++) clickOn(controller.board.getChildren().get(i));
         for (int i = 40; i <= 43; i++) clickOn(controller.board.getChildren().get(i));
         clickOn(controller.board.getChildren().get(100)); // causal index, far from the other stone

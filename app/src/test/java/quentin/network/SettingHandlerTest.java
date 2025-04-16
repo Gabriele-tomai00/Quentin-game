@@ -1,7 +1,5 @@
 package quentin.network;
 
-// JUnit 5
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -23,9 +21,7 @@ class SettingHandlerTest {
         IllegalArgumentException exception =
                 assertThrows(
                         IllegalArgumentException.class,
-                        () -> {
-                            settingHandler.setUsername("default");
-                        });
+                        () -> settingHandler.setUsername("default"));
         assertEquals("Username cannot be 'default'.", exception.getMessage());
     }
 
@@ -35,12 +31,5 @@ class SettingHandlerTest {
 
         settingHandler.setPort(12345);
         assertEquals(12345, settingHandler.getPort());
-    }
-
-    @Test
-    void testValidateUsernamePassesForCustomUsername() {
-        SettingHandler settingHandler = new SettingHandler();
-        settingHandler.setUsername("CustomUser");
-        assertDoesNotThrow(settingHandler::validateUsername);
     }
 }

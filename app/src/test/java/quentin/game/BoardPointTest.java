@@ -8,17 +8,6 @@ import org.junit.jupiter.api.Test; // Test of JUnit 5
 class BoardPointTest {
 
     @Test
-    void testFromString() {
-        assertAll(
-                () -> assertEquals(BoardPoint.BLACK, BoardPoint.fromString("B")),
-                () -> assertEquals(BoardPoint.BLACK, BoardPoint.fromString("Black")),
-                () -> assertEquals(BoardPoint.WHITE, BoardPoint.fromString("W")),
-                () -> assertEquals(BoardPoint.WHITE, BoardPoint.fromString("White")),
-                () -> assertEquals(BoardPoint.EMPTY, BoardPoint.fromString(".")),
-                () -> assertEquals(BoardPoint.EMPTY, BoardPoint.fromString("Unknown")));
-    }
-
-    @Test
     void testToString() {
         assertAll(
                 () -> assertEquals("B", BoardPoint.BLACK.toString()),

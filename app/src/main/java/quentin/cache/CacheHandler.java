@@ -10,7 +10,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class CacheHandler {
-    private static final String CACHE_FILE = ".last_match_cache";
 
     private CacheHandler() {
         throw new UnsupportedOperationException(
@@ -41,8 +40,8 @@ public class CacheHandler {
         }
     }
 
-    public static void clearCache() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(CACHE_FILE))) {
+    public static void clearCache(File file) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.write("");
             writer.flush();
         } catch (IOException e) {

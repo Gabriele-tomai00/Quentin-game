@@ -35,14 +35,8 @@ class GameStarterTest {
         starter.run();
         boolean blackWon = starter.getGame().hasWon(BoardPoint.BLACK);
         assertAll(
-                () ->
-                        assertEquals(
-                                BoardPoint.BLACK,
-                                starter.getGame().getBoard().getPoint(new Cell(0, 0))),
-                () ->
-                        assertEquals(
-                                BoardPoint.BLACK,
-                                starter.getGame().getBoard().getPoint(new Cell(12, 0))),
+                () -> assertEquals(BoardPoint.BLACK, getColorOfThisCell(starter, new Cell(0, 0))),
+                () -> assertEquals(BoardPoint.BLACK, getColorOfThisCell(starter, new Cell(12, 0))),
                 () -> assertTrue(blackWon));
     }
 
@@ -61,7 +55,7 @@ class GameStarterTest {
         StreamUtility.provideInput(commands);
         CachedGameStarter starter = new CachedGameStarter();
         starter.run();
-        assertEquals(BoardPoint.WHITE, starter.getGame().getBoard().getPoint(new Cell(1, 0)));
+        assertEquals(BoardPoint.WHITE, getColorOfThisCell(starter, new Cell(1, 0)));
     }
 
     @Test
@@ -93,5 +87,9 @@ class GameStarterTest {
                                 helperMessage.contains(
                                         "  <coordinates>            : Makes a move. Examples: A1 b2"
                                                 + " C5 (wrong examples: 5A, 24)")));
+    }
+
+    private BoardPoint getColorOfThisCell(CachedGameStarter starter, Cell cell) {
+        return starter.getGame().getBoard().getPoint(cell);
     }
 }
