@@ -16,6 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -45,6 +46,7 @@ public class Controller implements Initializable {
     EventHandler<MouseEvent> startHandler = this::startWithMouseClick;
     EventHandler<MouseEvent> resetHandler = this::resetWithMouseClicked;
     ExitHandler exitHandler = Platform::exit;
+    private Pane lastPlacedCell;
 
     public Controller() {
         super();
@@ -106,6 +108,11 @@ public class Controller implements Initializable {
             }
             cache.saveLog(new GameLog(LocalDateTime.now(), new LocalGame(game)));
             display();
+            if (lastPlacedCell != null) {
+                lastPlacedCell.borderProperty().set(Border.stroke(Color.GREY));
+            }
+            lastPlacedCell = panes.get(cell.row()).get(cell.col());
+            lastPlacedCell.borderProperty().set(Border.stroke(Color.RED));
         } catch (MoveException e1) {
             errorMessage("Invalid move!");
         }
@@ -150,6 +157,10 @@ public class Controller implements Initializable {
     public void goBack() {
         try {
             game = new LocalGame(cache.goBack().game());
+            if (lastPlacedCell != null) {
+                lastPlacedCell.borderProperty().set(Border.stroke(Color.GRAY));
+            }
+            lastPlacedCell = null;
             display();
         } catch (RuntimeException ex) {
             errorMessage("No more memory left!");
@@ -159,6 +170,10 @@ public class Controller implements Initializable {
     public void goForward() {
         try {
             game = new LocalGame(cache.goForward().game());
+            if (lastPlacedCell != null) {
+                lastPlacedCell.borderProperty().set(Border.stroke(Color.GRAY));
+            }
+            lastPlacedCell = null;
             display();
         } catch (RuntimeException ex) {
             errorMessage("Cannot go forward!");
