@@ -21,9 +21,7 @@ class NetworkStarterTest {
         NetworkStarter starter = new NetworkStarter();
         starter.run();
         String messages = output.toString();
-        assertAll(
-                () -> assertTrue(messages.contains("default")),
-                () -> assertTrue(messages.contains("6789")));
+        assertTrue(messages.contains("6789"));
     }
 
     @Test

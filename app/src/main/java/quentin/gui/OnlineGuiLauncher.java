@@ -1,15 +1,16 @@
 package quentin.gui;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import java.util.concurrent.Executors;
 
 public class OnlineGuiLauncher extends Application {
     private Parent root;
-    private ExecutorService executor;
+    private final ExecutorService executor;
 
     public OnlineGuiLauncher() {
         executor = Executors.newSingleThreadExecutor();
