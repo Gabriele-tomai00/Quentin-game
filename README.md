@@ -38,9 +38,11 @@ For detailed instructions on how to play Quentin, refer to the [Instructions Fil
    ```
 
 2. Build the project:
+   `./gradlew build`  
+   If you want to save time and not running the test of the GUI (it can requires more than one minute) use the following command:
    ```bash
-   ./gradlew build
-   ```
+   ./gradlew build -PexcludeFxTests=true
+      ```
 If you already have Gradle installed you might need to run `gradle wrapper` before build.
 
 ---
