@@ -1,9 +1,10 @@
 package quentin.network;
 
+import static quentin.network.NetworkInfo.getLocalAddress;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.Callable;
@@ -28,8 +29,7 @@ public class UdpServer implements Callable<Void> {
 
                 String message = new String(packet.getData(), 0, packet.getLength());
                 System.out.println("Connection from: " + message);
-                NetworkInfo serverInfo =
-                        new NetworkInfo(InetAddress.getLocalHost().getHostAddress(), username);
+                NetworkInfo serverInfo = new NetworkInfo(getLocalAddress(), username);
                 buffer = serverInfo.getBytes();
                 DatagramPacket sendPacket =
                         new DatagramPacket(

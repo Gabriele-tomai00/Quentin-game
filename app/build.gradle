@@ -73,6 +73,11 @@ test {
     systemProperty 'testfx.headless', 'true'
     systemProperty 'glass.platform', 'Monocle'
     systemProperty 'monocle.platform', 'Headless'
+
+    if (project.hasProperty("excludeFxTests") && project.property("excludeFxTests") == "true") {
+        exclude("**/gui/**")
+        logger.lifecycle("⚠️  JavaFX tests (in test/gui) excluded")
+    }
 }
 
 spotless {

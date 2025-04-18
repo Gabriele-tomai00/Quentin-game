@@ -9,8 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.BeforeAll;
@@ -85,6 +84,31 @@ class ControllerTest extends ApplicationTest {
         clickOn(controller.board.getChildren().get(2));
         clickOn(controller.board.getChildren().get(4));
         assertEquals(Color.WHITE, getColorOfCell(4));
+    }
+
+    @Test
+    void testIfiLastHighlightedCellIsRed() {
+        clickOn(messageField);
+        clickOn(controller.board.getChildren().get(2));
+        clickOn(controller.board.getChildren().get(5));
+        assertEquals(Color.RED, getBorderColorOfCell(5));
+    }
+
+    @Test
+    void testIfNextToLastHighlightedCellIsNotRed() {
+        clickOn(messageField);
+        clickOn(controller.board.getChildren().get(2));
+        clickOn(controller.board.getChildren().get(5));
+        assertEquals(Color.GREY, getBorderColorOfCell(2));
+    }
+
+    @Test
+    void testIfAfterBackButtonTheCellIsNotRedHighlighted() {
+        clickOn(messageField);
+        clickOn(controller.board.getChildren().get(2));
+        clickOn(controller.board.getChildren().get(5));
+        clickOn(goBackButton);
+        assertEquals(Color.GREY, getBorderColorOfCell(5));
     }
 
     @Test
@@ -268,5 +292,15 @@ class ControllerTest extends ApplicationTest {
     Color getColorOfCell(int index) {
         Pane cell = (Pane) controller.board.getChildren().get(index);
         return (Color) cell.getBackground().getFills().getFirst().getFill();
+    }
+
+    Color getBorderColorOfCell(int index) {
+        Region region = (Region) controller.board.getChildren().get(index);
+        Border border = region.getBorder();
+        if (border != null) {
+            BorderStroke stroke = border.getStrokes().getFirst();
+            return (Color) stroke.getTopStroke();
+        }
+        return null;
     }
 }
