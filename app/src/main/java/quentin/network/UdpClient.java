@@ -1,14 +1,13 @@
 package quentin.network;
 
+import static quentin.network.NetworkInfo.getLocalAddress;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.InterfaceAddress;
-import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.Enumeration;
 import java.util.concurrent.Callable;
 
 public class UdpClient implements Callable<NetworkInfo> {
@@ -56,22 +55,5 @@ public class UdpClient implements Callable<NetworkInfo> {
 
     protected DatagramSocket createSocket() throws SocketException {
         return new DatagramSocket();
-    }
-
-    private static String getLocalAddress() {
-        try {
-            final Enumeration<NetworkInterface> interfaces =
-                    NetworkInterface.getNetworkInterfaces();
-            while (interfaces.hasMoreElements()) {
-                for (InterfaceAddress addr : interfaces.nextElement().getInterfaceAddresses()) {
-                    if (addr.getAddress().isSiteLocalAddress()) {
-                        return addr.getAddress().getHostAddress();
-                    }
-                }
-            }
-        } catch (SocketException e) {
-            System.err.println("Error: unable to get local IP address: " + e.getMessage());
-        }
-        return "IP non disponibile";
     }
 }
