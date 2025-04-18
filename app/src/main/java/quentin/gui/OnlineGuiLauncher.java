@@ -5,10 +5,15 @@ import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import java.util.concurrent.Executors;
 
 public class OnlineGuiLauncher extends Application {
     private Parent root;
     private ExecutorService executor;
+
+    public OnlineGuiLauncher() {
+        executor = Executors.newSingleThreadExecutor();
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
